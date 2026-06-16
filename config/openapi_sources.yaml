@@ -1,0 +1,29 @@
+default: shanhai_apifox
+
+sources:
+  shanhai_apifox:
+    provider: apifox
+    description: "山海智影 Apifox 项目"
+    invite_url: "https://app.apifox.com/invite/project?token=U8JpDQgpUYTot3mFvwcGz"
+
+    # 生产推荐 1：在 Apifox 项目设置 -> 导出数据 -> OpenAPI -> 打开 URL，
+    # 将 RAW URL 配置到环境变量 APIFOX_OPENAPI_RAW_URL。
+    raw_url: "http://127.0.0.1:4523/export/openapi/4?version=3.0"
+    raw_url_env: "APIFOX_OPENAPI_RAW_URL"
+
+    # 生产推荐 2：使用 Apifox 开放 API 导出 OpenAPI。
+    # 需要在 CI/CD 密钥里配置 APIFOX_PROJECT_ID 与 APIFOX_ACCESS_TOKEN。
+    project_id_env: "APIFOX_PROJECT_ID"
+    access_token_env: "APIFOX_ACCESS_TOKEN"
+    export_api_url: "https://api.apifox.com/v1/projects/{project_id}/export-openapi"
+    export_options:
+      oasVersion: "3.0"
+      exportFormat: "JSON"
+
+    snapshot_path: "data/openapi/apifox_snapshot.json"
+    raw_path: "data/openapi/apifox_raw.json"
+    latest_path: "data/openapi/apifox_latest.json"
+    diff_json_path: "reports/openapi/apifox_diff.json"
+    diff_markdown_path: "reports/openapi/apifox_diff.md"
+
+    fail_on_breaking_change: true

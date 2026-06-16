@@ -1,0 +1,1747 @@
+{
+  "components": {
+    "schemas": {
+      "ApiResponseListMapObject": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "description": "",
+            "items": {
+              "$ref": "#/components/schemas/MapObject"
+            },
+            "type": "array"
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseMapObject": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "description": "",
+            "properties": {
+              "active_count": {
+                "type": "integer"
+              },
+              "disabled_count": {
+                "type": "integer"
+              },
+              "keys": {
+                "items": {
+                  "$ref": "#/components/schemas/keys"
+                },
+                "type": "array"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "user_id": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "null"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseObject": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "description": "",
+            "items": {
+              "properties": {
+                "key": {
+                  "description": "Returns the key corresponding to this entry.",
+                  "type": "string"
+                },
+                "value": {
+                  "description": "Returns the value corresponding to this entry.  If the mapping\nhas been removed from the backing map (by the iterator's\n{@code remove} operation), the results of this call are undefined.",
+                  "properties": {},
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseSpeakerClassifyStatusRespDTO": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SpeakerClassifyStatusRespDTO",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseSpeakerClassifySubmitRespDTO": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SpeakerClassifySubmitRespDTO",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseVideoTSBaseResponse": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VideoTSBaseResponse",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseVideoTSTaskStatusResponse": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VideoTSTaskStatusResponse",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MapObject": {
+        "properties": {
+          "key": {
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "SpeakerClassifySegmentDTO": {
+        "properties": {
+          "content": {
+            "description": "文本内容",
+            "type": "string"
+          },
+          "end": {
+            "description": "结束时间",
+            "type": "string"
+          },
+          "spk": {
+            "description": "角色名",
+            "type": "string"
+          },
+          "start": {
+            "description": "开始时间",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SpeakerClassifyStatusRespDTO": {
+        "properties": {
+          "asrDuration": {
+            "description": "ASR 识别时长",
+            "type": "number"
+          },
+          "durationMs": {
+            "description": "算法耗时",
+            "type": "number"
+          },
+          "error": {
+            "description": "错误信息",
+            "type": "string"
+          },
+          "message": {
+            "description": "任务消息",
+            "type": "string"
+          },
+          "progress": {
+            "description": "任务进度",
+            "type": "integer"
+          },
+          "requestId": {
+            "description": "算法 request_id",
+            "type": "string"
+          },
+          "spkResult": {
+            "description": "说话人分类结果",
+            "items": {
+              "$ref": "#/components/schemas/SpeakerClassifySegmentDTO",
+              "description": "说话人分类片段"
+            },
+            "type": "array"
+          },
+          "status": {
+            "description": "任务状态: pending/running/success/error",
+            "type": "string"
+          },
+          "taskId": {
+            "description": "算法 task_id",
+            "type": "string"
+          },
+          "taskName": {
+            "description": "任务名称",
+            "type": "string"
+          },
+          "timestamps": {
+            "description": "算法时间戳块",
+            "properties": {},
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "SpeakerClassifySubmitRespDTO": {
+        "properties": {
+          "audioPath": {
+            "description": "上传到 TOS 的 object key",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "算法 request_id",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimbreDesignResult": {
+        "properties": {
+          "audioUrl": {
+            "description": "音频完整URL",
+            "type": "string"
+          },
+          "outputDir": {
+            "description": "输出目录UUID，用于后续克隆",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "请求ID，用于查询状态",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "TimbreDesignStatusResult": {
+        "properties": {
+          "audioPath": {
+            "description": "音频路径（success时返回）",
+            "type": "string"
+          },
+          "status": {
+            "description": "任务状态（pending/running/success/failed）",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VideoTSBaseResponse": {
+        "properties": {
+          "message": {
+            "description": "消息",
+            "type": "string"
+          },
+          "status": {
+            "description": "状态",
+            "type": "string"
+          },
+          "taskId": {
+            "description": "任务ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VideoTSTaskStatusResponse": {
+        "properties": {
+          "downloadUrl": {
+            "description": "下载URL",
+            "type": "string"
+          },
+          "error": {
+            "description": "错误信息",
+            "type": "string"
+          },
+          "message": {
+            "description": "状态消息",
+            "type": "string"
+          },
+          "progress": {
+            "description": "进度百分比（0-100）",
+            "type": "integer"
+          },
+          "status": {
+            "description": "状态（pending/processing/completed/failed）",
+            "type": "string"
+          },
+          "taskId": {
+            "description": "任务ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "keys": {
+        "properties": {
+          "apiKey": {
+            "description": "",
+            "type": "string"
+          },
+          "createTime": {
+            "description": "",
+            "type": "string"
+          },
+          "experienceKey": {
+            "description": "",
+            "type": "string"
+          },
+          "id": {
+            "description": "",
+            "format": "int64",
+            "type": "integer"
+          },
+          "rateLimit": {
+            "default": 100,
+            "description": "",
+            "type": "integer"
+          },
+          "status": {
+            "default": 1,
+            "description": "0:禁用 1:启用",
+            "type": "integer"
+          },
+          "updateTime": {
+            "description": "",
+            "type": "string"
+          },
+          "userId": {
+            "description": "",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {}
+  },
+  "info": {
+    "description": "",
+    "title": "OpenApi",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.1",
+  "paths": {
+    "/admin/api-key/create": {
+      "post": {
+        "deprecated": false,
+        "description": "创建API Key\n为用户创建新的API密钥",
+        "parameters": [
+          {
+            "description": "",
+            "example": "lychee@2026",
+            "in": "header",
+            "name": "X-Admin-Token",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "user_id": 1
+              },
+              "schema": {
+                "$ref": "#/components/schemas/MapObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapObject"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "创建API Key",
+        "tags": []
+      }
+    },
+    "/open/asr": {
+      "post": {
+        "deprecated": false,
+        "description": "语音识别\n上传音频文件进行语音识别",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "language",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "语音识别",
+        "tags": []
+      }
+    },
+    "/open/speaker-classify/status": {
+      "get": {
+        "deprecated": false,
+        "description": "查询说话人分类状态\n查询分类任务状态",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSpeakerClassifyStatusRespDTO"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "查询说话人分类状态",
+        "tags": []
+      }
+    },
+    "/open/speaker-classify/submit": {
+      "post": {
+        "deprecated": false,
+        "description": "提交说话人分类任务\n上传音频进行说话人分类，限时免费",
+        "parameters": [
+          {
+            "description": "",
+            "example": "",
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSpeakerClassifySubmitRespDTO"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "提交说话人分类任务",
+        "tags": []
+      }
+    },
+    "/open/subtitle/erase": {
+      "post": {
+        "deprecated": false,
+        "description": "字幕擦除\n提交视频字幕擦除任务",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "language_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "do_not_encrypt_link",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "subtitle_mode",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "字幕擦除",
+        "tags": []
+      }
+    },
+    "/open/subtitle/erase/result": {
+      "get": {
+        "deprecated": false,
+        "description": "查询擦除结果\n查询字幕擦除任务结果",
+        "parameters": [
+          {
+            "description": "",
+            "example": "",
+            "in": "query",
+            "name": "project_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "查询擦除结果",
+        "tags": []
+      }
+    },
+    "/open/timbre-design/generate": {
+      "post": {
+        "deprecated": false,
+        "description": "音色设计\n生成音色，限时免费",
+        "parameters": [
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "accentValue": "1",
+                "ageValue": "2",
+                "genderValue": "1",
+                "langCode": "zh",
+                "pitchValue": "4",
+                "styleValue": "1",
+                "text": "这是一段测试文本"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/MapObject"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimbreDesignResult",
+                  "description": "音色设计结果"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "音色设计",
+        "tags": []
+      }
+    },
+    "/open/timbre-design/status": {
+      "get": {
+        "deprecated": false,
+        "description": "音色设计状态查询\n查询音色设计任务状态",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimbreDesignStatusResult",
+                  "description": "音色设计状态查询结果"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "音色设计状态查询",
+        "tags": []
+      }
+    },
+    "/open/videots/back-translation": {
+      "post": {
+        "deprecated": false,
+        "description": "台词回译\n支持TOS路径或文件上传方式进行回译",
+        "parameters": [
+          {
+            "description": "",
+            "example": "",
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "file": {
+                    "example": "file://C:\\Users\\Administrator\\Downloads\\5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh_translated_en.srt",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "mode": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "target_language": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "tos_path": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "user_prompt": {
+                    "example": "",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "message": "台词回译任务已创建，正在处理中...",
+                    "status": "processing",
+                    "taskId": "bba8d074-6b04-4209-852b-4917f5cfc08a"
+                  },
+                  "info": "success",
+                  "requestId": "995e6b6f-0ce2-411e-9115-bbaec1008fb5"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoTSBaseResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "台词回译",
+        "tags": []
+      }
+    },
+    "/open/videots/download": {
+      "get": {
+        "deprecated": false,
+        "description": "下载任务结果\n下载Video-TS翻译任务的结果文件",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": "1\n00:00:00,300 --> 00:00:03,200\nLet's welcome the new couple with applause\n\n2\n00:00:08,413 --> 00:00:10,757\nBrother, you're wearing a bathrobe to the wedding?\n\n3\n00:00:11,952 --> 00:00:12,678\nWhat?\n\n4\n00:00:13,787 --> 00:00:15,530\nYou're really embarrassing me, An Mei Wenjiang\n\n5\n00:00:17,022 --> 00:00:19,330\nBrother, we're out of the city now\n\n6\n00:00:19,450 --> 00:00:21,530\nYou're being too showy. I'm worried about you\n\n7\n00:00:22,380 --> 00:00:22,967\nOkay\n\n8\n00:00:23,860 --> 00:00:25,216\nThen I won't go down there\n\n9\n00:00:27,250 --> 00:00:29,110\nPlease have the new couple exchange their rings\n\n10\n00:00:44,230 --> 00:00:45,430\nYou're so good\n\n11\n00:00:46,985 --> 00:00:48,950\nIt's just that this dress doesn't really suit me\n\n12\n00:00:52,310 --> 00:00:53,450\nBrother, I'll go in first to take a look\n\n13\n00:00:53,580 --> 00:00:55,000\nI'll be back soon\n\n14\n00:01:05,471 --> 00:01:07,450\nI heard that you're very good at painting\n\n15\n00:01:07,660 --> 00:01:11,100\nThen you have to draw a picture of a wedding scene, and you can't leave until you've finished it\n\n16\n00:01:13,930 --> 00:01:14,916\nYou're so good\n\n17\n00:01:14,916 --> 00:01:17,150\nIt's completely soulless\n\n18\n00:01:17,150 --> 00:01:17,940\nBoring\n\n19\n00:01:33,670 --> 00:01:35,580\nThe groom can now kiss the bride\n\n20\n00:01:36,440 --> 00:01:38,680\nGive him/her a kiss\n\n21\n00:01:44,450 --> 00:01:45,930\nI've been lucky too\n\n22\n00:01:46,940 --> 00:01:48,100\nI should leave now, too\n\n23\n00:02:24,120 --> 00:02:25,120\nBeautiful\n\n24\n00:02:33,640 --> 00:02:35,960\nHer figure is still quite good\n\n25\n00:02:39,760 --> 00:02:40,370\nSingle\n\n26\n00:02:42,933 --> 00:02:43,413\nYes\n\n27\n00:02:55,290 --> 00:02:56,362\nTake a nap\n\n28\n00:02:58,290 --> 00:02:58,800\nWhat?\n",
+                "schema": {
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "下载任务结果",
+        "tags": []
+      }
+    },
+    "/open/videots/retranslate": {
+      "post": {
+        "deprecated": false,
+        "description": "重新翻译\n支持TOS路径或文件上传方式进行选择性重新翻译",
+        "parameters": [
+          {
+            "description": "",
+            "example": "",
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "file_original": {
+                    "example": "file://C:\\Users\\Administrator\\Desktop\\项目任务\\2.0\\api-server\\翻译接口\\001-en-shanhai-translated-zh.srt",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "file_translated": {
+                    "example": "file://C:\\Users\\Administrator\\Downloads\\ea88197a-bb9c-4e20-822a-d20240c7215b_ea88197a-bb9c-4e20-822a-d20240c7215b_001-en-shanhai-translated-zh_translated_en.srt",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "mode": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "retranslation_items": {
+                    "example": "[{\"index\":1,\"feedback\":\"翻译更简洁口语化\"},{\"index\":3,\"feedback\":\"翻译不准确\"}]",
+                    "type": "string"
+                  },
+                  "target_language": {
+                    "example": "en",
+                    "type": "string"
+                  },
+                  "tos_path_original": {
+                    "example": "",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "tos_path_translated": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "user_prompt": {
+                    "example": "",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "message": "重新翻译任务已开始，请使用task_id查询进度",
+                    "status": "processing",
+                    "taskId": "51132fe3-17c0-4a6f-8afd-9399ce4757ee"
+                  },
+                  "info": "success",
+                  "requestId": "8c556a9c-d7a2-4958-9106-7f6576e29f56"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoTSBaseResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "重新翻译",
+        "tags": []
+      }
+    },
+    "/open/videots/status": {
+      "get": {
+        "deprecated": false,
+        "description": "查询任务状态\n查询Video-TS翻译任务的实时状态",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "billingInfo": {
+                      "pricingInfo": [
+                        {
+                          "completionTokens": 241,
+                          "inputPricePer1kTokens": 0.0012,
+                          "modelName": "doubao-seed-translation-250915",
+                          "outputPricePer1kTokens": 0.0036,
+                          "promptTokens": 764,
+                          "totalTokens": 1005
+                        },
+                        {
+                          "completionTokens": 8201,
+                          "inputPricePer1kTokens": 0.0009,
+                          "modelName": "doubao-seed-2-0-lite-260215",
+                          "outputPricePer1kTokens": 0.0054,
+                          "promptTokens": 3236,
+                          "totalTokens": 11437
+                        },
+                        {
+                          "completionTokens": 450,
+                          "inputPricePer1kTokens": 0.0003,
+                          "modelName": "doubao-seed-1-6-flash-250828",
+                          "outputPricePer1kTokens": 0.003,
+                          "promptTokens": 887,
+                          "totalTokens": 1337
+                        }
+                      ],
+                      "totalCost": 0.050601,
+                      "totalTokens": 13779
+                    },
+                    "downloadUrl": "5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh_translated_en.srt",
+                    "error": null,
+                    "message": "翻译任务完成",
+                    "progress": 100,
+                    "result": {
+                      "failedTranslations": 3,
+                      "inputPath": "/PMAIGC/code/video_ts_api/uploads/5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh.srt",
+                      "outputPath": "/PMAIGC/code/video_ts_api/outputs/5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh_translated_en.srt",
+                      "targetLanguage": "en",
+                      "totalSubtitles": 28,
+                      "translatedSubtitles": 28
+                    },
+                    "status": "completed",
+                    "taskId": "5a9dbf10-81b3-4ac5-8d86-acdd0669d88d"
+                  },
+                  "info": "success",
+                  "requestId": "d16840f9-7f83-4986-b9cc-1fcad2640719"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoTSTaskStatusResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "查询任务状态",
+        "tags": []
+      }
+    },
+    "/open/videots/tasks": {
+      "get": {
+        "deprecated": false,
+        "description": "获取任务列表\n获取Video-TS所有任务的列表",
+        "parameters": [
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": 200,
+                  "data": [
+                    {
+                      "created_at": "2026-05-07T14:02:31.475168",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "51132fe3-17c0-4a6f-8afd-9399ce4757ee"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:24:19.527611",
+                      "message": "台词回译完成",
+                      "status": "completed",
+                      "task_id": "5a38dbf2-08b1-4f78-a69c-6dc3c403a71e"
+                    },
+                    {
+                      "created_at": "2026-04-28T14:20:39.040427",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "be18565d-5780-4e22-8c0e-ff04c9bf558d"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:39:49.873172",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "16558c9a-a350-440d-a8bb-63741c9d31ba"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:26:39.533231",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "43f05bd0-96e1-4dde-98a9-995ee2b2a559"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:17:22.546076",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "46e70167-8dc8-47b5-af3a-64f82a16a82e"
+                    },
+                    {
+                      "created_at": "2026-04-28T14:26:13.118202",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "7fcdb442-89b7-44c2-ab4d-a05f10cc591a"
+                    },
+                    {
+                      "created_at": "2026-05-07T14:06:50.539953",
+                      "message": "台词回译完成",
+                      "status": "completed",
+                      "task_id": "bba8d074-6b04-4209-852b-4917f5cfc08a"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:11:55.983613",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "4cab6ffe-06ce-4eb8-bfdd-259f3366dd70"
+                    },
+                    {
+                      "created_at": "2026-04-28T13:50:50.481970",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "ac5de163-8f61-477c-835b-ee60b2e10b5c"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:36:18.039830",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "b90aa31a-63a2-4eb4-88e4-16989d034108"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:17:49.944087",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "f82c6d5a-7b71-462c-91a4-ebff3b705115"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:10:27.558703",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "56291b5d-584d-45ea-b4a9-1b7d74ac4403"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:23:42.177608",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "531d5ea1-7794-4fa1-8ecc-44957679aa58"
+                    },
+                    {
+                      "created_at": "2026-05-07T14:03:56.117669",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "a0bbb2dd-f04f-4394-a975-def54ea2ce5b"
+                    },
+                    {
+                      "created_at": "2026-04-28T14:17:05.669867",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "098e01d1-f7f6-441f-896e-9eb9b3a26a38"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:26:25.570855",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "07aaf8d4-001e-4a42-b52b-7f5d2e1224ac"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:58:59.687876",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "8706b352-466c-4b3e-8c9f-aa4303e7e155"
+                    },
+                    {
+                      "created_at": "2026-04-28T14:29:56.810475",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "09d52153-6a5a-4fd8-9557-2c2c8a1a4498"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:09:48.755248",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "86a47f2a-d2fc-406f-81ac-a93fb87a2d28"
+                    },
+                    {
+                      "created_at": "2026-04-28T17:40:04.202467",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "0e4806c1-0379-4e90-b66e-0a61a24b2872"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:28:25.929038",
+                      "message": "台词回译完成",
+                      "status": "completed",
+                      "task_id": "8e72dae6-8c61-438e-8e22-484845c1883e"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:36:59.541782",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "e77a23d4-1c47-42d1-b858-86078643b048"
+                    },
+                    {
+                      "created_at": "2026-04-28T14:33:14.088901",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "32070f0b-9ba9-4cfd-81a8-587fd78b2a40"
+                    },
+                    {
+                      "created_at": "2026-04-28T13:52:01.626589",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "b0a64d5d-7744-4017-bfec-cc3c8e954239"
+                    },
+                    {
+                      "created_at": "2026-04-28T10:59:31.210458",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "b1eec2b9-b6f3-4076-8d0b-818abdd2dfbe"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:21:05.496015",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "2af2344a-0965-4fbf-8167-54ea4c5bc5f0"
+                    },
+                    {
+                      "created_at": "2026-04-28T17:40:13.357349",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "85f416eb-9ba1-4c7d-b9a4-7b0c03fab535"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:23:06.291378",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "f4899813-ab2b-47fd-ac2a-f35a920bed5e"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:08:08.141354",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "c6cb4ce3-bfa4-43c3-937c-f77219b85241"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:38:22.986132",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "e1607b29-f249-49e8-94b8-ffcdb8ca7573"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:28:54.902972",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "eb33c9e3-863f-4d1a-b5fd-aefb5c2142fc"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:19:33.879801",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "5ea6742c-ebeb-403d-aa22-67e4fe59b8c7"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:57:13.720087",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "c726f4dd-448b-4727-a3a0-0738ae144e1e"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:35:03.372422",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "faa941f9-bede-44e4-aa30-6a16ccbe4049"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:15:21.188482",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "e6310235-a348-4d2d-a8c4-7884d3757abf"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:19:12.583876",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "d7e89c67-15d4-4e28-bf85-430fc73663c3"
+                    },
+                    {
+                      "created_at": "2026-04-28T12:10:53.647004",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "401944ff-699b-45f3-b0ad-8618741d2e01"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:34:11.049825",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "d610a5a1-0e49-4e70-8ccb-dbc1f8cd149c"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:13:11.571048",
+                      "message": "台词回译完成",
+                      "status": "completed",
+                      "task_id": "eb53c501-f552-4285-a857-8275a51a27ec"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:25:43.572087",
+                      "message": "重新翻译任务完成",
+                      "status": "completed",
+                      "task_id": "207d83dc-d1da-48ff-9101-e611869302d0"
+                    },
+                    {
+                      "created_at": "2026-04-28T11:37:22.418907",
+                      "message": "台词回译完成",
+                      "status": "completed",
+                      "task_id": "ee77f48f-0407-433e-a99a-ca292ae16d1f"
+                    },
+                    {
+                      "created_at": "2026-05-07T13:55:36.483147",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "5a9dbf10-81b3-4ac5-8d86-acdd0669d88d"
+                    },
+                    {
+                      "created_at": "2026-04-28T13:43:13.621682",
+                      "message": "翻译任务完成",
+                      "status": "completed",
+                      "task_id": "2b299c13-6435-404e-8d34-b28ca921887d"
+                    },
+                    {
+                      "created_at": "2026-04-28T15:27:20.011524",
+                      "message": "台词回译完成",
+                      "status": "completed",
+                      "task_id": "f0823d00-9b4f-4fda-bbac-4a281891b00b"
+                    }
+                  ],
+                  "info": "success",
+                  "requestId": "f7fc5642-be51-4333-a583-9c83a52a1ce7"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMapObject"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "获取任务列表",
+        "tags": []
+      }
+    },
+    "/open/videots/translate": {
+      "post": {
+        "deprecated": false,
+        "description": "字幕翻译\n支持TOS路径或文件上传方式提交翻译任务，mode=direct直接转发，mode=tos先上传TOS再调Video-TS",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "tos_path",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "en",
+            "in": "query",
+            "name": "target_language",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "",
+            "in": "query",
+            "name": "user_prompt",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "direct",
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "",
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "file": {
+                    "example": "file://C:\\Users\\Administrator\\Desktop\\项目任务\\2.0\\api-server\\翻译接口\\001-en-shanhai-translated-zh.srt",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "mode": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "tos_path": {
+                    "example": "",
+                    "type": "string"
+                  },
+                  "user_prompt": {
+                    "example": "",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": 200,
+                  "data": {
+                    "message": "翻译任务已开始，请使用task_id查询进度",
+                    "status": "processing",
+                    "taskId": "5a9dbf10-81b3-4ac5-8d86-acdd0669d88d"
+                  },
+                  "info": "success",
+                  "requestId": "4a78e5bd-f435-4e05-bd56-8ae82c356e4b"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoTSBaseResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "字幕翻译",
+        "tags": []
+      }
+    },
+    "/open/voice/zeroshot/clone": {
+      "post": {
+        "deprecated": false,
+        "description": "语音克隆\n上传音频进行声音克隆",
+        "parameters": [
+          {
+            "description": "",
+            "example": "",
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "audio": {
+                    "example": "file://C:\\Users\\Administrator\\Downloads\\split.mp3",
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "audio"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "语音克隆",
+        "tags": []
+      }
+    },
+    "/open/voice/zeroshot/infer": {
+      "post": {
+        "deprecated": false,
+        "description": "语音推理\n使用克隆的声音生成语音",
+        "parameters": [
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "examples": {},
+              "schema": {
+                "properties": {
+                  "audio": {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "ref_text": {
+                    "description": "参考文本",
+                    "type": "string"
+                  },
+                  "sample_rate": {
+                    "description": "采样率",
+                    "example": 44100,
+                    "examples": [
+                      44100
+                    ],
+                    "type": "integer"
+                  },
+                  "speaker_id": {
+                    "description": "音色ID",
+                    "example": "550e8400-e29b-41d4-a716-446655440000",
+                    "examples": [
+                      "550e8400-e29b-41d4-a716-446655440000"
+                    ],
+                    "type": "string"
+                  },
+                  "speed": {
+                    "description": "语速",
+                    "example": 1,
+                    "examples": [
+                      1
+                    ],
+                    "type": "number"
+                  },
+                  "text": {
+                    "description": "推理文本",
+                    "example": "你好，欢迎使用语音合成",
+                    "examples": [
+                      "你好，欢迎使用语音合成"
+                    ],
+                    "type": "string"
+                  },
+                  "volume": {
+                    "description": "音量",
+                    "example": 1,
+                    "examples": [
+                      1
+                    ],
+                    "type": "number"
+                  }
+                },
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {},
+                  "type": "object"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "语音推理",
+        "tags": []
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "开发环境",
+      "url": "http://101.126.91.130:46062/openapi"
+    }
+  ],
+  "tags": []
+}

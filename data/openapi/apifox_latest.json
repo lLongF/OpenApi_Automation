@@ -1,0 +1,402 @@
+{
+  "openapi_version": "3.0.1",
+  "operation_count": 16,
+  "operations": {
+    "GET /open/speaker-classify/status": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "request_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/speaker-classify/status",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询说话人分类状态",
+      "tags": []
+    },
+    "GET /open/subtitle/erase/result": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "project_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/subtitle/erase/result",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询擦除结果",
+      "tags": []
+    },
+    "GET /open/timbre-design/status": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "request_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/timbre-design/status",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "音色设计状态查询",
+      "tags": []
+    },
+    "GET /open/videots/download": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "task_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/videots/download",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "下载任务结果",
+      "tags": []
+    },
+    "GET /open/videots/status": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "task_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/videots/status",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询任务状态",
+      "tags": []
+    },
+    "GET /open/videots/tasks": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/videots/tasks",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "获取任务列表",
+      "tags": []
+    },
+    "POST /admin/api-key/create": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "X-Admin-Token",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/admin/api-key/create",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "创建API Key",
+      "tags": []
+    },
+    "POST /open/asr": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "language",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/asr",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "语音识别",
+      "tags": []
+    },
+    "POST /open/speaker-classify/submit": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/speaker-classify/submit",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "提交说话人分类任务",
+      "tags": []
+    },
+    "POST /open/subtitle/erase": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "do_not_encrypt_link",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "language_code",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "subtitle_mode",
+          "required": false,
+          "schema_type": "integer"
+        }
+      ],
+      "path": "/open/subtitle/erase",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "字幕擦除",
+      "tags": []
+    },
+    "POST /open/timbre-design/generate": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/timbre-design/generate",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "音色设计",
+      "tags": []
+    },
+    "POST /open/videots/back-translation": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/videots/back-translation",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "台词回译",
+      "tags": []
+    },
+    "POST /open/videots/retranslate": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/videots/retranslate",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "重新翻译",
+      "tags": []
+    },
+    "POST /open/videots/translate": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "mode",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "target_language",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "tos_path",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "user_prompt",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/videots/translate",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "字幕翻译",
+      "tags": []
+    },
+    "POST /open/voice/zeroshot/clone": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/voice/zeroshot/clone",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "语音克隆",
+      "tags": []
+    },
+    "POST /open/voice/zeroshot/infer": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/voice/zeroshot/infer",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "语音推理",
+      "tags": []
+    }
+  },
+  "source": "shanhai_apifox",
+  "synced_at": "2026-06-09T06:21:26.363091+00:00"
+}

@@ -1,0 +1,288 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","0","test_voice_clone[VC_NEG_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"","0","test_back_translation[VB_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"[Live 测试] 视频重新翻译接口。
+
+    接口：POST /open/videots/retranslate
+    请求方式：multipart/form-data（视频文件 + SRT 字幕文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_retranslate[VR_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_translate[VT_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"[Live 测试] 说话人分类任务提交接口。
+
+    接口：POST /open/speaker-classify/submit
+    请求方式：multipart/form-data（音频文件）
+    认证：api_key 请求头
+    ","0","test_speaker_classify_submit[SC_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 视频翻译提交接口。
+
+    接口：POST /open/videots/translate
+    请求方式：multipart/form-data（视频文件 + 表单参数如 src_lang / target_lang）
+    认证：api_key 请求头
+    ","0","test_translate[VT_NEG_003]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_back_translation[VB_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"","0","test_retranslate[VR_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"","0","test_voice_infer[VI_BOUND_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"[Live 测试] 音色设计生成接口。
+
+    接口：POST /open/timbre-design/generate
+    请求方式：application/json（JSON 请求体，包含 prompt / num / timbre_id 等参数）
+    认证：api_key 请求头
+    功能：根据文本描述（prompt）生成特定音色的音频
+    ","0","test_timbre_design[TD_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_timbre_design","",""
+"[Live 测试] 说话人分类任务状态查询接口。
+
+    接口：GET /open/speaker-classify/status
+    请求参数：task_id（查询参数）
+    认证：api_key 请求头
+    ","0","test_speaker_classify_status[SCS_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 说话人分类任务提交接口。
+
+    接口：POST /open/speaker-classify/submit
+    请求方式：multipart/form-data（音频文件）
+    认证：api_key 请求头
+    ","0","test_speaker_classify_submit[SC_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 视频翻译提交接口。
+
+    接口：POST /open/videots/translate
+    请求方式：multipart/form-data（视频文件 + 表单参数如 src_lang / target_lang）
+    认证：api_key 请求头
+    ","0","test_translate[VT_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"[Live 测试] 视频翻译提交接口。
+
+    接口：POST /open/videots/translate
+    请求方式：multipart/form-data（视频文件 + 表单参数如 src_lang / target_lang）
+    认证：api_key 请求头
+    ","0","test_translate[VT_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_voice_infer[VI_POS_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"","0","test_subtitle_erase_result[SER_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_translate[VT_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"","0","test_subtitle_erase_submit[SE_BOUND_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_translate[VT_NEG_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"[Live 测试] Zero-shot 声音推理（合成）接口。
+
+    接口：POST /open/voice/zeroshot/infer
+    请求方式：multipart/form-data（参考音频 + 表单参数如 timbre_id / text / language）
+    认证：api_key 请求头
+    功能：根据已注册的 timbre_id 和文本合成语音
+    ","0","test_voice_infer[VI_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"[契约测试] 验证每个业务模块（按 case id 前缀分组）至少包含 1 个正向用例和 1 个反向用例。","1","test_each_business_module_has_positive_and_negative_cases","tests","Mon Jun 08 18:35:52 CST 2026","passed","Mon Jun 08 18:35:52 CST 2026","","test_contract_data","",""
+"","0","test_subtitle_erase_submit[SE_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_speaker_classify_status[SCS_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_speaker_classify_submit[SC_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 说话人分类任务提交接口。
+
+    接口：POST /open/speaker-classify/submit
+    请求方式：multipart/form-data（音频文件）
+    认证：api_key 请求头
+    ","0","test_speaker_classify_submit[SC_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_tts_websocket[WS_TTS_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_websocket","",""
+"[Live 测试] Zero-shot 声音推理（合成）接口。
+
+    接口：POST /open/voice/zeroshot/infer
+    请求方式：multipart/form-data（参考音频 + 表单参数如 timbre_id / text / language）
+    认证：api_key 请求头
+    功能：根据已注册的 timbre_id 和文本合成语音
+    ","0","test_voice_infer[VI_POS_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"[Live 测试-契约] 从 Apifox 实时拉取 OpenAPI 文档，与本地快照对比，确保无破坏性变更。
+
+    依赖：
+        --live 参数 + 环境变量 APIFOX_PROJECT_ID / APIFOX_ACCESS_TOKEN
+    接口来源：config/openapi_sources.yaml 中配置的 OpenAPI source
+    ","0","test_apifox_openapi_has_no_breaking_changes","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_openapi_contract","",""
+"","0","test_subtitle_erase_submit[SE_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] ASR 语音识别接口（REST 模式）。
+
+    接口：POST /open/asr
+    请求方式：multipart/form-data（音频文件 + 表单参数如 language）
+    认证：api_key 请求头
+    ","0","test_asr_rest[ASR_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 字幕擦除提交接口。
+
+    接口：POST /open/subtitle/erase
+    请求方式：multipart/form-data（音频文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_subtitle_erase_submit[SE_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 字幕擦除提交接口。
+
+    接口：POST /open/subtitle/erase
+    请求方式：multipart/form-data（音频文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_subtitle_erase_submit[SE_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_voice_infer[VI_BOUND_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"[Live 测试] Zero-shot 声音克隆接口。
+
+    接口：POST /open/voice/zeroshot/clone
+    请求方式：multipart/form-data（音频样本 + 表单参数如 timbre_name / language）
+    认证：api_key 请求头
+    功能：上传参考音频，注册一个新的音色，返回 timbre_id
+    ","0","test_voice_clone[VC_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"","0","test_asr_websocket[WS_ASR_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_websocket","",""
+"[Live 测试] ASR 语音识别接口（REST 模式）。
+
+    接口：POST /open/asr
+    请求方式：multipart/form-data（音频文件 + 表单参数如 language）
+    认证：api_key 请求头
+    ","0","test_asr_rest[ASR_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 字幕擦除提交接口。
+
+    接口：POST /open/subtitle/erase
+    请求方式：multipart/form-data（音频文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_subtitle_erase_submit[SE_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 视频翻译任务状态查询接口。
+
+    接口：GET /open/videots/status
+    请求参数：task_id（查询参数）
+    认证：api_key 请求头
+    ","0","test_videots_status[VS_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_subtitle_erase_result[SER_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] Zero-shot 声音推理（合成）接口。
+
+    接口：POST /open/voice/zeroshot/infer
+    请求方式：multipart/form-data（参考音频 + 表单参数如 timbre_id / text / language）
+    认证：api_key 请求头
+    功能：根据已注册的 timbre_id 和文本合成语音
+    ","0","test_voice_infer[VI_NEG_003]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"","0","test_voice_infer[VI_NEG_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"","0","test_timbre_design[TD_BOUND_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_timbre_design","",""
+"","0","test_asr_rest[ASR_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 音色设计生成接口。
+
+    接口：POST /open/timbre-design/generate
+    请求方式：application/json（JSON 请求体，包含 prompt / num / timbre_id 等参数）
+    认证：api_key 请求头
+    功能：根据文本描述（prompt）生成特定音色的音频
+    ","0","test_timbre_design[TD_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_timbre_design","",""
+"[Live 测试] Zero-shot 声音克隆接口。
+
+    接口：POST /open/voice/zeroshot/clone
+    请求方式：multipart/form-data（音频样本 + 表单参数如 timbre_name / language）
+    认证：api_key 请求头
+    功能：上传参考音频，注册一个新的音色，返回 timbre_id
+    ","0","test_voice_clone[VC_NEG_003]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"","0","test_timbre_design[TD_NEG_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_timbre_design","",""
+"[Live 测试] 字幕擦除结果查询接口。
+
+    接口：GET /open/subtitle/erase/result
+    请求参数：task_id（查询参数）
+    认证：api_key 请求头
+    ","0","test_subtitle_erase_result[SER_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 反向翻译接口（将翻译结果再译回源语言以评估翻译质量）。
+
+    接口：POST /open/videots/back-translation
+    请求方式：multipart/form-data（视频文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_back_translation[VB_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_voice_clone[VC_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"[单元测试-契约] 验证差异检测工具能正确识别「参数从可选变为必填」的破坏性变更。
+
+    模拟接口：GET /open/videots/status（视频翻译状态查询）
+    - task_id 参数从 required=false 变为 required=true -> 检测为 parameter_became_required
+    ","1","test_openapi_diff_detects_breaking_required_parameter_added","tests","Mon Jun 08 18:35:52 CST 2026","passed","Mon Jun 08 18:35:52 CST 2026","","test_openapi_contract","",""
+"","0","test_asr_rest[ASR_NEG_002]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_timbre_design[TD_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_timbre_design","",""
+"[Live 测试] 视频翻译提交接口。
+
+    接口：POST /open/videots/translate
+    请求方式：multipart/form-data（视频文件 + 表单参数如 src_lang / target_lang）
+    认证：api_key 请求头
+    ","0","test_translate[VT_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_voice_infer[VI_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"[Live 测试] Zero-shot 声音推理（合成）接口。
+
+    接口：POST /open/voice/zeroshot/infer
+    请求方式：multipart/form-data（参考音频 + 表单参数如 timbre_id / text / language）
+    认证：api_key 请求头
+    功能：根据已注册的 timbre_id 和文本合成语音
+    ","0","test_voice_infer[VI_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"[契约测试] 验证 data/test_data.yaml 中 files 块引用的所有 mock 文件在磁盘上真实存在。","1","test_all_mock_files_exist","tests","Mon Jun 08 18:35:52 CST 2026","passed","Mon Jun 08 18:35:52 CST 2026","","test_contract_data","",""
+"","0","test_asr_websocket[WS_ASR_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_websocket","",""
+"[Live 测试] ASR 语音识别接口（REST 模式）。
+
+    接口：POST /open/asr
+    请求方式：multipart/form-data（音频文件 + 表单参数如 language）
+    认证：api_key 请求头
+    ","0","test_asr_rest[ASR_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_timbre_design[TD_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_timbre_design","",""
+"[Live 测试] 反向翻译接口（将翻译结果再译回源语言以评估翻译质量）。
+
+    接口：POST /open/videots/back-translation
+    请求方式：multipart/form-data（视频文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_back_translation[VB_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_retranslate[VR_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"","0","test_videots_status[VS_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"[Live 测试] Zero-shot 声音克隆接口。
+
+    接口：POST /open/voice/zeroshot/clone
+    请求方式：multipart/form-data（音频样本 + 表单参数如 timbre_name / language）
+    认证：api_key 请求头
+    功能：上传参考音频，注册一个新的音色，返回 timbre_id
+    ","0","test_voice_clone[VC_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"[Live 测试] 视频重新翻译接口。
+
+    接口：POST /open/videots/retranslate
+    请求方式：multipart/form-data（视频文件 + SRT 字幕文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_retranslate[VR_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","1","test_tts_protocol_build_and_parse_session_started_packet","tests","Fri Jun 05 22:07:31 CST 2026","passed","Fri Jun 05 22:07:31 CST 2026","","test_contract_data","",""
+"[Live 测试] 字幕擦除结果查询接口。
+
+    接口：GET /open/subtitle/erase/result
+    请求参数：task_id（查询参数）
+    认证：api_key 请求头
+    ","0","test_subtitle_erase_result[SER_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_asr_rest[ASR_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 说话人分类任务状态查询接口。
+
+    接口：GET /open/speaker-classify/status
+    请求参数：task_id（查询参数）
+    认证：api_key 请求头
+    ","0","test_speaker_classify_status[SCS_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"[单元测试-契约] 验证 OpenAPI 规范化工具能正确从文档中提取接口元数据（operation_id / request_body_required / response_codes）。
+
+    被验证接口：POST /open/asr（ASR REST 语音识别）
+    ","0","test_openapi_normalizer_extracts_operations","tests","Mon Jun 08 18:35:52 CST 2026","passed","Mon Jun 08 18:35:52 CST 2026","","test_openapi_contract","",""
+"[Workflow] 语音克隆返回 request_id 后，自动传递给语音合成接口的 speaker_id。","12058","test_voice_clone_to_infer_workflow","tests","Mon Jun 08 18:38:50 CST 2026","passed","Mon Jun 08 18:39:02 CST 2026","","test_voice_workflow","",""
+"","0","test_speaker_classify_status[SCS_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"[Live 测试] 音色设计生成接口。
+
+    接口：POST /open/timbre-design/generate
+    请求方式：application/json（JSON 请求体，包含 prompt / num / timbre_id 等参数）
+    认证：api_key 请求头
+    功能：根据文本描述（prompt）生成特定音色的音频
+    ","0","test_timbre_design[TD_NEG_002]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_timbre_design","",""
+"[Live 测试] Zero-shot 声音克隆接口。
+
+    接口：POST /open/voice/zeroshot/clone
+    请求方式：multipart/form-data（音频样本 + 表单参数如 timbre_name / language）
+    认证：api_key 请求头
+    功能：上传参考音频，注册一个新的音色，返回 timbre_id
+    ","0","test_voice_clone[VC_POS_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"[契约测试] 验证所有测试用例均包含必填元数据：id（唯一）、title（非空）、category（合法枚举值）、expected。","0","test_case_definitions_have_required_metadata","tests","Mon Jun 08 18:35:52 CST 2026","passed","Mon Jun 08 18:35:52 CST 2026","","test_contract_data","",""
+"","0","test_videots_status[VS_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_videots","",""
+"[契约测试] 缺失文件的反向用例也必须以 multipart/form-data 发送，避免后端拒绝 x-www-form-urlencoded。","1","test_multipart_files_forces_multipart_when_file_is_missing","tests","Mon Jun 08 18:35:52 CST 2026","passed","Mon Jun 08 18:35:52 CST 2026","","test_contract_data","",""
+"[Live 测试] 字幕擦除提交接口。
+
+    接口：POST /open/subtitle/erase
+    请求方式：multipart/form-data（音频文件 + 表单参数）
+    认证：api_key 请求头
+    ","0","test_subtitle_erase_submit[SE_NEG_003]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_tts_websocket[WS_TTS_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_websocket","",""
+"[Live 测试] Zero-shot 声音推理（合成）接口。
+
+    接口：POST /open/voice/zeroshot/infer
+    请求方式：multipart/form-data（参考音频 + 表单参数如 timbre_id / text / language）
+    认证：api_key 请求头
+    功能：根据已注册的 timbre_id 和文本合成语音
+    ","0","test_voice_infer[VI_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_voice","",""
+"","0","test_voice_infer[VI_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
+"[Live 测试] 视频翻译任务状态查询接口。
+
+    接口：GET /open/videots/status
+    请求参数：task_id（查询参数）
+    认证：api_key 请求头
+    ","0","test_videots_status[VS_NEG_001]","tests","Mon Jun 08 16:39:05 CST 2026","skipped","Mon Jun 08 16:39:05 CST 2026","","test_videots","",""
+"","0","test_speaker_classify_submit[SC_POS_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_subtitle_asr_speaker","",""
+"","0","test_voice_clone[VC_NEG_001]","tests","Fri Jun 05 22:07:31 CST 2026","skipped","Fri Jun 05 22:07:31 CST 2026","","test_voice","",""
