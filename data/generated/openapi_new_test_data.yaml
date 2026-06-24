@@ -1,0 +1,169 @@
+_meta:
+  generated_at: '2026-06-24T08:00:22.290522+00:00'
+  source: data/openapi/apifox_raw.json
+  note: Generated draft only. Fill real request values, file_key, expected code, and assertions before merging into data/test_data/*.yaml.
+open_video_compose_status_get_001:
+  endpoint:
+    method: GET
+    path: /open/video-compose/status
+    summary: 查询视频压制合成任务
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: VCS_POS_001
+    title: 查询视频压制合成任务-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    params:
+      task_id: '{{task_id}}'
+  - id: VCS_NEG_001
+    title: 查询视频压制合成任务-缺少必填参数task_id
+    category: negative
+    params: {}
+    expected:
+      http_status_any:
+      - 200
+      - 400
+      - 422
+      code_any:
+      - 400
+      - 422
+      message_contains_any:
+      - task_id
+      - 必填
+      - 缺少
+      - 不能为空
+open_voice_separate_status_get_002:
+  endpoint:
+    method: GET
+    path: /open/voice/separate/status
+    summary: 查询背景音与人声分离任务状态
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: VSS_POS_001
+    title: 查询背景音与人声分离任务状态-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    params:
+      task_id: '{{task_id}}'
+  - id: VSS_NEG_001
+    title: 查询背景音与人声分离任务状态-缺少必填参数task_id
+    category: negative
+    params: {}
+    expected:
+      http_status_any:
+      - 200
+      - 400
+      - 422
+      code_any:
+      - 400
+      - 422
+      message_contains_any:
+      - task_id
+      - 必填
+      - 缺少
+      - 不能为空
+open_video_compose_tasks_post_003:
+  endpoint:
+    method: POST
+    path: /open/video-compose/tasks
+    summary: 提交视频压制合成任务
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: VCT_POS_001
+    title: 提交视频压制合成任务-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    params:
+      coordinate_height: 1
+      coordinate_width: 1
+      subtitle_font_size: 1
+      subtitle_x: 1
+      subtitle_y: 1
+      target_language: zh
+    content_type: multipart/form-data
+    form: {}
+    file_field: video_file
+    file_key: replace-with-file-key
+    required_body_fields:
+    - video_file
+  - content_type: multipart/form-data
+    form: {}
+    file_field: video_file
+    file_key: null
+    id: VCT_NEG_001
+    title: 提交视频压制合成任务-缺少必填字段video_file
+    category: negative
+    expected:
+      http_status_any:
+      - 200
+      - 400
+      - 422
+      code_any:
+      - 400
+      - 422
+      message_contains_any:
+      - video_file
+      - 必填
+      - 缺少
+      - 不能为空
+open_voice_separate_post_004:
+  endpoint:
+    method: POST
+    path: /open/voice/separate
+    summary: 提交背景音与人声分离任务
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: VS_POS_001
+    title: 提交背景音与人声分离任务-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    content_type: multipart/form-data
+    form: {}
+    file_field: srt
+    file_key: replace-with-file-key
+    required_body_fields:
+    - audio
+  - content_type: multipart/form-data
+    form: {}
+    file_field: srt
+    file_key: replace-with-file-key
+    id: VS_NEG_001
+    title: 提交背景音与人声分离任务-缺少必填字段audio
+    category: negative
+    expected:
+      http_status_any:
+      - 200
+      - 400
+      - 422
+      code_any:
+      - 400
+      - 422
+      message_contains_any:
+      - audio
+      - 必填
+      - 缺少
+      - 不能为空

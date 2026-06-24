@@ -1,6 +1,30 @@
 {
   "components": {
     "schemas": {
+      "ApiResponseJSONObject": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "description": "",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ApiResponseListMapObject": {
         "properties": {
           "code": {
@@ -143,6 +167,48 @@
         },
         "type": "object"
       },
+      "ApiResponseVideoCompositionSubmitResponse": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VideoCompositionSubmitResponse",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseVideoCompositionTaskResponse": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VideoCompositionTaskResponse",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ApiResponseVideoTSBaseResponse": {
         "properties": {
           "code": {
@@ -172,6 +238,27 @@
           },
           "data": {
             "$ref": "#/components/schemas/VideoTSTaskStatusResponse",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          },
+          "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseVoiceSeparateSubmitResponse": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/VoiceSeparateSubmitResponse",
             "description": ""
           },
           "info": {
@@ -312,6 +399,58 @@
         },
         "type": "object"
       },
+      "VideoCompositionSubmitResponse": {
+        "properties": {
+          "status": {
+            "description": "",
+            "examples": [
+              "pending"
+            ],
+            "type": "string"
+          },
+          "taskId": {
+            "description": "",
+            "examples": [
+              "2e7a0c98-3b5d-4c20-9c0a-8ec0e6c5e8ad"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VideoCompositionTaskResponse": {
+        "properties": {
+          "errorMessage": {
+            "description": "",
+            "examples": [
+              "视频合成超时"
+            ],
+            "type": "string"
+          },
+          "resultPath": {
+            "description": "",
+            "examples": [
+              "https://example.com/openapi/video-compose/2026/06/23/task/result.mp4"
+            ],
+            "type": "string"
+          },
+          "status": {
+            "description": "",
+            "examples": [
+              "completed"
+            ],
+            "type": "string"
+          },
+          "taskId": {
+            "description": "",
+            "examples": [
+              "2e7a0c98-3b5d-4c20-9c0a-8ec0e6c5e8ad"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "VideoTSBaseResponse": {
         "properties": {
           "message": {
@@ -353,6 +492,31 @@
           },
           "taskId": {
             "description": "任务ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VoiceSeparateSubmitResponse": {
+        "properties": {
+          "audioPath": {
+            "description": "",
+            "type": "string"
+          },
+          "message": {
+            "description": "",
+            "type": "string"
+          },
+          "srtJsonPath": {
+            "description": "",
+            "type": "string"
+          },
+          "taskId": {
+            "description": "",
+            "type": "string"
+          },
+          "taskName": {
+            "description": "",
             "type": "string"
           }
         },
@@ -850,6 +1014,163 @@
         },
         "security": [],
         "summary": "音色设计状态查询",
+        "tags": []
+      }
+    },
+    "/open/video-compose/status": {
+      "get": {
+        "deprecated": false,
+        "description": "查询视频压制合成任务\n查询异步任务状态；任务成功后返回完整result_url供用户下载",
+        "parameters": [
+          {
+            "description": "提交任务返回的task_id",
+            "in": "query",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoCompositionTaskResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "查询视频压制合成任务",
+        "tags": []
+      }
+    },
+    "/open/video-compose/tasks": {
+      "post": {
+        "deprecated": false,
+        "description": "提交视频压制合成任务\noperation支持audio_synthesize/subtitle_burn/both",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "target_language",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "subtitle_x",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "subtitle_y",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "字幕字号，像素。推荐使用该字段控制字幕大小，允许范围12-96，超出会自动修正",
+            "in": "query",
+            "name": "subtitle_font_size",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "coordinate_width",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "",
+            "in": "query",
+            "name": "coordinate_height",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "audio_file": {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "subtitle_file": {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "video_file": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "video_file"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVideoCompositionSubmitResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "提交视频压制合成任务",
         "tags": []
       }
     },
@@ -1583,6 +1904,105 @@
         "tags": []
       }
     },
+    "/open/voice/separate": {
+      "post": {
+        "deprecated": false,
+        "description": "提交背景音与人声分离任务\n上传音频和可选 SRT 字幕，提交异步分离任务",
+        "parameters": [
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "properties": {
+                  "audio": {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  "srt": {
+                    "format": "binary",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "audio"
+                ],
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoiceSeparateSubmitResponse"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "提交背景音与人声分离任务",
+        "tags": []
+      }
+    },
+    "/open/voice/separate/status": {
+      "get": {
+        "deprecated": false,
+        "description": "查询背景音与人声分离任务状态\n查询异步任务状态，成功时返回 vocals_url/no_vocals_url",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "task_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseJSONObject"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "查询背景音与人声分离任务状态",
+        "tags": []
+      }
+    },
     "/open/voice/zeroshot/clone": {
       "post": {
         "deprecated": false,
@@ -1681,7 +2101,7 @@
                   },
                   "speaker_id": {
                     "description": "音色ID",
-                    "example": "550e8400-e29b-41d4-a716-446655440000",
+                    "example": "ceee4c70-ba01-48d7-8ebb-0d076556ada2",
                     "examples": [
                       "550e8400-e29b-41d4-a716-446655440000"
                     ],
@@ -1697,7 +2117,7 @@
                   },
                   "text": {
                     "description": "推理文本",
-                    "example": "你好，欢迎使用语音合成",
+                    "example": "",
                     "examples": [
                       "你好，欢迎使用语音合成"
                     ],
@@ -1712,6 +2132,9 @@
                     "type": "number"
                   }
                 },
+                "required": [
+                  "text"
+                ],
                 "type": "object"
               }
             }
@@ -1737,11 +2160,6 @@
       }
     }
   },
-  "servers": [
-    {
-      "description": "开发环境",
-      "url": "http://101.126.91.130:46062/openapi"
-    }
-  ],
+  "servers": [],
   "tags": []
 }

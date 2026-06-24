@@ -1,0 +1,78 @@
+# 接口名称：字幕擦除接口
+# 提交接口：POST /open/subtitle/erase
+# 结果接口：GET /open/subtitle/erase/result
+# 请求方式：提交接口使用 multipart/form-data，结果接口使用 query params
+# 数据说明：
+# - submit_cases 维护字幕擦除提交用例
+# - result_cases 维护字幕擦除结果查询用例
+# 关联字段：提交接口返回 project_id，结果查询接口通过 params.project_id 查询。
+
+subtitle_erase:
+  limit:
+    input: "video"
+    duration: "10s-60min"
+    max_size: "2GB"
+    formats: ["mp4", "mov"]
+  submit_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key / form: 表单字段
+    # ---
+    - id: "SE_POS_001"
+      title: "字幕擦除-上传合法MP4视频"
+      category: "positive"
+      file_key: "valid_video"
+      form:
+        name: "api-auto-erase"
+        language_code: "zh"
+        subtitle_mode: 0
+        do_not_encrypt_link: "true"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.project_id"]
+    - id: "SE_NEG_001"
+      title: "字幕擦除-缺失视频文件"
+      category: "negative"
+      form:
+        language_code: "zh"
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["file", "文件不能为空", "视频"]
+    - id: "SE_NEG_002"
+      title: "字幕擦除-视频格式不是MP4或MOV"
+      category: "negative"
+      file_key: "invalid_video"
+      form:
+        language_code: "zh"
+      expected:
+        http_status_any: [200,400, 415, 422, 500]
+        code: 400
+        message_contains_any: ["MP4", "MOV", "格式", "视频"]
+    # - id: "SE_NEG_003"
+    #   title: "字幕擦除-视频超过2GB"
+    #   category: "negative"
+    #   file_key: "oversize_video_2100mb"
+    #   form:
+    #     language_code: "zh"
+    #   expected:
+    #     http_status_any: [400, 413, 422, 500]
+    #     message_contains_any: ["2G", "2GB", "大小", "超过", "文件"]
+  result_cases:
+    # --- 字段说明 ---
+    # params: URL 查询参数（如 project_id），用于 GET 状态查询接口
+    # ---
+    - id: "SER_POS_001"
+      title: "字幕擦除-查询结果"
+      category: "positive"
+      params:
+        project_id: "{{project_id}}"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "SER_NEG_001"
+      title: "字幕擦除-缺失project_id"
+      category: "negative"
+      params: {}
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["project_id", "参数", "不能为空"]

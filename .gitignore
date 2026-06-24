@@ -1,2 +1,9 @@
-# Mock 文件：仅保留测试必需的小文件，大文件本地生成
+# Mock files: keep only small fixtures required by tests; large files are generated locally.
 data/mock_files/
+
+# Generated test reports and local tool installs.
+__pycache__/
+reports/report.html
+reports/allure-results/
+reports/allure-report/
+tools/allure/

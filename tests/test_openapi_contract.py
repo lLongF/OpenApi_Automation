@@ -77,7 +77,6 @@ def test_openapi_diff_detects_breaking_required_parameter_added():
     assert any(item["type"] == "parameter_became_required" for item in diff["changes"])
 
 
-@pytest.mark.live
 @pytest.mark.openapi
 def test_apifox_openapi_has_no_breaking_changes():
     """[Live 测试-契约] 从 Apifox 实时拉取 OpenAPI 文档，与本地快照对比，确保无破坏性变更。

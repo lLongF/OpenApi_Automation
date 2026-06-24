@@ -1,0 +1,72 @@
+# 接口名称：语音克隆接口
+# 接口路径：POST /open/voice/zeroshot/clone
+# 请求方式：multipart/form-data
+# 数据说明：cases 维护语音克隆用例，包含正向上传音频、缺少文件、格式错误、文件超限等场景。
+# 文件引用：file_key 对应 data/test_data/files.yaml 中的 files 配置。
+# 关联字段：正向用例返回 request_id，后续可作为语音合成接口的 speaker_id 使用。
+
+voice_clone:
+  limit:
+    input: "audio"
+    file_duration: "1s-30s"
+    max_size: "10MB"
+  # --- 用例通用字段说明 ---
+  # id: 用例唯一编号
+  # title: Allure 报告中显示的用例标题
+  # category: 用例分类，positive=正向，negative=反向，boundary=边界
+  # expected: 预期响应断言配置
+  # ---
+  cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件的引用 key，对应 files 块中定义的文件（null=不上传）
+    # form: multipart 表单字段，最终作为 HTTP data 参数发送
+    # ---
+    - id: "VC_POS_001"
+      title: "语音克隆-上传合法音频"
+      category: "positive"
+      file_key: "valid_clone_audio"
+      form:
+        body: '{"carry_back":"voice-clone-valid"}'
+      expected:
+        http_status: 200
+        code: 200
+        required_fields: ["code", "request_id"]
+    - id: "VC_NEG_001"
+      title: "语音克隆-缺失音频文件"
+      category: "negative"
+      file_key: null
+      form:
+        body: '{"carry_back":"voice-clone-missing-file"}'
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["audio", "文件不能为空", "为空", "未上传", "FileInvalid"]
+    - id: "VC_NEG_002"
+      title: "语音克隆-音频格式错误"
+      category: "negative"
+      file_key: "valid_video"
+      form:
+        body: '{"carry_back":"voice-clone-invalid-format"}'
+      expected:
+        http_status: 200
+        code: 400
+        message_contains_any: ["不支持的文件类型", "mp3/wav/m4a","FileInvalid"]
+    - id: "VC_NEG_003"
+      title: "语音克隆-音频超过10MB"
+      category: "negative"
+      file_key: "valid_clone_50mb"
+      form:
+        body: '{"carry_back":"voice-clone-oversize"}'
+      expected:
+        http_status: 200
+        code: 400
+        message_contains_any: ["文件大小不能超过10MB", "10MB", "大小", "超过", "文件"]
+    - id: "VC_NEG_004"
+      title: "语音克隆-音频超过30s"
+      category: "negative"
+      file_key: "valid_clone_1min_5mb"
+      form:
+        body: '{"carry_back":"voice-clone-oversize"}'
+      expected:
+        http_status: 200
+        code: 400
+        message_contains_any: ["文件大小不能超过30s", "30s", "大小", "超过", "文件"]

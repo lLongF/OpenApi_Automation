@@ -1,6 +1,6 @@
 {
   "openapi_version": "3.0.1",
-  "operation_count": 16,
+  "operation_count": 20,
   "operations": {
     "GET /open/speaker-classify/status": {
       "method": "GET",
@@ -77,6 +77,31 @@
       "summary": "音色设计状态查询",
       "tags": []
     },
+    "GET /open/video-compose/status": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "task_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/video-compose/status",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询视频压制合成任务",
+      "tags": []
+    },
     "GET /open/videots/download": {
       "method": "GET",
       "operation_id": null,
@@ -144,6 +169,31 @@
         "200"
       ],
       "summary": "获取任务列表",
+      "tags": []
+    },
+    "GET /open/voice/separate/status": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "task_id",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/voice/separate/status",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询背景音与人声分离任务状态",
       "tags": []
     },
     "POST /admin/api-key/create": {
@@ -277,6 +327,61 @@
       "summary": "音色设计",
       "tags": []
     },
+    "POST /open/video-compose/tasks": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "coordinate_height",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "coordinate_width",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "subtitle_font_size",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "subtitle_x",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "subtitle_y",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "target_language",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/video-compose/tasks",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "提交视频压制合成任务",
+      "tags": []
+    },
     "POST /open/videots/back-translation": {
       "method": "POST",
       "operation_id": null,
@@ -358,6 +463,25 @@
       "summary": "字幕翻译",
       "tags": []
     },
+    "POST /open/voice/separate": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/voice/separate",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "提交背景音与人声分离任务",
+      "tags": []
+    },
     "POST /open/voice/zeroshot/clone": {
       "method": "POST",
       "operation_id": null,
@@ -398,5 +522,5 @@
     }
   },
   "source": "shanhai_apifox",
-  "synced_at": "2026-06-09T06:21:26.363091+00:00"
+  "synced_at": "2026-06-24T08:00:23.098895+00:00"
 }

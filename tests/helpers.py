@@ -6,14 +6,22 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 import pytest
 
 from openapi_automation.clients.openapi_client import build_files
-from openapi_automation.core.assertions import response_json
 from openapi_automation.core.assertions import assert_expected_response
 from openapi_automation.core.render import render_value
+
+try:
+    import allure
+except ImportError:  # pragma: no cover
+    allure = None
+
+ATTACHMENT_LIMIT = 50_000
+SENSITIVE_HEADERS = {"api_key", "x-admin-token", "authorization"}
 
 
 def case_ids(cases: list[dict[str, Any]]) -> list[str]:
@@ -33,7 +41,13 @@ def rendered(case: dict[str, Any], common: dict[str, Any]) -> dict[str, Any]:
 
 def assert_case(response, case: dict[str, Any]):
     """根据用例定义中的 expected 字段校验 API 响应（状态码、code、必填字段等）。"""
-    return assert_expected_response(response, case["expected"])
+    attach_allure_case(case)
+    attach_allure_exchange(response, case)
+    try:
+        return assert_expected_response(response, case["expected"])
+    except AssertionError as exc:
+        attach_allure_text("Failure reason", str(exc) or repr(exc))
+        raise
 
 
 def single_file_bundle(test_data: dict, case: dict[str, Any], field_name: str = "file"):
@@ -42,48 +56,6 @@ def single_file_bundle(test_data: dict, case: dict[str, Any], field_name: str = 
         return build_files(test_data, {})
     return build_files(test_data, {field_name: case["file_key"]})
 
-
-def clone_voice_and_get_speaker_id(api_client, test_data: dict) -> str:
-    """调用语音克隆接口，返回后续语音合成所需 speaker_id。
-
-    当前业务约定：语音克隆响应中的 request_id 即为 speaker_id。
-    """
-    bundle = build_files(test_data, {"audio": "valid_clone_audio"})
-    with bundle as files:
-        response = api_client.clone_voice(
-            files=files,
-            data={"body": '{"carry_back":"auto-speaker-id"}'},
-        )
-    payload = response_json(response)
-    speaker_id = _first_present(payload, ("request_id", "data.request_id"))
-    assert speaker_id, f"语音克隆接口未返回 request_id，无法作为 speaker_id 传递。响应: {payload!r}"
-    return str(speaker_id)
-
-
-def resolve_auto_speaker_id(
-    case: dict[str, Any],
-    api_client,
-    test_data: dict,
-    runtime_context: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    """把语音合成用例中的占位 speaker_id 替换成真实值。
-
-    优先使用 test_voice_clone 正向用例缓存的 request_id；如果只单独跑 test_voice_infer，
-    则自动补跑一次语音克隆。
-    """
-    form = case.get("form")
-    if not isinstance(form, dict):
-        return case
-    speaker_id = form.get("speaker_id")
-    if not speaker_id or not str(speaker_id).startswith("replace-with-valid"):
-        return case
-
-    resolved = dict(case)
-    resolved_form = dict(form)
-    context_speaker_id = (runtime_context or {}).get("speaker_id")
-    resolved_form["speaker_id"] = context_speaker_id or clone_voice_and_get_speaker_id(api_client, test_data)
-    resolved["form"] = resolved_form
-    return resolved
 
 
 def _expand_generated_text(value: Any) -> Any:
@@ -100,20 +72,6 @@ def _expand_generated_text(value: Any) -> Any:
     return value
 
 
-def _first_present(payload: dict[str, Any], paths: tuple[str, ...]) -> Any:
-    for path in paths:
-        current: Any = payload
-        missing = False
-        for part in path.split("."):
-            if not isinstance(current, dict) or part not in current:
-                missing = True
-                break
-            current = current[part]
-        if not missing and current not in (None, ""):
-            return current
-    return None
-
-
 def _marks_for_case(case: dict[str, Any]) -> list[Any]:
     """根据用例的 category 字段返回对应的 pytest 标记。"""
     category = case.get("category")
@@ -122,6 +80,107 @@ def _marks_for_case(case: dict[str, Any]) -> list[Any]:
         marks.append(pytest.mark.smoke)
     elif category == "negative":
         marks.append(pytest.mark.negative)
+    elif category == "exception":
+        marks.append(pytest.mark.exception)
     elif category == "boundary":
         marks.append(pytest.mark.boundary)
     return marks
+
+
+def attach_allure_case(case: dict[str, Any]) -> None:
+    if allure is None:
+        return
+    case_id = case.get("id", "")
+    title = case.get("title") or case_id
+    allure.dynamic.title(str(title))
+    if case_id:
+        allure.dynamic.story(str(case_id))
+    if case.get("category"):
+        allure.dynamic.label("category", str(case["category"]))
+    if title:
+        allure.dynamic.description(str(title))
+
+
+def attach_allure_exchange(response, case: dict[str, Any]) -> None:
+    if allure is None:
+        return
+    attach_allure_json("Case input", _case_input(case))
+    attach_allure_json("Expected result", case.get("expected", {}))
+    attach_allure_json("HTTP request", _request_info(response))
+    attach_allure_json("HTTP response", _response_info(response))
+
+
+def attach_allure_json(name: str, value: Any) -> None:
+    if allure is None:
+        return
+    attach_allure_text(name, json.dumps(value, ensure_ascii=False, indent=2, default=str), "json")
+
+
+def attach_allure_text(name: str, value: str, extension: str = "txt") -> None:
+    if allure is None:
+        return
+    attachment_type = allure.attachment_type.JSON if extension == "json" else allure.attachment_type.TEXT
+    allure.attach(_truncate(value), name=name, attachment_type=attachment_type, extension=extension)
+
+
+def _case_input(case: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "id": case.get("id"),
+        "title": case.get("title"),
+        "category": case.get("category"),
+        "file_key": case.get("file_key"),
+        "form": case.get("form"),
+        "json": case.get("json"),
+        "params": case.get("params"),
+        "auth": case.get("auth", "default"),
+    }
+
+
+def _request_info(response) -> dict[str, Any]:
+    request = getattr(response, "request", None)
+    if request is None:
+        return {}
+    return {
+        "method": getattr(request, "method", None),
+        "url": getattr(request, "url", None),
+        "headers": _sanitize_headers(dict(getattr(request, "headers", {}) or {})),
+        "body": _safe_body(getattr(request, "body", None)),
+    }
+
+
+def _response_info(response) -> dict[str, Any]:
+    text = getattr(response, "text", "")
+    return {
+        "status_code": getattr(response, "status_code", None),
+        "headers": dict(getattr(response, "headers", {}) or {}),
+        "body": _maybe_json(text),
+    }
+
+
+def _sanitize_headers(headers: dict[str, Any]) -> dict[str, Any]:
+    sanitized = {}
+    for key, value in headers.items():
+        sanitized[key] = "***" if key.lower() in SENSITIVE_HEADERS else value
+    return sanitized
+
+
+def _safe_body(body: Any) -> Any:
+    if body is None:
+        return None
+    if isinstance(body, bytes):
+        return _truncate(body.decode("utf-8", errors="replace"))
+    return _truncate(str(body))
+
+
+def _maybe_json(text: str) -> Any:
+    try:
+        return json.loads(text)
+    except (TypeError, ValueError):
+        return _truncate(text or "")
+
+
+def _truncate(value: str, limit: int = ATTACHMENT_LIMIT) -> str:
+    if len(value) <= limit:
+        return value
+    omitted = len(value) - limit
+    return f"{value[:limit]}\n... <truncated {omitted} chars>"

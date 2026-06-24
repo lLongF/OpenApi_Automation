@@ -1,11 +1,11 @@
-"""
+﻿"""
 音色设计（Timbre Design）接口测试。
 
 覆盖接口：
 - POST /open/timbre-design/generate  音色设计生成
 - GET /open/timbre-design/status     音色设计状态查询
 
-测试数据来源：data/test_data.yaml 中 timbre_design 模块
+测试数据来源：data/test_data/*.yaml 中 timbre_design 模块
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from openapi_automation.core.assertions import response_json
 
 
 def pytest_generate_tests(metafunc):
-    """动态参数化：根据 test_data.yaml 中 timbre_design 模块数据自动生成测试用例。"""
+    """动态参数化：根据 test_data/*.yaml 中 timbre_design 模块数据自动生成测试用例。"""
     if "case" in metafunc.fixturenames:
         from openapi_automation.core.config import load_test_data
 
@@ -53,7 +53,7 @@ def test_timbre_status(api_client, test_data, common, status_case, runtime_conte
     """[Live 测试] 音色设计状态查询接口。
 
     接口：GET /open/timbre-design/status
-    依赖：上游 /open/timbre-design/generate 返回的 request_id/requestId
+    依赖：上游 /open/timbre-design/generate 返回的 request_id
     """
     case = rendered(status_case, common)
     params = dict(case.get("params", {}))

@@ -1,0 +1,44 @@
+# 接口名称：ASR 语音识别接口
+# 接口路径：POST /open/asr
+# 请求方式：multipart/form-data
+# 数据说明：rest_cases 维护 ASR 提交识别用例，包含正向、缺少文件、格式错误等场景。
+# 文件引用：file_key 对应 data/test_data/files.yaml 中的 files 配置。
+
+asr:
+  limit:
+    input: "audio"
+    duration: "10s-60min"
+    max_size: "2GB"
+    formats: ["mp3", "wav", "m4a"]
+  rest_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key / form: 表单字段
+    # ---
+    - id: "ASR_POS_001"
+      title: "ASR识别-上传合法音频"
+      category: "positive"
+      file_key: "valid_audio"
+      form:
+        language: "zh"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.text"]
+    - id: "ASR_NEG_001"
+      title: "ASR识别-缺失音频文件"
+      category: "negative"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["file", "文件", "参数"]
+    - id: "ASR_NEG_002"
+      title: "ASR识别-音频格式错误"
+      category: "negative"
+      file_key: "invalid_audio"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [200, 415, 422, 500]
+        code: 400
+        message_contains_any: ["mp3", "wav", "m4a", "格式", "音频"]

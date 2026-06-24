@@ -1,0 +1,115 @@
+# 接口名称：背景音与人声分离接口
+# 提交接口：POST /open/voice/separate
+# 状态接口：GET /open/voice/separate/status
+# 接口 ID：475265043
+# 请求方式：提交接口使用 multipart/form-data，状态接口使用 query params
+# 限制说明：
+# - 音频时长 <= 10 分钟
+# - 音频文件大小 <= 50MB
+# - 音频格式支持 wav、mp3、m4a 等常见格式
+# - 字幕文件大小 <= 1MB
+# - 字幕文件格式为 srt
+# 数据说明：
+# - submit_cases 维护背景音与人声分离提交用例
+# - status_cases 维护背景音与人声分离状态查询用例
+# 关联字段：提交接口返回 taskId/task_id，状态查询接口通过 params.task_id 查询。
+
+voice_separate:
+  limit:
+    input: "audio and optional subtitle"
+    audio_duration: "<=10min"
+    audio_max_size: "50MB"
+    audio_formats: ["wav", "mp3", "m4a"]
+    subtitle_max_size: "1MB"
+    subtitle_format: "srt"
+  submit_cases:
+    # --- 字段说明 ---
+    # files: 多文件映射，格式为 {接口字段名: files块中的key}
+    # audio: 必填音频文件字段
+    # srt: 可选字幕文件字段
+    # ---
+    - id: "VSEP_POS_001"
+      title: "背景音与人声分离-上传合法音频和字幕"
+      category: "positive"
+      files:
+        audio: "valid_audio"
+        srt: "valid_subtitle"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VSEP_NEG_001"
+      title: "背景音与人声分离-缺少音频文件"
+      category: "negative"
+      files:
+        srt: "valid_subtitle"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["audio", "file", "文件", "不能为空", "缺少"]
+    - id: "VSEP_NEG_002"
+      title: "背景音与人声分离-音频格式错误"
+      category: "negative"
+      files:
+        audio: "invalid_audio"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["wav", "mp3", "m4a", "格式", "音频", "FileInvalid"]
+    - id: "VSEP_NEG_003"
+      title: "背景音与人声分离-字幕格式错误"
+      category: "negative"
+      files:
+        audio: "valid_audio"
+        srt: "invalid_subtitle"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["srt", "字幕", "格式", "文件", "FileInvalid"]
+    - id: "VSEP_BOUNDARY_001"
+      title: "背景音与人声分离-音频大小等于50MB"
+      category: "boundary"
+      files:
+        audio: "valib_speaker_5min_50mb"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VSEP_EXCEPTION_001"
+      title: "背景音与人声分离-音频超过50MB"
+      category: "exception"
+      files:
+        audio: "oversize_speaker_51mb"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["50M", "50MB", "大小", "超过", "文件"]
+  status_cases:
+    # --- 字段说明 ---
+    # params.task_id: 提交接口返回的任务 ID；占位值会在运行时替换为提交接口缓存值
+    # ---
+    - id: "VSEPS_POS_001"
+      title: "背景音与人声分离-查询任务状态"
+      category: "positive"
+      params:
+        task_id: "{{task_id}}"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "VSEPS_NEG_001"
+      title: "背景音与人声分离-缺少task_id"
+      category: "negative"
+      params: {}
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["task_id", "参数", "不能为空", "缺少"]
+    - id: "VSEPS_EXCEPTION_001"
+      title: "背景音与人声分离-task_id不存在"
+      category: "exception"
+      params:
+        task_id: "not-exist-task-id"
+      expected:
+        http_status_any: [200, 404, 500]
+        code_any: [404, 500]
+        message_contains_any: ["任务不存在", "task", "不存在", "失败"]

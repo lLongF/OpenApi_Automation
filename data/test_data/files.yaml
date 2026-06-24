@@ -1,0 +1,21 @@
+# 公共文件配置
+# 用途：维护所有文件上传类接口使用的 mock 文件路径。
+# 说明：
+# - 用例中通过 file_key 引用这里的 key，例如 file_key: "valid_audio"
+# - 代码会通过 test_data["files"][file_key] 找到真实文件路径
+# - 新增文件类用例时，先把文件放到 data/mock_files/，再在这里增加 key
+
+files:
+  valid_audio: "data/mock_files/青蛙王子-译制音频_关BGM.wav"
+  valid_clone_audio: "data/mock_files/青蛙王子-译制音频_关BGM.wav"
+  valid_clone_open_audio: "data/mock_files/青蛙王子-译制音频_开BGM.wav"
+  valid_clone_50mb: "data/mock_files/50MB.mp3"
+  valid_clone_1min_5mb: "data/mock_files/1min_5MB.wav"
+  valid_subtitle: "data/mock_files/契妻的诱惑1-中文字幕.srt"
+  valid_subtitle_translated: "data/mock_files/契妻的诱惑1-译后字幕.srt"
+  valid_video: "data/mock_files/青蛙王子.mp4"
+  invalid_audio: "data/mock_files/睡前故事.txt"
+  invalid_subtitle: "data/mock_files/青蛙王子.mp4"
+  invalid_video: "data/mock_files/青蛙王子-字幕.srt"
+  oversize_speaker_51mb: "data/mock_files/oversize_speaker_51mb.mp3"
+  valib_speaker_5min_50mb: "data/mock_files/five_minute_50mb_audio.wav"

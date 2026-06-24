@@ -89,7 +89,19 @@ def load_env_config(env_name: str | None = None) -> EnvConfig:
 
 
 def load_test_data() -> dict[str, Any]:
-    return load_yaml("data/test_data.yaml")
+    split_dir = project_path("data/test_data")
+    if not split_dir.exists():
+        return load_yaml("data/test_data.yaml")
+
+    merged: dict[str, Any] = {}
+    for path in sorted(split_dir.glob("*.yaml")):
+        item = load_yaml(path)
+        duplicate_keys = set(merged) & set(item)
+        if duplicate_keys:
+            names = ", ".join(sorted(duplicate_keys))
+            raise KeyError(f"Duplicate test data section(s) in {path}: {names}")
+        merged.update(item)
+    return merged
 
 
 def project_path(path: str | Path) -> Path:

@@ -1,0 +1,142 @@
+# 接口名称：字幕翻译接口
+# 翻译接口：POST /open/videots/translate
+# 重译接口：POST /open/videots/retranslate
+# 回译接口：POST /open/videots/back-translation
+# 状态接口：GET /open/videots/status
+# 请求方式：提交类接口使用 multipart/form-data，状态接口使用 query params
+# 数据说明：
+# - translate_cases 维护字幕翻译提交用例
+# - retranslate_cases 维护字幕重译用例
+# - back_translation_cases 维护字幕回译用例
+# - status_cases 维护字幕翻译任务状态查询用例
+# 关联字段：翻译提交接口返回 task_id，状态查询接口通过 params.task_id 查询。
+
+videots:
+  limit:
+    input: "subtitle file"
+    max_size: "1MB"
+    format: "srt"
+  translate_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key
+    # form: multipart 表单字段（target_language / user_prompt / mode 等）
+    # ---
+    - id: "VT_POS_001"
+      title: "字幕翻译-上传合法SRT文件"
+      category: "positive"
+      file_key: "valid_subtitle"
+      form:
+        target_language: "en"
+        user_prompt: "正式场合使用"
+        mode: "direct"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VT_NEG_001"
+      title: "字幕翻译-缺失字幕文件和tos_path"
+      category: "negative"
+      form:
+        target_language: "en"
+        mode: "direct"
+      expected:
+        http_status_any: [200,400, 422, 500]
+        code: 400
+        message_contains_any: ["file", "tos_path", "字幕", "至少","失败"]
+    - id: "VT_NEG_002"
+      title: "字幕翻译-字幕文件格式不是srt"
+      category: "negative"
+      file_key: "invalid_subtitle"
+      form:
+        target_language: "en"
+        mode: "direct"
+      expected:
+        http_status_any: [200,400, 415, 422, 500]
+        code: 400
+        message_contains_any: ["srt", "格式", "字幕", "文件"]
+    # - id: "VT_NEG_003"
+    #   title: "字幕翻译-字幕文件超过1MB"
+    #   category: "negative"
+    #   file_key: "oversize_subtitle_2mb"
+    #   form:
+    #     target_language: "en"
+    #     mode: "direct"
+    #   expected:
+    #     http_status_any: [400, 413, 422, 500]
+    #     message_contains_any: ["1M", "1MB", "大小", "超过", "文件"]
+  retranslate_cases:
+    # --- 字段说明 ---
+    # files: 多文件映射，格式为 {form字段名: files块中的key}
+    # form: 表单字段（retranslation_items 等）
+    # ---
+    - id: "VR_POS_001"
+      title: "字幕重译-上传原字幕和译文字幕"
+      category: "positive"
+      files:
+        file_original: "valid_subtitle"
+        file_translated: "valid_subtitle_translated"
+      form:
+        target_language: "en"
+        retranslation_items: '[{"index":1,"feedback":"翻译更简洁口语化"}]'
+        mode: "direct"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "VR_NEG_001"
+      title: "字幕重译-retranslation_items不是JSON"
+      category: "negative"
+      files:
+        file_original: "valid_subtitle"
+        file_translated: "valid_subtitle_translated"
+      form:
+        target_language: "en"
+        retranslation_items: "not-json"
+        mode: "direct"
+      expected:
+        http_status_any: [200,400, 422, 500]
+        code: 500
+        message_contains_any: ["retranslation_items", "JSON", "参数", "失败"]
+  back_translation_cases:
+    # --- 字段说明 ---
+    # file_key: 上传单个文件引用key / form: 表单字段
+    # ---
+    - id: "VB_POS_001"
+      title: "字幕回译-上传合法SRT文件"
+      category: "positive"
+      file_key: "valid_subtitle_translated"
+      form:
+        target_language: "en"
+        mode: "direct"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "VB_NEG_001"
+      title: "字幕回译-字幕文件格式错误"
+      category: "negative"
+      file_key: "invalid_subtitle"
+      form:
+        target_language: "en"
+        mode: "direct"
+      expected:
+        http_status_any: [200,400, 415, 422, 500]
+        code: 500
+        message_contains_any: ["srt", "格式", "字幕", "文件", "失败"]
+  status_cases:
+    # --- 字段说明 ---
+    # params: URL 查询参数（如 task_id / request_id），用于 GET 状态查询接口
+    # ---
+    - id: "VS_POS_001"
+      title: "字幕任务-查询任务状态"
+      category: "positive"
+      params:
+        task_id: "{{task_id}}"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "VS_NEG_001"
+      title: "字幕任务-缺失task_id"
+      category: "negative"
+      params: {}
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["task_id", "参数", "不能为空"]

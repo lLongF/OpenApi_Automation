@@ -1,0 +1,39 @@
+# 接口名称：语音合成接口
+# 接口路径：POST /open/voice/zeroshot/infer
+# 请求方式：multipart/form-data
+# 数据说明：cases 维护语音合成用例，主要使用 speaker_id + text 生成音频。
+# 文件引用：如用例配置 file_key，则对应 data/test_data/files.yaml 中的 files 配置。
+# 关联字段：form.speaker_id 可使用 common.speaker_id，也可以由语音克隆正向用例自动缓存得到。
+
+voice_infer:
+  limit:
+    input: "audio and text"
+    audio_duration: "1s-30s"
+    audio_max_size: "10MB"
+    text_max_chars: 3000
+  cases:
+    # --- 字段说明 ---
+    # form: 表单字段（speaker_id / text / speed / volume / sample_rate 等）
+    # ---
+    - id: "VI_POS_001"
+      title: "语音合成-使用speaker_id和合法文本"
+      category: "positive"
+      form:
+        speaker_id: "{{speaker_id}}"
+        text: "你好，欢迎使用语音合成接口。"
+        speed: "1.0"
+        volume: "1.0"
+        sample_rate: "24000"
+      expected:
+        http_status: 200
+        code: 200
+        required_fields: ["code", "data", "request_id"]
+    - id: "VI_NEG_001"
+      title: "语音合成-缺失文本"
+      category: "negative"
+      form:
+        speaker_id: "{{speaker_id}}"
+        speed: "1.0"
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["text", "文本", "不能为空", "参数"]

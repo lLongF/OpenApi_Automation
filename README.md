@@ -1,178 +1,328 @@
-# 山海智影 OpenAPI 接口自动化框架
+# 山海智影 OpenAPI 接口自动化项目
 
-这是一个面向生产项目的 Python 接口自动化基座，覆盖语音克隆、语音合成、音色设计、字幕翻译、字幕擦除、ASR、公共说话人分类等 REST 接口。当前版本已按要求移除 WebSocket 接口。
+这是一个基于 `pytest` 的 OpenAPI 接口自动化测试项目，主要覆盖语音克隆、语音合成、音色设计、字幕翻译、视频字幕/ASR、说话人分类、OpenAPI 契约检查等接口。
 
-## 技术选型
+项目已经接入 Allure 报告。报告中会展示用例标题、接口入参、接口出参、预期结果和失败原因。
 
-- `pytest`：用例组织、参数化、标记分层，适合接口自动化长期维护。
-- `requests`：REST API 调用稳定成熟，封装成本低。
-- `PyYAML`：测试数据、环境配置外置，替换后即时生效。
-- `pytest-html + allure-pytest`：默认生成 HTML 报告，也支持 Allure 全量报告。
-- `jsonschema`：预留响应 schema 校验能力，适合后续把接口契约继续细化。
-
-## 目录说明
+## 项目结构
 
 ```text
-config/env.yaml                  环境、域名、超时、重试、user_id/admin_token 配置
-config/openapi_sources.yaml      Apifox RAW URL / OpenAPI 同步源配置
-data/test_data.yaml              所有接口测试数据，含正向、反向、边界、流程数据
-data/mock_files/                 文件类 mock 数据，替换文件即可生效
-src/openapi_automation/core/     配置、HTTP、断言、文件、模板渲染等通用能力
-src/openapi_automation/clients/  REST 业务 client
-tests/                           pytest 用例层，只表达测试意图
-reports/                         HTML 与 Allure 结果输出
-scripts/run_tests.sh             live 测试运行脚本
-scripts/sync_openapi.py          从 Apifox/Swagger 拉取 OpenAPI 并生成变更报告
+config/
+  env.yaml                    环境配置：base_url、user_id、admin_token、超时、重试等
+  openapi_sources.yaml        Apifox / OpenAPI 契约同步配置
+
+data/
+  test_data/                  按接口拆分维护的测试数据 YAML
+  test_data.yaml              测试数据入口说明，不再直接维护接口用例
+  mock_files/                 文件上传类接口使用的测试文件
+  openapi/                    OpenAPI 快照、最新同步文件、原始导出文件
+
+src/openapi_automation/
+  clients/                    API client 封装
+  core/                       配置读取、HTTP 请求、断言、文件加载等基础能力
+  contract/                   OpenAPI 契约同步、规范化、diff 对比
+
+tests/
+  conftest.py                 pytest fixture、Allure 套件名、运行参数
+  helpers.py                  通用请求、断言、Allure 附件、接口关联辅助方法
+  test_voice.py               语音克隆、语音合成
+  test_timbre_design.py       音色设计
+  test_videots.py             字幕翻译、回译、状态查询
+  test_subtitle_asr_speaker.py 视频字幕擦除、ASR 相关接口
+  test_speaker_classify.py    说话人分类提交、状态查询
+  test_contract_data.py       测试数据契约检查
+  test_openapi_contract.py    OpenAPI / Apifox 契约检查
+
+scripts/
+  validate_test_data.py       校验 test_data/*.yaml 格式和中文引号
+  install_allure.ps1          Windows 安装 Allure CLI
+  generate_allure_report.ps1  根据 allure-results 生成 allure-report
+  run_tests.ps1               Windows 一键运行测试并生成 Allure 报告
+  sync_openapi.py             同步 Apifox / OpenAPI 文档并生成 diff
 ```
 
-## 运行方式
+## 安装依赖
 
-安装依赖：
+先进入项目目录：
 
-```bash
-python3 -m pip install -r requirements.txt
+```powershell
+cd D:\Project\OpenApi_Automation
 ```
 
-只跑本地 contract 检查，不访问线上接口：
+安装 Python 依赖：
 
-```bash
-python3 -m pytest -m contract
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-默认全量运行也不会访问线上接口，所有 `live` 用例会跳过：
+安装 Allure CLI：
 
-```bash
-python3 -m pytest
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_allure.ps1
 ```
 
-运行真实接口测试前，需要配置固定 `user_id`。框架会先调用 `/admin/api-key/create`，从响应 `data.api_key` 取值，再把这个 key 自动放进所有业务接口的 `api_key` header。
+如果你本机已经安装了 Python，后续命令直接使用 `python` 即可。
 
-```bash
-export SHANHAI_USER_ID="你的固定user_id"
-export SHANHAI_ADMIN_TOKEN="如果环境需要X-Admin-Token就填写，不需要可不配"
-bash scripts/run_tests.sh
+## 运行前检查测试数据
+
+建议每次改完 `data/test_data/*.yaml` 后先执行：
+
+```powershell
+python scripts/validate_test_data.py
+```
+
+这个脚本可以提前发现：
+
+- YAML 格式错误
+- 中文弯引号 `“ ” ‘ ’`
+- 容易导致 pytest 收集失败的数据问题
+
+## 常用运行命令
+
+运行所有非 live 用例：
+
+```powershell
+python -m pytest tests
+```
+
+运行所有 live 用例，也就是会请求真实接口的用例：
+
+```powershell
+python -m pytest tests -m live --live
+```
+
+只运行某一个文件：
+
+```powershell
+python -m pytest tests/test_voice.py --live
+```
+
+只运行某一个用例：
+
+```powershell
+python -m pytest tests/test_videots.py::test_translate --live
 ```
 
 按标记运行：
 
-```bash
-bash scripts/run_tests.sh "smoke"
-bash scripts/run_tests.sh "negative or boundary"
+```powershell
+python -m pytest tests -m smoke --live
+python -m pytest tests -m negative --live
+python -m pytest tests -m boundary --live
+python -m pytest tests -m contract
+python -m pytest tests -m openapi --live
 ```
 
-## Apifox 契约同步
+说明：
 
-你们公司的 Apifox 项目邀请链接已记录在 `config/openapi_sources.yaml`，它用于人进入项目协作；CI/CD 自动化不能稳定依赖邀请页登录态，所以生产执行需要配置下面两种方式之一。
+- `-m live`：只筛选带 `@pytest.mark.live` 的用例。
+- `--live`：允许真实接口测试执行；不加时 live 用例会跳过。
+- `-m contract`：运行本地契约检查，通常不请求业务接口。
+- `-m openapi --live`：运行 OpenAPI / Apifox 契约同步检查。
 
-方式一，推荐：配置 Apifox OpenAPI RAW URL。
+## 运行并生成 Allure 报告
 
-当前本地 Apifox RAW URL 已写入配置：
+方式一：直接运行 pytest。pytest 结束后会自动生成 Allure HTML 报告。
+
+运行用例并生成最新报告：
+
+```powershell
+python -m pytest tests -m live --live --alluredir=reports/allure-results --clean-alluredir
+```
+
+如果只想手动重新生成 Allure HTML 报告，也可以单独执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/generate_allure_report.ps1
+```
+
+方式二：使用项目脚本一键运行并生成报告：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live
+```
+
+只运行指定标记：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live -Marker "smoke"
+powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live -Marker "negative"
+powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live -Marker "boundary"
+```
+
+## 查看 Allure 报告
+
+启动本地静态服务：
+
+```powershell
+python -m http.server 8088 --directory reports
+```
+
+浏览器访问：
 
 ```text
-http://127.0.0.1:4523/export/openapi/4?version=3.0
+http://127.0.0.1:8088/allure-report/index.html
 ```
 
-如需临时覆盖，可配置：
+注意：
 
-```bash
-export APIFOX_OPENAPI_RAW_URL="Apifox OpenAPI RAW URL"
-python3 scripts/sync_openapi.py
+- 修改用例或测试数据后，需要重新运行 pytest。
+- pytest 结束后会自动重新生成 `reports/allure-report`。
+- 浏览器只是展示已经生成好的静态报告，不会自动根据代码变化刷新。
+- 如果页面看起来没变化，可以强制刷新浏览器，或者重新打开报告地址。
+
+## Allure 报告内容说明
+
+报告中会展示：
+
+- 用例标题：读取 `data/test_data/*.yaml` 中每条 case 的 `title`
+- 功能套件：在 `tests/conftest.py` 的 `SUITE_NAMES` 中维护
+- 入参信息：Allure 附件 `Case input`
+- 预期结果：Allure 附件 `Expected result`
+- HTTP 请求：Allure 附件 `HTTP request`
+- HTTP 响应：Allure 附件 `HTTP response`
+- 失败原因：Allure 附件 `Failure reason`
+
+如果新增测试文件，希望 Allure 显示中文套件名，需要在 `tests/conftest.py` 中补充：
+
+```python
+SUITE_NAMES = {
+    "test_voice.py": "语音克隆与合成接口",
+    "test_videots.py": "字幕翻译接口",
+    "test_speaker_classify.py": "说话人分类接口",
+}
 ```
 
-方式二：使用 Apifox 开放 API。
+## 测试数据说明
 
-在 CI/CD 密钥中配置：
-
-```bash
-export APIFOX_PROJECT_ID="Apifox 项目 ID"
-export APIFOX_ACCESS_TOKEN="Apifox API 访问令牌"
-python3 scripts/sync_openapi.py
-```
-
-同步后会生成：
+测试数据集中在：
 
 ```text
-data/openapi/apifox_latest.json       最新接口快照
-data/openapi/apifox_snapshot.json     基线快照，需手动接受或脚本加 --update-snapshot
-reports/openapi/apifox_diff.json      机器可读 diff
-reports/openapi/apifox_diff.md        人可读变更报告
+data/test_data/*.yaml
 ```
 
-第一次建立基线：
-
-```bash
-python3 scripts/sync_openapi.py --update-snapshot
-```
-
-后续后端发布后检查接口变更：
-
-```bash
-python3 scripts/sync_openapi.py
-```
-
-如果检测到删除接口、参数变必填、参数类型变化、请求体变必填、成功响应被移除等破坏性变更，脚本默认返回非 0，适合接入 Jenkins、GitLab CI、GitHub Actions 或公司发布流水线。
-
-也可以通过 pytest 统一出报告：
-
-```bash
-python3 -m pytest -m openapi --live
-```
-
-报告位置：
-
-- Pytest HTML：`reports/report.html`
-- Allure 原始结果：`reports/allure-results`
-- 如果本机安装了 Allure CLI，脚本会生成：`reports/allure-report/index.html`
-- Apifox/OpenAPI Diff：`reports/openapi/apifox_diff.md`
-
-## Mock 数据替换
-
-接口测试数据集中在 `data/test_data.yaml`。当前 `speaker_id` 已支持自动链路传递：如果仍是占位值，语音合成测试会先调用语音克隆接口，把返回的 `request_id` 自动作为 `speaker_id` 使用。
-
-```text
-语音克隆 /open/voice/zeroshot/clone
-  -> response.request_id
-  -> 语音合成 /open/voice/zeroshot/infer 的 speaker_id
-```
-
-语音克隆和语音合成的链路现在直接在 `tests/test_voice.py` 里完成：`test_voice_clone` 正向用例会缓存 `request_id`，后续 `test_voice_infer` 遇到占位 `speaker_id` 时会优先使用这个缓存值。
-
-可以运行正向用例验证这条链路：
-
-```bash
-bash scripts/run_tests.sh "smoke"
-```
-
-其他业务依赖 ID 暂时仍可在 `data/test_data.yaml` 手动替换，例如 `task_id`、`project_id`、`request_id`：
+常见字段含义：
 
 ```yaml
-common:
-  task_id: "真实翻译接口返回的 task_id"
-  project_id: "真实字幕擦除接口返回的 project_id"
-  request_id: "真实说话人识别接口返回的 request_id"
+id: 用例编号，用于 pytest 参数名和报告展示
+title: 用例标题，会显示到 Allure 报告
+category: 用例分类，例如 positive、negative、boundary、flow
+request: 请求数据
+expected: 预期结果
+http_status: 预期 HTTP 状态码
+http_status_any: 允许多个 HTTP 状态码
+code: 预期业务 code
+code_any: 允许多个业务 code
+message_contains: 响应信息需要包含的文本
+message_contains_any: 响应信息命中任意一个文本即可
+json_path_required: 指定 JSON 路径必须存在且非空
 ```
 
-文件类数据在 `data/mock_files/`，直接替换同名文件即可。 live 正向测试前建议替换为真实有效文件：
+`http_status_any` 适合接口行为还没完全统一的场景。例如有些反向用例 HTTP 仍然返回 `200`，但业务 `code` 返回 `400`，这时可以用业务 code 判断失败原因。
 
-- 语音克隆：音频 1s-30s，最大 10MB
-- 语音合成：参考音频 1s-30s，最大 10MB；文本最大 3000 字符
-- 音色设计：文本最大 500 字符
-- 翻译接口：SRT 字幕文件，最大 1MB
-- 字幕擦除：MP4/MOV，10 秒到 60 分钟，最大 2GB
-- ASR 识别：mp3/wav/m4a，10 秒到 60 分钟，最大 2GB
-- 说话人识别：wav/mp3/m4a，10 分钟内，最大 50MB
+## 接口关联数据
 
-## 用例覆盖
+部分接口需要先提交任务，再查询状态。项目里已经支持一些运行时缓存：
 
-当前数据层已按接口测试标准覆盖：
+```text
+语音克隆提交
+  -> 缓存 request_id
+  -> 语音合成 speaker_id 使用缓存值
 
-- 正向：成功请求、关键字段断言、业务码断言。
-- 反向：缺失文件、文件格式错误、文件超大小、文本为空、文本超长度、任务 ID 缺失。
-- 边界：围绕图片里的文件大小、格式、文本长度限制设计。
-- 流程：翻译任务、字幕擦除、说话人分类的提交与状态查询。
+字幕翻译提交
+  -> 缓存 task_id
+  -> 字幕翻译状态查询使用缓存值
 
-## 注意事项
+说话人分类提交
+  -> 缓存 request_id
+  -> 说话人分类状态查询使用缓存值
+```
 
-文档中部分接口错误码使用 HTTP 200 + 业务 `code`，也有接口使用 400/500。断言层支持 `http_status_any`、`code_any`、`message_contains_any`，便于兼容当前文档和真实服务差异。生产联调稳定后，建议逐步把模糊断言收紧为精确错误码与 schema。
+如果状态查询用例直接单独运行，没有前置提交用例，代码会尽量自动提交一次任务并拿到对应 ID。
 
-当前 `data/mock_files` 里有若干负向用例文件，例如 `oversize_audio_11mb.wav`、`oversize_video_2100mb.mp4`。这些是稀疏文件，用于触发大小限制，不会实际占满同等磁盘空间。
+## Mock 文件说明
+
+文件路径统一维护在 `data/test_data/files.yaml` 的 `files` 区域。
+
+契约测试 `test_all_mock_files_exist` 会检查这些路径是否真实存在。如果报：
+
+```text
+Missing mock file for xxx
+```
+
+说明 `data/test_data/files.yaml` 中配置了某个文件路径，但 `data/mock_files/` 下面没有这个文件。
+
+处理方式：
+
+- 补上对应 mock 文件
+- 或者把 YAML 中的路径改成真实存在的文件
+
+## OpenAPI / Apifox 契约检查
+
+配置文件：
+
+```text
+config/openapi_sources.yaml
+```
+
+常用命令：
+
+```powershell
+python scripts/sync_openapi.py
+```
+
+第一次建立或主动接受新基线：
+
+```powershell
+python scripts/sync_openapi.py --update-snapshot
+```
+
+通过 pytest 运行 OpenAPI 契约检查：
+
+```powershell
+python -m pytest tests/test_openapi_contract.py --live
+```
+
+生成文件：
+
+```text
+data/openapi/apifox_raw.json       从 Apifox 拉到的原始 OpenAPI 文档
+data/openapi/apifox_latest.json    最新规范化快照
+data/openapi/apifox_snapshot.json  本地基线快照
+reports/openapi/apifox_diff.json   机器可读 diff
+reports/openapi/apifox_diff.md     人可读 diff 报告
+```
+
+如果报：
+
+```text
+OpenAPI document root must be an object
+```
+
+说明 Apifox 地址返回的不是标准 OpenAPI JSON，可能是 HTML、错误信息、数组或空内容。
+
+如果报：
+
+```text
+has_breaking_changes
+```
+
+说明最新 OpenAPI 和本地基线相比有破坏性变更，例如：
+
+- 接口被删除
+- 参数从非必填变成必填
+- 参数类型变化
+- 请求体从非必填变成必填
+- 成功响应码被删除
+
+可以查看：
+
+```text
+reports/openapi/apifox_diff.md
+```
+
+确认变更是否合理。如果变更合理，再执行 `--update-snapshot` 接受新的基线。
+
+
+Allure 报告是前端静态页面，直接双击 `index.html` 可能出现 404、500 或资源加载失败。  
+用 `http.server` 可以像正常网站一样访问报告。

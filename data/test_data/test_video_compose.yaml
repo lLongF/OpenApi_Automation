@@ -1,0 +1,147 @@
+# 接口名称：视频压制合成接口
+# 提交接口：POST /open/video-compose/tasks
+# 状态接口：GET /open/video-compose/status
+# 请求方式：提交接口使用 multipart/form-data + query params，状态接口使用 query params
+# 字段说明：
+# - video_file: 必填视频文件
+# - audio_file: 可选音频文件
+# - subtitle_file: 可选字幕文件
+# - target_language / subtitle_x / subtitle_y / subtitle_font_size / coordinate_width / coordinate_height: query 参数
+# 数据说明：
+# - submit_cases 维护视频压制合成提交用例
+# - status_cases 维护视频压制合成状态查询用例
+# 关联字段：提交接口返回 taskId/task_id，状态查询接口通过 params.task_id 查询。
+
+video_compose:
+  limit:
+    input: "video with optional audio and subtitle"
+    video_file: "required"
+    audio_file: "optional"
+    subtitle_file: "optional"
+    subtitle_font_size: "12-96"
+  submit_cases:
+    # --- 字段说明 ---
+    # files: 多文件映射，格式为 {接口字段名: files块中的key}
+    # params: URL query 参数
+    # ---
+    - id: "VCMP_POS_001"
+      title: "视频压制合成-上传视频音频字幕"
+      category: "positive"
+      files:
+        video_file: "valid_video"
+        audio_file: "valid_audio"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_x: 0
+        subtitle_y: 0
+        subtitle_font_size: 24
+        coordinate_width: 1920
+        coordinate_height: 1080
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VCMP_NEG_001"
+      title: "视频压制合成-缺少视频文件"
+      category: "negative"
+      files:
+        audio_file: "valid_audio"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["video_file", "video", "文件", "不能为空", "缺少"]
+    - id: "VCMP_NEG_002"
+      title: "视频压制合成-视频格式错误"
+      category: "negative"
+      files:
+        video_file: "invalid_video"
+        audio_file: "valid_audio"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["mp4", "mov", "格式", "视频", "FileInvalid"]
+    - id: "VCMP_NEG_003"
+      title: "视频压制合成-字幕格式错误"
+      category: "negative"
+      files:
+        video_file: "valid_video"
+        subtitle_file: "invalid_subtitle"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["srt", "字幕", "格式", "文件", "FileInvalid"]
+    - id: "VCMP_BOUNDARY_001"
+      title: "视频压制合成-字幕字号最小边界12"
+      category: "boundary"
+      files:
+        video_file: "valid_video"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_font_size: 12
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.taskId"]
+    - id: "VCMP_BOUNDARY_002"
+      title: "视频压制合成-字幕字号最大边界96"
+      category: "boundary"
+      files:
+        video_file: "valid_video"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_font_size: 96
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.taskId"]
+    - id: "VCMP_EXCEPTION_001"
+      title: "视频压制合成-音频格式异常"
+      category: "exception"
+      files:
+        video_file: "valid_video"
+        audio_file: "invalid_audio"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["audio", "音频", "格式", "FileInvalid"]
+  status_cases:
+    # --- 字段说明 ---
+    # params.task_id: 提交接口返回的任务 ID；占位值会在运行时替换为提交接口缓存值
+    # ---
+    - id: "VCMPS_POS_001"
+      title: "视频压制合成-查询任务状态"
+      category: "positive"
+      params:
+        task_id: "{{task_id}}"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "VCMPS_NEG_001"
+      title: "视频压制合成-缺少task_id"
+      category: "negative"
+      params: {}
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 500]
+        message_contains_any: ["task_id", "参数", "不能为空", "缺少"]
+    - id: "VCMPS_EXCEPTION_001"
+      title: "视频压制合成-task_id不存在"
+      category: "exception"
+      params:
+        task_id: "not-exist-task-id"
+      expected:
+        http_status_any: [200, 404, 500]
+        code_any: [404, 500]
+        message_contains_any: ["任务不存在", "task", "不存在", "失败"]

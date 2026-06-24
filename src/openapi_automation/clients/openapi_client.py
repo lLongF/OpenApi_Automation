@@ -64,6 +64,18 @@ class ShanhaiOpenApiClient:
     def timbre_status(self, *, params: dict[str, Any], auth: str = "default"):
         return self.http.get("/open/timbre-design/status", params=params, auth=auth)
 
+    def voice_separate(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
+        return self.http.post("/open/voice/separate", files=_multipart_files(files, data), auth=auth)
+
+    def voice_separate_status(self, *, params: dict[str, Any], auth: str = "default"):
+        return self.http.get("/open/voice/separate/status", params=params, auth=auth)
+
+    def video_compose(self, *, files: dict | None = None, params: dict | None = None, auth: str = "default"):
+        return self.http.post("/open/video-compose/tasks", files=_multipart_files(files), params=params, auth=auth)
+
+    def video_compose_status(self, *, params: dict[str, Any], auth: str = "default"):
+        return self.http.get("/open/video-compose/status", params=params, auth=auth)
+
 
 def build_files(test_data: dict, mapping: dict[str, str] | None = None) -> MultipartFiles:
     bundle = MultipartFiles()

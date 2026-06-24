@@ -1,0 +1,60 @@
+# 接口名称：说话人分类接口
+# 提交接口：POST /open/speaker-classify/submit
+# 状态接口：GET /open/speaker-classify/status
+# 请求方式：提交接口使用 multipart/form-data，状态接口使用 query params
+# 数据说明：
+# - submit_cases 维护说话人分类提交用例
+# - status_cases 维护说话人分类状态查询用例
+# 关联字段：提交接口返回 request_id，状态查询接口通过 params.request_id 查询。
+
+speaker_classify:
+  limit:
+    input: "audio"
+    duration: "<=10min"
+    max_size: "50MB"
+    formats: ["wav", "mp3", "m4a"]
+  submit_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key（null=不上传）
+    # ---
+    - id: "SC_POS_001"
+      title: "说话人分类-上传合法音频"
+      category: "positive"
+      file_key: "valid_audio"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.request_id"]
+    - id: "SC_NEG_001"
+      title: "说话人分类-缺少音频文件"
+      category: "negative"
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["file", "文件不能为空"]
+    - id: "SC_NEG_002"
+      title: "说话人分类-音频超过50MB"
+      category: "negative"
+      file_key: "oversize_speaker_51mb"
+      expected:
+        http_status: 200
+        code: 400
+        message_contains_any: ["50M", "50MB", "大小", "超过", "文件"]
+  status_cases:
+    # --- 字段说明 ---
+    # params: URL 查询参数（request_id），用于 GET 状态查询接口
+    # ---
+    - id: "SCS_POS_001"
+      title: "说话人分类-查询状态"
+      category: "positive"
+      params:
+        request_id: "{{request_id}}"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "SCS_NEG_001"
+      title: "说话人分类-缺少request_id"
+      category: "negative"
+      params: {}
+      expected:
+        http_status_any: [400, 422, 500]
+        message_contains_any: ["request_id", "不能为空", "参数"]

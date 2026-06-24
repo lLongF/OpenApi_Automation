@@ -1,7 +1,7 @@
-"""
+﻿"""
 测试数据契约校验（Contract Tests for Test Data）。
 
-验证 data/test_data.yaml 中定义的测试用例数据完整性：
+验证 data/test_data/*.yaml 中定义的测试用例数据完整性：
 - 引用的 mock 文件是否存在
 - 每个用例是否具备必填元数据（id/title/category/expected）
 - 每个业务模块是否至少覆盖正向和反向用例
@@ -15,6 +15,14 @@ from requests import Request
 
 from openapi_automation.clients.openapi_client import _multipart_files
 from openapi_automation.core.config import project_path
+
+
+SMART_QUOTES = {
+    "\u201c": 'Chinese left double quote: use "',
+    "\u201d": 'Chinese right double quote: use "',
+    "\u2018": "Chinese left single quote: use '",
+    "\u2019": "Chinese right single quote: use '",
+}
 
 
 def _walk_cases(node):
@@ -31,7 +39,7 @@ def _walk_cases(node):
 
 @pytest.mark.contract
 def test_all_mock_files_exist(test_data):
-    """[契约测试] 验证 data/test_data.yaml 中 files 块引用的所有 mock 文件在磁盘上真实存在。"""
+    """[契约测试] 验证 data/test_data/*.yaml 中 files 块引用的所有 mock 文件在磁盘上真实存在。"""
     for key, path in test_data["files"].items():
         assert project_path(path).exists(), f"Missing mock file for {key}: {path}"
 
@@ -40,12 +48,27 @@ def test_all_mock_files_exist(test_data):
 def test_case_definitions_have_required_metadata(test_data):
     """[契约测试] 验证所有测试用例均包含必填元数据：id（唯一）、title（非空）、category（合法枚举值）、expected。"""
     cases = list(_walk_cases(test_data))
-    assert cases, "No cases were loaded from data/test_data.yaml"
+    assert cases, "No cases were loaded from data/test_data/*.yaml"
     ids = [case["id"] for case in cases]
     assert len(ids) == len(set(ids)), "Case ids must be unique"
     for case in cases:
-        assert case["category"] in {"positive", "negative", "boundary"}
+        assert case["category"] in {"positive", "negative", "boundary", "exception"}
         assert case["title"].strip()
+
+
+@pytest.mark.contract
+def test_test_data_yaml_does_not_use_smart_quotes():
+    """[契约测试] 验证 test_data.yaml 未误用中文弯引号，避免 YAML 字符串解析失败。"""
+    paths = [project_path("data/test_data.yaml"), *sorted(project_path("data/test_data").glob("*.yaml"))]
+    failures = []
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        for line_number, line in enumerate(text.splitlines(), start=1):
+            for quote, message in SMART_QUOTES.items():
+                column = line.find(quote)
+                if column != -1:
+                    failures.append(f"{path}:{line_number}:{column + 1}: {message}: {line}")
+    assert not failures, "\n".join(failures)
 
 
 @pytest.mark.contract
