@@ -53,6 +53,8 @@ cd D:\Project\OpenApi_Automation
 
 ```powershell
 python -m pip install -r requirements.txt
+# 如果当前环境使用 Python 3 命令：
+python3 -m pip install -r requirements.txt
 ```
 
 安装 Allure CLI：
@@ -61,7 +63,7 @@ python -m pip install -r requirements.txt
 powershell -ExecutionPolicy Bypass -File scripts/install_allure.ps1
 ```
 
-如果你本机已经安装了 Python，后续命令直接使用 `python` 即可。
+如果当前环境将 Python 3 命令配置为 `python3`，请使用下面每组命令中的 `python3` 版本；同一组中的两条命令等价，只需执行其中一条。
 
 
 
@@ -71,34 +73,43 @@ powershell -ExecutionPolicy Bypass -File scripts/install_allure.ps1
 
 ```powershell
 python -m pytest tests
+python3 -m pytest tests
 ```
 
 运行所有 live 用例，也就是会请求真实接口的用例：
 
 ```powershell
 python -m pytest tests -m live --live
+python3 -m pytest tests -m live --live
 ```
 
 只运行某一个文件：
 
 ```powershell
 python -m pytest tests/test_voice.py --live
+python3 -m pytest tests/test_voice.py --live
 ```
 
 只运行某一个用例：
 
 ```powershell
 python -m pytest tests/test_videots.py::test_translate --live
+python3 -m pytest tests/test_videots.py::test_translate --live
 ```
 
 按标记运行：
 
 ```powershell
 python -m pytest tests -m smoke --live
+python3 -m pytest tests -m smoke --live
 python -m pytest tests -m negative --live
+python3 -m pytest tests -m negative --live
 python -m pytest tests -m boundary --live
+python3 -m pytest tests -m boundary --live
 python -m pytest tests -m contract
+python3 -m pytest tests -m contract
 python -m pytest tests -m openapi --live
+python3 -m pytest tests -m openapi --live
 ```
 
 说明：
@@ -116,6 +127,7 @@ python -m pytest tests -m openapi --live
 
 ```powershell
 python -m pytest tests --live --alluredir=reports/allure-results --clean-alluredir
+python3 -m pytest tests --live --alluredir=reports/allure-results --clean-alluredir
 ```
 
 如果只想手动重新生成 Allure HTML 报告，也可以单独执行：
@@ -144,6 +156,7 @@ powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live -Marker "bo
 
 ```powershell
 python -m http.server 8088 --directory reports
+python3 -m http.server 8088 --directory reports
 ```
 
 浏览器访问：
@@ -257,18 +270,21 @@ config/openapi_sources.yaml
 
 ```powershell
 python scripts/sync_openapi.py
+python3 scripts/sync_openapi.py
 ```
 
 第一次建立或主动接受新基线：
 
 ```powershell
 python scripts/sync_openapi.py --update-snapshot
+python3 scripts/sync_openapi.py --update-snapshot
 ```
 
 通过 pytest 运行 OpenAPI 契约检查：
 
 ```powershell
 python -m pytest tests/test_openapi_contract.py --live
+python3 -m pytest tests/test_openapi_contract.py --live
 ```
 
 生成文件：
