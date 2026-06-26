@@ -3,6 +3,7 @@ data/mock_files/
 
 # Generated test reports and local tool installs.
 __pycache__/
+.idea/
 reports/report.html
 reports/allure-results/
 reports/allure-report/
