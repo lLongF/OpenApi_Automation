@@ -82,15 +82,19 @@ video_compose:
       title: "视频压制合成-字幕字号最小边界12"
       category: "boundary"
       files:
-        video_file: "valid_video"
+        video_file: "valid_compose_video"
         subtitle_file: "valid_subtitle"
       params:
         target_language: "zh"
         subtitle_font_size: 12
+        subtitle_x: 360
+        subtitle_y: 600
+        coordinate_width: 720
+        coordinate_height: 1280
       expected:
         http_status: 200
         code: 200
-        json_path_required: ["data.taskId"]
+        json_path_required: ["data.task_id"]
     - id: "VCMP_BOUNDARY_002"
       title: "视频压制合成-字幕字号最大边界96"
       category: "boundary"
@@ -100,10 +104,14 @@ video_compose:
       params:
         target_language: "zh"
         subtitle_font_size: 96
+        subtitle_x: 360
+        subtitle_y: 600
+        coordinate_width: 720
+        coordinate_height: 1280
       expected:
         http_status: 200
         code: 200
-        json_path_required: ["data.taskId"]
+        json_path_required: ["data.task_id"]
     - id: "VCMP_EXCEPTION_001"
       title: "视频压制合成-音频格式异常"
       category: "exception"

@@ -10,6 +10,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 from .helpers import assert_case, case_ids, case_params, rendered
@@ -43,7 +45,7 @@ def test_timbre_design(api_client, common, case, runtime_context):
     response = api_client.generate_timbre(json=case["json"], auth=case.get("auth", "default"))
     payload = assert_case(response, case)
     if case.get("category") == "positive" and payload:
-        request_id = payload.get("request_id") or payload.get("requestId") or (payload.get("data") or {}).get("request_id")
+        request_id = (payload.get("data") or {}).get("request_id") or payload.get("request_id")
         if request_id:
             runtime_context["timbre_request_id"] = str(request_id)
 
@@ -56,12 +58,25 @@ def test_timbre_status(api_client, test_data, common, status_case, runtime_conte
     依赖：上游 /open/timbre-design/generate 返回的 request_id
     """
     case = rendered(status_case, common)
-    params = dict(case.get("params", {}))
+    case = _resolve_auto_timbre_request_id(case, api_client, test_data, runtime_context)
+    response = api_client.timbre_status(params=case.get("params", {}), auth=case.get("auth", "default"))
+    assert_case(response, case)
+
+
+def _resolve_auto_timbre_request_id(case, api_client, test_data, runtime_context):
+    params = case.get("params")
+    if not isinstance(params, dict):
+        return case
     request_id = params.get("request_id")
-    if request_id and str(request_id).startswith("replace-with-valid"):
-        params["request_id"] = runtime_context.get("timbre_request_id") or _generate_timbre_and_get_request_id(api_client, test_data)
-    response = api_client.timbre_status(params=params, auth=case.get("auth", "default"))
-    assert_case(response, {**case, "params": params})
+    if not request_id or not str(request_id).startswith("replace-with-valid"):
+        return case
+
+    resolved = dict(case)
+    resolved_params = dict(params)
+    context_request_id = runtime_context.get("timbre_request_id")
+    resolved_params["request_id"] = context_request_id or _generate_timbre_and_get_request_id(api_client, test_data)
+    resolved["params"] = resolved_params
+    return resolved
 
 
 def _generate_timbre_and_get_request_id(api_client, test_data) -> str:
@@ -69,7 +84,12 @@ def _generate_timbre_and_get_request_id(api_client, test_data) -> str:
         if item.get("category") == "positive":
             response = api_client.generate_timbre(json=item["json"])
             payload = response_json(response)
-            request_id = payload.get("request_id") or payload.get("requestId") or (payload.get("data") or {}).get("request_id")
+            request_id = _timbre_design_request_id(payload)
             assert request_id, f"音色设计接口未返回 request_id/requestId，无法查询状态。响应: {payload!r}"
             return str(request_id)
     raise AssertionError("未找到音色设计正向用例，无法自动生成 request_id。")
+
+
+def _timbre_design_request_id(payload: dict[str, Any]) -> Any:
+    data = payload.get("data") or {}
+    return data.get("request_id")  or payload.get("request_id") 

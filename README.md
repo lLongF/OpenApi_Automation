@@ -63,19 +63,7 @@ powershell -ExecutionPolicy Bypass -File scripts/install_allure.ps1
 
 如果你本机已经安装了 Python，后续命令直接使用 `python` 即可。
 
-## 运行前检查测试数据
 
-建议每次改完 `data/test_data/*.yaml` 后先执行：
-
-```powershell
-python scripts/validate_test_data.py
-```
-
-这个脚本可以提前发现：
-
-- YAML 格式错误
-- 中文弯引号 `“ ” ‘ ’`
-- 容易导致 pytest 收集失败的数据问题
 
 ## 常用运行命令
 
@@ -127,7 +115,7 @@ python -m pytest tests -m openapi --live
 运行用例并生成最新报告：
 
 ```powershell
-python -m pytest tests -m live --live --alluredir=reports/allure-results --clean-alluredir
+python -m pytest tests --live --alluredir=reports/allure-results --clean-alluredir
 ```
 
 如果只想手动重新生成 Allure HTML 报告，也可以单独执行：

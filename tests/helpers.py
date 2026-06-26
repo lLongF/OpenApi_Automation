@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from contextvars import ContextVar
 import json
 from typing import Any
 
@@ -22,6 +23,7 @@ except ImportError:  # pragma: no cover
 
 ATTACHMENT_LIMIT = 50_000
 SENSITIVE_HEADERS = {"api_key", "x-admin-token", "authorization"}
+_CURRENT_REPORT_ITEM: ContextVar[Any | None] = ContextVar("_CURRENT_REPORT_ITEM", default=None)
 
 
 def case_ids(cases: list[dict[str, Any]]) -> list[str]:
@@ -43,6 +45,7 @@ def assert_case(response, case: dict[str, Any]):
     """根据用例定义中的 expected 字段校验 API 响应（状态码、code、必填字段等）。"""
     attach_allure_case(case)
     attach_allure_exchange(response, case)
+    attach_case_log(response, case)
     try:
         return assert_expected_response(response, case["expected"])
     except AssertionError as exc:
@@ -110,6 +113,17 @@ def attach_allure_exchange(response, case: dict[str, Any]) -> None:
     attach_allure_json("HTTP response", _response_info(response))
 
 
+def attach_case_log(response, case: dict[str, Any]) -> None:
+    request_info = _request_info(response)
+    full_url = request_info.get("url") or ""
+    log = _case_execution_log(response, case)
+    if allure is not None and full_url:
+        allure.dynamic.parameter("Full interface URL", str(full_url))
+    attach_allure_text("Full interface URL", str(full_url))
+    attach_allure_text("Execution log", log)
+    _record_pytest_html_log(full_url, log)
+
+
 def attach_allure_json(name: str, value: Any) -> None:
     if allure is None:
         return
@@ -123,6 +137,19 @@ def attach_allure_text(name: str, value: str, extension: str = "txt") -> None:
     allure.attach(_truncate(value), name=name, attachment_type=attachment_type, extension=extension)
 
 
+def set_report_item(item: Any) -> Any:
+    item._openapi_report_logs = []
+    return _CURRENT_REPORT_ITEM.set(item)
+
+
+def reset_report_item(token: Any) -> None:
+    _CURRENT_REPORT_ITEM.reset(token)
+
+
+def pytest_html_logs_for_item(item: Any) -> list[dict[str, str]]:
+    return list(getattr(item, "_openapi_report_logs", []) or [])
+
+
 def _case_input(case: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": case.get("id"),
@@ -134,6 +161,47 @@ def _case_input(case: dict[str, Any]) -> dict[str, Any]:
         "params": case.get("params"),
         "auth": case.get("auth", "default"),
     }
+
+
+def _case_execution_log(response, case: dict[str, Any]) -> str:
+    request_info = _request_info(response)
+    response_info = _response_info(response)
+    lines = [
+        f"Case ID: {case.get('id', '')}",
+        f"Case title: {case.get('title') or case.get('id', '')}",
+        f"Category: {case.get('category', '')}",
+        f"Interface full URL: {request_info.get('url', '')}",
+        f"Request method: {request_info.get('method', '')}",
+        f"Auth: {case.get('auth', 'default')}",
+        f"HTTP status: {response_info.get('status_code', '')}",
+        "",
+        "Request headers:",
+        json.dumps(request_info.get("headers", {}), ensure_ascii=False, indent=2, default=str),
+        "",
+        "Request body:",
+        json.dumps(request_info.get("body"), ensure_ascii=False, indent=2, default=str),
+        "",
+        "Case input:",
+        json.dumps(_case_input(case), ensure_ascii=False, indent=2, default=str),
+        "",
+        "Expected result:",
+        json.dumps(case.get("expected", {}), ensure_ascii=False, indent=2, default=str),
+        "",
+        "Response:",
+        json.dumps(response_info, ensure_ascii=False, indent=2, default=str),
+    ]
+    return _truncate("\n".join(lines))
+
+
+def _record_pytest_html_log(full_url: str, log: str) -> None:
+    item = _CURRENT_REPORT_ITEM.get()
+    if item is None:
+        return
+    logs = getattr(item, "_openapi_report_logs", None)
+    if logs is None:
+        logs = []
+        item._openapi_report_logs = logs
+    logs.append({"url": str(full_url or ""), "log": log})
 
 
 def _request_info(response) -> dict[str, Any]:

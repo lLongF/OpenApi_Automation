@@ -13,6 +13,7 @@ from __future__ import annotations
 import pytest
 
 from openapi_automation.clients.openapi_client import build_files
+from openapi_automation.core.assertions import response_json
 
 from .helpers import assert_case, case_ids, case_params, rendered
 
@@ -112,3 +113,16 @@ def clone_voice_and_get_speaker_id(api_client, test_data: dict) -> str:
     speaker_id = _first_present(payload, ("request_id", "data.request_id"))
     assert speaker_id, f"语音克隆接口未返回 request_id，无法作为 speaker_id 传递。响应: {payload!r}"
     return str(speaker_id)
+
+
+def _first_present(payload: dict, paths: tuple[str, ...]):
+    for path in paths:
+        current = payload
+        for part in path.split("."):
+            if not isinstance(current, dict) or part not in current:
+                current = None
+                break
+            current = current[part]
+        if current not in (None, ""):
+            return current
+    return None

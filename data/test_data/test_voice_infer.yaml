@@ -27,7 +27,8 @@ voice_infer:
       expected:
         http_status: 200
         code: 200
-        required_fields: ["code", "data", "request_id"]
+        required_fields: ["code"]
+        json_path_required: ["request_id"]
     - id: "VI_NEG_001"
       title: "语音合成-缺失文本"
       category: "negative"

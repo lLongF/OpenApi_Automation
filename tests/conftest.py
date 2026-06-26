@@ -31,6 +31,8 @@ if str(SRC) not in sys.path:
 from openapi_automation.clients.openapi_client import ShanhaiOpenApiClient
 from openapi_automation.core.config import load_env_config, load_test_data
 from openapi_automation.core.http_client import HttpClient
+from tests.helpers import pytest_html_logs_for_item as html_logs_for_item
+from tests.helpers import reset_report_item, set_report_item
 
 
 SUITE_NAMES = {
@@ -173,11 +175,31 @@ def pytest_runtest_setup(item):
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
-    if allure is None or report.passed:
+    if report.when == "call":
+        _add_pytest_html_logs(item, report)
+    if allure is not None and not report.passed:
+        reason = report.longreprtext if hasattr(report, "longreprtext") else str(report.longrepr)
+        if reason:
+            allure.attach(reason, name="Failure reason", attachment_type=allure.attachment_type.TEXT)
+
+
+def _add_pytest_html_logs(item, report) -> None:
+    logs = html_logs_for_item(item)
+    if not logs:
         return
-    reason = report.longreprtext if hasattr(report, "longreprtext") else str(report.longrepr)
-    if reason:
-        allure.attach(reason, name="Failure reason", attachment_type=allure.attachment_type.TEXT)
+    try:
+        from pytest_html import extras
+    except ImportError:
+        return
+
+    report.extras = list(getattr(report, "extras", []) or [])
+    for index, entry in enumerate(logs, start=1):
+        url = entry.get("url") or ""
+        log = entry.get("log") or ""
+        title = "Interface log" if len(logs) == 1 else f"Interface log {index}"
+        report.extras.append(extras.text(log, name=title))
+        if url:
+            report.extras.append(extras.url(url, name=f"Full interface URL {index}"))
 
 
 def pytest_collection_modifyitems(config, items):
@@ -212,6 +234,15 @@ def common(test_data):
 def runtime_context():
     """[Fixture] 运行期上下文，用于在同一轮测试内传递上游接口返回值。"""
     return {}
+
+
+@pytest.fixture(autouse=True)
+def report_item_context(request):
+    token = set_report_item(request.node)
+    try:
+        yield
+    finally:
+        reset_report_item(token)
 
 
 @pytest.fixture(scope="session")

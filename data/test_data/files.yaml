@@ -19,3 +19,4 @@ files:
   invalid_video: "data/mock_files/青蛙王子-字幕.srt"
   oversize_speaker_51mb: "data/mock_files/oversize_speaker_51mb.mp3"
   valib_speaker_5min_50mb: "data/mock_files/five_minute_50mb_audio.wav"
+  valid_compose_video: "data/mock_files/好一个乖乖女.mp4"
