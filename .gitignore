@@ -7,4 +7,6 @@ __pycache__/
 reports/report.html
 reports/allure-results/
 reports/allure-report/
+reports/runs/
+reports/web*.log
 tools/allure/

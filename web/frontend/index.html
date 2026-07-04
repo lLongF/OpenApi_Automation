@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenAPI 自动化测试台</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">OA</div>
+          <div>
+            <h1>OpenAPI 自动化测试台</h1>
+            <p>环境、用例、执行、报告</p>
+          </div>
+        </div>
+
+        <nav>
+          <button :class="{ active: tab === 'run' }" @click="tab = 'run'">运行测试</button>
+          <button :class="{ active: tab === 'cases' }" @click="tab = 'cases'">测试数据</button>
+          <button :class="{ active: tab === 'runs' }" @click="tab = 'runs'">执行记录</button>
+        </nav>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <strong>{{ healthText }}</strong>
+            <span>当前环境：{{ selectedEnv }}</span>
+          </div>
+          <button class="ghost" @click="reloadAll">刷新</button>
+        </header>
+
+        <section v-if="tab === 'run'" class="section">
+          <div class="section-head">
+            <div>
+              <h2>运行测试</h2>
+              <p>选择环境、模块和标记后启动 pytest。</p>
+            </div>
+            <button class="primary" :disabled="running" @click="startRun">
+              {{ running ? '执行中...' : '开始运行' }}
+            </button>
+          </div>
+
+          <div class="grid two">
+            <label>
+              环境
+              <select v-model="selectedEnv">
+                <option v-for="env in envs" :key="env.name" :value="env.name">
+                  {{ env.name }} - {{ env.base_url }}
+                </option>
+              </select>
+            </label>
+            <label>
+              模块
+              <select v-model="selectedModule">
+                <option value="">全部 tests</option>
+                <option v-for="module in modules" :key="module.name" :value="module.name">
+                  {{ module.name }}（{{ module.case_count }}）
+                </option>
+              </select>
+            </label>
+            <label>
+              标记
+              <select v-model="marker">
+                <option value="">不筛选</option>
+                <option value="smoke">smoke</option>
+                <option value="negative">negative</option>
+                <option value="boundary">boundary</option>
+                <option value="contract">contract</option>
+                <option value="openapi">openapi</option>
+              </select>
+            </label>
+            <label class="check">
+              <input type="checkbox" v-model="live" />
+              <span>启用 live，调用真实接口</span>
+            </label>
+          </div>
+
+          <div v-if="activeRun" class="run-panel">
+            <div class="run-meta">
+              <strong>Run {{ activeRun.id }}</strong>
+              <span :class="['badge', activeRun.status]">{{ activeRun.status }}</span>
+              <a :href="activeRun.report_url + '?run=' + activeRun.id" target="_blank">打开 Allure 报告</a>
+            </div>
+            <pre>{{ log }}</pre>
+          </div>
+        </section>
+
+        <section v-if="tab === 'cases'" class="section">
+          <div class="section-head">
+            <div>
+              <h2>测试数据</h2>
+              <p>第一版支持浏览模块和查看/编辑单条 case JSON。</p>
+            </div>
+            <button class="ghost" @click="reloadCases">重新加载</button>
+          </div>
+
+          <div class="cases-layout">
+            <div class="module-list">
+              <button
+                v-for="module in modules"
+                :key="module.name"
+                :class="{ active: currentModule && currentModule.name === module.name }"
+                @click="selectModule(module.name)"
+              >
+                <span>{{ module.name }}</span>
+                <small>{{ module.case_count }} cases</small>
+              </button>
+            </div>
+
+            <div class="case-list" v-if="currentModule">
+              <div
+                v-for="item in currentModule.cases"
+                :key="item.id"
+                :class="['case-row', { active: selectedCase && selectedCase.id === item.id }]"
+                @click="selectCase(item)"
+              >
+                <strong>{{ item.id }}</strong>
+                <span>{{ item.title || item.category }}</span>
+                <small>{{ item.category }}</small>
+              </div>
+            </div>
+
+            <div class="editor" v-if="selectedCase">
+              <div class="editor-head">
+                <strong>{{ selectedCase.id }}</strong>
+                <button class="primary small" @click="saveCase">保存</button>
+              </div>
+              <textarea v-model="caseJson" spellcheck="false"></textarea>
+              <p class="hint">{{ saveMessage }}</p>
+            </div>
+          </div>
+        </section>
+
+        <section v-if="tab === 'runs'" class="section">
+          <div class="section-head">
+            <div>
+              <h2>执行记录</h2>
+              <p>查看本地启动过的测试任务。</p>
+            </div>
+            <button class="ghost" @click="reloadRuns">刷新记录</button>
+          </div>
+          <div class="table">
+            <div class="tr head">
+              <span>状态</span><span>环境</span><span>模块</span><span>开始时间</span><span>操作</span>
+            </div>
+            <div class="tr" v-for="run in runs" :key="run.id">
+              <span :class="['badge', run.status]">{{ run.status }}</span>
+              <span>{{ run.env }}</span>
+              <span>{{ run.module || '全部' }}</span>
+              <span>{{ run.started_at || run.created_at }}</span>
+              <span>
+                <button class="link" @click="openRun(run)">日志</button>
+                <a :href="run.report_url + '?run=' + run.id" target="_blank">报告</a>
+              </span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/assets/app.js"></script>
+  </body>
+</html>
