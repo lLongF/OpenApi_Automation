@@ -41,7 +41,8 @@ def test_voice_clone(api_client, test_data, common, voice_clone_case, runtime_co
     接口：POST /open/voice/zeroshot/clone
     请求方式：multipart/form-data（音频样本 + 表单参数如 timbre_name / language）
     认证：api_key 请求头
-    功能：上传参考音频，注册一个新的音色，返回 timbre_id
+    功能：上传参考音频，注册一个新的音色，返回 request_id
+
     """
     case = rendered(voice_clone_case, common)
     mapping = {"audio": case["file_key"]} if case.get("file_key") else {}

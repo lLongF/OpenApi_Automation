@@ -42,10 +42,11 @@ voice_separate:
       title: "背景音与人声分离-缺少音频文件"
       category: "negative"
       files:
+        audio: "empty_audio"
         srt: "valid_subtitle"
       expected:
         http_status_any: [200, 400, 422, 500]
-        code_any: [400, 422, 500]
+        code: 1003
         message_contains_any: ["audio", "file", "文件", "不能为空", "缺少"]
     - id: "VSEP_NEG_002"
       title: "背景音与人声分离-音频格式错误"
@@ -54,8 +55,8 @@ voice_separate:
         audio: "invalid_audio"
       expected:
         http_status_any: [200, 400, 422, 500]
-        code_any: [400, 422, 500]
-        message_contains_any: ["wav", "mp3", "m4a", "格式", "音频", "FileInvalid"]
+        code: 1003
+        message_contains_any: ["不支持的文件类型，请上传wav/mp3/m4a/aac/flac格式文件","wav", "mp3", "m4a", "格式", "音频", "FileInvalid"]
     - id: "VSEP_NEG_003"
       title: "背景音与人声分离-字幕格式错误"
       category: "negative"
@@ -64,13 +65,13 @@ voice_separate:
         srt: "invalid_subtitle"
       expected:
         http_status_any: [200, 400, 422, 500]
-        code_any: [400, 422, 500]
-        message_contains_any: ["srt", "字幕", "格式", "文件", "FileInvalid"]
+        code: 1001
+        message_contains_any: ["字幕文件仅支持srt格式","srt", "字幕", "格式", "文件", "FileInvalid"]
     - id: "VSEP_BOUNDARY_001"
       title: "背景音与人声分离-音频大小等于50MB"
       category: "boundary"
       files:
-        audio: "valib_speaker_5min_50mb"
+        audio: "valid_speaker_5min_50mb"
       expected:
         http_status: 200
         code: 200
@@ -82,8 +83,28 @@ voice_separate:
         audio: "oversize_speaker_51mb"
       expected:
         http_status_any: [200, 400, 422, 500]
-        code_any: [400, 422, 500]
+        code: 1003
         message_contains_any: ["50M", "50MB", "大小", "超过", "文件"]
+    - id: "VSEP_EXCEPTION_002"
+      title: "背景音与人声分离-音频时长超过10分钟"
+      category: "exception"
+      files:
+        audio: "oversize_speaker_12min"
+        srt: "valid_subtitle"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["10分钟", "时长", "超过", "音频"]
+    - id: "VSEP_EXCEPTION_003"
+      title: "背景音与人声分离-字幕文件超过1MB"
+      category: "exception"
+      files:
+        audio: "valid_audio"
+        srt: "oversize_subtitle_11mb"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1001
+        message_contains_any: ["1MB", "字幕", "大小", "超过", "文件"]
   status_cases:
     # --- 字段说明 ---
     # params.task_id: 提交接口返回的任务 ID；占位值会在运行时替换为提交接口缓存值
@@ -102,7 +123,7 @@ voice_separate:
       params: {}
       expected:
         http_status_any: [200, 400, 422, 500]
-        code_any: [400, 422, 500]
+        code: 1002
         message_contains_any: ["task_id", "参数", "不能为空", "缺少"]
     - id: "VSEPS_EXCEPTION_001"
       title: "背景音与人声分离-task_id不存在"
@@ -111,5 +132,5 @@ voice_separate:
         task_id: "not-exist-task-id"
       expected:
         http_status_any: [200, 404, 500]
-        code_any: [404, 500]
+        code: 1300
         message_contains_any: ["任务不存在", "task", "不存在", "失败"]

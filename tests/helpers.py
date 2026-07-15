@@ -24,6 +24,12 @@ except ImportError:  # pragma: no cover
 ATTACHMENT_LIMIT = 50_000
 SENSITIVE_HEADERS = {"api_key", "x-admin-token", "authorization"}
 _CURRENT_REPORT_ITEM: ContextVar[Any | None] = ContextVar("_CURRENT_REPORT_ITEM", default=None)
+CATEGORY_LABELS = {
+    "positive": "正向用例",
+    "negative": "反向用例",
+    "boundary": "边界用例",
+    "exception": "异常用例",
+}
 
 
 def case_ids(cases: list[dict[str, Any]]) -> list[str]:
@@ -96,10 +102,13 @@ def attach_allure_case(case: dict[str, Any]) -> None:
     case_id = case.get("id", "")
     title = case.get("title") or case_id
     allure.dynamic.title(str(title))
+    if title:
+        allure.dynamic.story(str(title))
     if case_id:
-        allure.dynamic.story(str(case_id))
+        allure.dynamic.parameter("用例编号", str(case_id))
     if case.get("category"):
-        allure.dynamic.label("category", str(case["category"]))
+        category = str(case["category"])
+        allure.dynamic.label("category", CATEGORY_LABELS.get(category, category))
     if title:
         allure.dynamic.description(str(title))
 

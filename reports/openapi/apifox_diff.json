@@ -42,6 +42,47 @@
           },
           {
             "in": "query",
+            "name": "name",
+            "required": false,
+            "schema_type": "string"
+          },
+          {
+            "in": "query",
+            "name": "page_no",
+            "required": false,
+            "schema_type": "integer"
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema_type": "integer"
+          }
+        ],
+        "path": "/open/voice/list",
+        "request_body_required": false,
+        "response_codes": [
+          "200"
+        ],
+        "summary": "查询公共音色列表",
+        "tags": []
+      },
+      "operation": "GET /open/voice/list",
+      "type": "operation_added"
+    },
+    {
+      "new": {
+        "method": "GET",
+        "operation_id": null,
+        "parameters": [
+          {
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema_type": "string"
+          },
+          {
+            "in": "query",
             "name": "task_id",
             "required": true,
             "schema_type": "string"
@@ -139,14 +180,113 @@
       },
       "operation": "POST /open/voice/separate",
       "type": "operation_added"
+    },
+    {
+      "old": {
+        "in": "query",
+        "name": "mode",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/videots/translate",
+      "parameter": "query:mode",
+      "type": "parameter_removed"
+    },
+    {
+      "old": {
+        "in": "query",
+        "name": "target_language",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/videots/translate",
+      "parameter": "query:target_language",
+      "type": "parameter_removed"
+    },
+    {
+      "old": {
+        "in": "query",
+        "name": "tos_path",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/videots/translate",
+      "parameter": "query:tos_path",
+      "type": "parameter_removed"
+    },
+    {
+      "old": {
+        "in": "query",
+        "name": "user_prompt",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/videots/translate",
+      "parameter": "query:user_prompt",
+      "type": "parameter_removed"
+    },
+    {
+      "new": {
+        "in": "query",
+        "name": "description",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/voice/zeroshot/clone",
+      "parameter": "query:description",
+      "type": "optional_parameter_added"
+    },
+    {
+      "new": {
+        "in": "query",
+        "name": "gender",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/voice/zeroshot/clone",
+      "parameter": "query:gender",
+      "type": "optional_parameter_added"
+    },
+    {
+      "new": {
+        "in": "query",
+        "name": "is_public",
+        "required": false,
+        "schema_type": "boolean"
+      },
+      "operation": "POST /open/voice/zeroshot/clone",
+      "parameter": "query:is_public",
+      "type": "optional_parameter_added"
+    },
+    {
+      "new": {
+        "in": "query",
+        "name": "lang_code",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/voice/zeroshot/clone",
+      "parameter": "query:lang_code",
+      "type": "optional_parameter_added"
+    },
+    {
+      "new": {
+        "in": "query",
+        "name": "name",
+        "required": false,
+        "schema_type": "string"
+      },
+      "operation": "POST /open/voice/zeroshot/clone",
+      "parameter": "query:name",
+      "type": "optional_parameter_added"
     }
   ],
   "has_breaking_changes": false,
   "summary": {
-    "added": 4,
+    "added": 5,
     "breaking_changes": 0,
-    "changed": 0,
+    "changed": 9,
     "removed": 0,
-    "total_changes": 4
+    "total_changes": 14
   }
 }

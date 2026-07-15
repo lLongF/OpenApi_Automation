@@ -12,11 +12,18 @@
 
 from __future__ import annotations
 
+import time
+from typing import Any
+
 import pytest
 
 from openapi_automation.clients.openapi_client import build_files
+from openapi_automation.core.assertions import response_json
 
 from .helpers import assert_case, case_ids, case_params, rendered
+
+VIDEOTS_STATUS_POLL_INTERVAL_SECONDS = 5
+VIDEOTS_STATUS_POLL_TIMEOUT_SECONDS = 300
 
 
 def pytest_generate_tests(metafunc):
@@ -96,6 +103,13 @@ def test_videots_status(api_client, test_data, common, status_case, runtime_cont
     """
     case = rendered(status_case, common)
     case = resolve_auto_task_id(case, api_client, test_data, runtime_context)
+    if case.get("id") == "VS_POS_001":
+        response = poll_videots_status_completed(api_client, case)
+        payload = assert_case(response, case)
+        status = ((payload or {}).get("data") or {}).get("status")
+        assert status == "completed", payload
+        return
+
     response = api_client.videots_status(params=case.get("params", {}), auth=case.get("auth", "default"))
     assert_case(response, case)
 
@@ -132,3 +146,37 @@ def submit_translation_and_get_task_id(api_client, test_data: dict) -> str:
     task_id = _first_present(payload, ("data.task_id", "task_id"))
     assert task_id, f"Translation API did not return task_id. response={payload!r}"
     return str(task_id)
+
+
+def poll_videots_status_completed(api_client, case):
+    """Poll video translation status until the async task is completed."""
+    deadline = time.monotonic() + VIDEOTS_STATUS_POLL_TIMEOUT_SECONDS
+    last_payload = None
+
+    while True:
+        response = api_client.videots_status(params=case.get("params", {}), auth=case.get("auth", "default"))
+        last_payload = response_json(response)
+        status = (last_payload.get("data") or {}).get("status")
+        if response.status_code == 200 and status == "completed":
+            return response
+        if time.monotonic() >= deadline:
+            break
+        time.sleep(VIDEOTS_STATUS_POLL_INTERVAL_SECONDS)
+
+    raise AssertionError(
+        "字幕翻译任务状态查询未在 "
+        f"{VIDEOTS_STATUS_POLL_TIMEOUT_SECONDS}s 内返回 completed，最后响应: {last_payload!r}"
+    )
+
+
+def _first_present(payload: dict, paths: tuple[str, ...]):
+    for path in paths:
+        current = payload
+        for part in path.split("."):
+            if not isinstance(current, dict) or part not in current:
+                current = None
+                break
+            current = current[part]
+        if current not in (None, ""):
+            return current
+    return None

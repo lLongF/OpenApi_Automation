@@ -28,7 +28,8 @@ timbre_design:
         accentValue: "1"
       expected:
         http_status: 200
-        required_fields: ["request_id"]
+        code: 200
+        json_path_required: ["data.request_id"]
     - id: "TD_NEG_001"
       title: "音色设计-文本为空"
       category: "negative"
@@ -39,7 +40,7 @@ timbre_design:
         ageValue: "2"
       expected:
         http_status_any: [400, 422, 500]
-        code: 400
+        code: 1001
         message_contains_any: ["text","必填"]
     - id: "TD_NEG_002"
       title: "音色设计-文本超过500字符"
@@ -51,25 +52,34 @@ timbre_design:
         ageValue: "2"
       expected:
         http_status_any: [400, 422, 500]
-        code: 400
+        code: 1001
         message_contains_any: ["文本","500","字符","超过"]
   status_cases:
     # --- 字段说明 ---
     # params: URL 查询参数（request_id），用于 GET 状态查询接口
     # ---
     - id: "TDS_POS_001"
-      title: "音色设计-查询状态"
+      title: "查询音色设计-状态"
       category: "positive"
       params:
         request_id: "{{request_id}}"
       expected:
         http_status: 200
     - id: "TDS_NEG_001"
-      title: "音色设计-缺失request_id"
+      title: "查询音色设计-缺失request_id"
       category: "negative"
       params: 
         request_id: null
       expected:
-        http_status_any: [400, 422, 500]
-        code: 400
-        message_contains_any: ["request_id", "不能为空", "参数"]
+        http_status_any: [ 200, 400, 422, 500, 404 ]
+        code: 1002
+        message_contains_any: [ "request_id", "缺少请求参数", "参数" ]
+    - id: "TDS_NEG_002"
+      title: "查询音色设计-request_id不存在"
+      category: "negative"
+      params:
+        request_id: "12345"
+      expected:
+        http_status_any: [ 200, 400, 422, 500, 404 ]
+        code: 1300
+        message_contains_any: [ "任务不存在" ]

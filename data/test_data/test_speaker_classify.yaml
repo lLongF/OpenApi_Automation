@@ -28,23 +28,41 @@ speaker_classify:
     - id: "SC_NEG_001"
       title: "说话人分类-缺少音频文件"
       category: "negative"
+      file_key: "empty_audio"
       expected:
-        http_status_any: [400, 422, 500]
+        http_status_any: [200,400, 422, 500]
+        code: 1003
         message_contains_any: ["file", "文件不能为空"]
     - id: "SC_NEG_002"
       title: "说话人分类-音频超过50MB"
       category: "negative"
       file_key: "oversize_speaker_51mb"
       expected:
-        http_status: 200
-        code: 400
-        message_contains_any: ["50M", "50MB", "大小", "超过", "文件"]
+        http_status_any: [200, 400, 422, 500, 404]
+        code: 1003
+        message_contains_any: ["文件大小不能超过50MB", "50MB", "大小", "超过", "文件"]
+    - id: "SC_NEG_003"
+      title: "说话人分类-音频时长超过10分钟"
+      category: "negative"
+      file_key: "oversize_speaker_12min"
+      expected:
+        http_status_any: [ 200,400, 422, 500, 404]
+        code: 1003
+        message_contains_any: [ "音频时长不能超过10分钟",  "时长", "超过", "音频" ]
+    - id: "SC_NEG_004"
+      title: "说话人分类-音频格式错误"
+      category: "negative"
+      file_key: "valid_video"
+      expected:
+        http_status_any: [ 200,400, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "不支持的文件类型", "mp3/wav/m4a","FileInvalid" ]
   status_cases:
     # --- 字段说明 ---
     # params: URL 查询参数（request_id），用于 GET 状态查询接口
     # ---
     - id: "SCS_POS_001"
-      title: "说话人分类-查询状态"
+      title: "查询说话人分类-状态"
       category: "positive"
       params:
         request_id: "{{request_id}}"
@@ -52,9 +70,19 @@ speaker_classify:
         http_status: 200
         code: 200
     - id: "SCS_NEG_001"
-      title: "说话人分类-缺少request_id"
+      title: "查询说话人分类-缺少request_id"
       category: "negative"
       params: {}
       expected:
-        http_status_any: [400, 422, 500]
-        message_contains_any: ["request_id", "不能为空", "参数"]
+        http_status_any: [ 200, 400, 422, 500, 404 ]
+        code: 1002
+        message_contains_any: [ "request_id", "缺少请求参数", "参数" ]
+    - id: "SCS_NEG_002"
+      title: "查询说话人分类-request_id不存在"
+      category: "negative"
+      params:
+        request_id: "12345"
+      expected:
+        http_status_any: [ 200, 400, 422, 500, 404 ]
+        code: 1300
+        message_contains_any: [ "任务不存在" ]

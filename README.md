@@ -1,4 +1,4 @@
-# 山海智影 OpenAPI 接口自动化
+# OpenAPI 接口自动化
 
 基于 `pytest` 的 OpenAPI 接口自动化测试项目，覆盖语音克隆、语音合成、音色设计、字幕翻译、视频字幕/ASR、说话人分类、OpenAPI 契约检查等接口。
 
@@ -7,12 +7,34 @@
 - Web 控制台：适合日常点选环境、模块并查看执行记录和 Allure 报告。
 - 命令行：适合本地调试、CI 或精确运行某个测试文件/用例。
 
-## 快速开始
+## 快速使用
+
+第一次使用先安装依赖：
 
 ```powershell
 cd D:\Project\OpenApi_Automation
 python -m pip install -r requirements.txt
 powershell -ExecutionPolicy Bypass -File scripts/install_allure.ps1
+```
+
+运行真实接口用例并生成报告：
+
+```powershell
+python -m pytest tests --live --clean-alluredir
+powershell -ExecutionPolicy Bypass -File scripts/generate_allure_report.ps1
+```
+
+常用报告位置：
+
+```text
+reports/report.html
+reports/allure-report/index.html
+```
+
+只跑本地契约和数据校验：
+
+```powershell
+python -m pytest tests/test_contract_data.py --no-allure-report
 ```
 
 启动 Web 控制台：
@@ -21,100 +43,48 @@ powershell -ExecutionPolicy Bypass -File scripts/install_allure.ps1
 powershell -ExecutionPolicy Bypass -File scripts/start_web.ps1 -Port 8000
 ```
 
-浏览器打开：
+打开：
 
 ```text
 http://127.0.0.1:8000/
 ```
 
-如果提示 `WinError 10048`，说明 `8000` 端口已经被占用。直接访问已有服务，或换端口启动：
+## 上传文件与测试数据要求
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/start_web.ps1 -Port 8001
-```
+上传文件统一放在 `data/mock_files/`，并在 `data/test_data/files.yaml` 里维护 `file_key -> 文件路径`。接口用例只引用 `file_key`，不用直接写文件路径。
 
-## Web 控制台
+| 接口 | 需要的文件 | 格式/大小/时长要求 | 当前测试数据 file_key |
+| --- | --- | --- | --- |
+| 语音克隆 `/open/voice/zeroshot/clone` | 音频 | mp3/wav/m4a；1s-30s；不超过 10MB | `valid_clone_audio` 约 0.61MB/19.9s；`valid_clone_open_audio` 约 14.80MB/20.2s；`valid_clone_1min_5mb` 约 5.85MB/2.1min；`empty_audio`；`valid_video` 用于格式错误 |
+| 语音合成 `/open/voice/zeroshot/infer` | 可选参考音频 + 文本 | 音频 1s-30s、不超过 10MB；文本不超过 3000 字符 | `valid_clone_audio`；`valid_clone_1min_5mb`；`valid_clone_open_audio` |
+| 公共音色列表 `/open/voice/list` | 无文件 | 只使用 query 参数 `name/page_no/page_size` | 无 |
+| 音色设计 `/open/timbre-design/generate` | 无文件 | JSON 文本参数，`text` 不超过 500 字符 | 无 |
+| 字幕翻译/重译/回译 `/open/videots/*` | 字幕文件 | srt；不超过 1MB | `valid_subtitle`；`valid_subtitle_translated`；`empty_subtitle`；`invalid_subtitle`；`oversize_subtitle_11mb` 约 10.49MB |
+| 字幕擦除 `/open/subtitle/erase` | 视频 | mp4/mov；10s-60min；不超过 2GB | `valid_video` 约 1.30MB/20.2s；`invalid_video`；`empty_video` |
+| 语音识别 `/open/asr` | 音频 | mp3/wav/m4a；10s-60min；不超过 100MB | `valid_audio` 约 0.61MB/19.9s；`valid_speaker_5min_50mb` 约 50MB/5min；`oversize_speaker_12min` 约 10.99MB/12min；`valid_audio_65min` 约 14.88MB/65min；`valid_audio_205MB` 约 205MB；`invalid_audio`；`empty_audio` |
+| 说话人分类 `/open/speaker-classify/submit` | 音频 | wav/mp3/m4a；不超过 10min；不超过 50MB | `valid_audio`；`oversize_speaker_51mb` 约 52MB/5min；`oversize_speaker_12min` 约 12min；`valid_video` 用于格式错误；`empty_audio` |
+| 背景音与人声分离 `/open/voice/separate` | 音频，字幕可选 | 音频 wav/mp3/m4a、不超过 10min、不超过 50MB；字幕 srt、不超过 1MB | `valid_audio`；`valid_subtitle`；`valid_speaker_5min_50mb`；`oversize_speaker_51mb`；`oversize_speaker_12min`；`oversize_subtitle_11mb`；`invalid_audio`；`invalid_subtitle`；`empty_audio` |
+| 视频压制合成 `/open/video-compose/tasks` | 视频必填，音频/字幕可选 | 视频 mp4/mov、10s-60min、不超过 2GB；音频不超过 10min/50MB；字幕 srt、不超过 1MB | `valid_video`；`valid_compose_video` 约 14.87MB/3min；`valid_audio`；`valid_subtitle`；`empty_video`；`invalid_video`；`invalid_audio`；`invalid_subtitle`；`oversize_speaker_51mb`；`oversize_speaker_12min`；`oversize_subtitle_11mb` |
 
-Web 页面支持：
-
-- 选择环境、模块、标记并启动测试。
-- 查看运行日志和历史执行记录。
-- 打开每次运行独立生成的 Allure 报告。
-- 浏览和编辑 `data/test_data/*.yaml` 中的测试数据。
-
-每次通过 Web 启动测试后，报告会生成在：
-
-```text
-reports/runs/<run_id>/allure-report/index.html
-```
-
-页面里的“报告”按钮会打开对应 run 的独立报告，避免多次运行互相覆盖导致 Allure 详情 404。
-
-## 命令行运行
-
-运行本地契约和非 live 用例：
-
-```powershell
-python -m pytest tests
-```
-
-运行真实接口用例：
-
-```powershell
-python -m pytest tests --live
-```
-
-只运行某个文件或用例：
-
-```powershell
-python -m pytest tests/test_voice.py --live
-python -m pytest tests/test_videots.py::test_translate --live
-```
-
-按标记运行：
-
-```powershell
-python -m pytest tests -m smoke --live
-python -m pytest tests -m negative --live
-python -m pytest tests -m boundary --live
-python -m pytest tests -m contract
-python -m pytest tests -m openapi --live
-```
-
-Windows 一键脚本：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live
-powershell -ExecutionPolicy Bypass -File scripts/run_tests.ps1 -Live -Marker "smoke"
-```
-
-## Allure 报告
-
-pytest 结束后会自动生成 Allure HTML 报告。也可以手动重新生成：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/generate_allure_report.ps1
-```
-
-命令行默认报告位置：
+测试数据文件对应关系：
 
 ```text
-reports/allure-report/index.html
+data/test_data/test_voice_clone.yaml        语音克隆
+data/test_data/test_voice_infer.yaml        语音合成
+data/test_data/test_voice_list.yaml         公共音色列表
+data/test_data/test_timbre_design.yaml      音色设计
+data/test_data/test_videots.yaml            字幕翻译/重译/回译
+data/test_data/test_subtitle_erase.yaml     字幕擦除
+data/test_data/test_asr.yaml                语音识别
+data/test_data/test_speaker_classify.yaml   说话人分类
+data/test_data/test_voice_separate.yaml     背景音与人声分离
+data/test_data/test_video_compose.yaml      视频压制合成
 ```
 
-用静态服务查看：
+新增或替换文件时，只需要两步：
 
-```powershell
-python -m http.server 8088 --directory reports
-```
-
-然后访问：
-
-```text
-http://127.0.0.1:8088/allure-report/index.html
-```
-
-不要直接双击 `index.html` 打开 Allure 报告，容易出现资源加载失败或 404。
+1. 把文件放入 `data/mock_files/`。
+2. 在 `data/test_data/files.yaml` 增加或修改对应 `file_key`，再在业务 YAML 用例中引用它。
 
 ## 目录说明
 
@@ -148,33 +118,6 @@ scripts/
   sync_openapi.py             同步 OpenAPI / Apifox
   validate_test_data.py       校验测试数据
 ```
-
-## 测试数据
-
-测试数据集中维护在：
-
-```text
-data/test_data/*.yaml
-```
-
-常见字段：
-
-```yaml
-id: 用例编号
-title: 用例标题
-category: positive / negative / boundary / exception
-request: 请求数据
-expected: 预期结果
-http_status: 预期 HTTP 状态码
-http_status_any: 允许多个 HTTP 状态码
-code: 预期业务 code
-code_any: 允许多个业务 code
-message_contains: 响应信息需要包含的文本
-message_contains_any: 命中任意一个文本即可
-json_path_required: 指定 JSON 路径必须存在且非空
-```
-
-上传文件路径统一在 `data/test_data/files.yaml` 中维护。契约测试会检查这些文件是否真实存在于 `data/mock_files/`。
 
 ## OpenAPI / Apifox 契约检查
 

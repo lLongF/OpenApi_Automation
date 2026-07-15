@@ -14,6 +14,7 @@ class HttpClient:
         self.config = config
         self.api_key = api_key
         self.session = requests.Session()
+        self.session.trust_env = False
         retry = Retry(
             total=config.retry.total,
             read=config.retry.total,

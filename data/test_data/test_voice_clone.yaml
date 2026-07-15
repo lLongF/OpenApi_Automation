@@ -31,7 +31,7 @@ voice_clone:
         http_status: 200
         code: 200
         required_fields: ["code"]
-        json_path_required: ["request_id"]
+        json_path_required: ["data.request_id"]
     - id: "VC_NEG_001"
       title: "语音克隆-缺失音频文件"
       category: "negative"
@@ -39,8 +39,9 @@ voice_clone:
       form:
         body: '{"carry_back":"voice-clone-missing-file"}'
       expected:
-        http_status_any: [400, 422, 500]
-        message_contains_any: ["audio", "文件不能为空", "为空", "未上传", "FileInvalid"]
+        http_status_any: [ 400 ]
+        code: 1002
+        message_contains_any: ["audio", "缺少请求参数", "缺失"]
     - id: "VC_NEG_002"
       title: "语音克隆-音频格式错误"
       category: "negative"
@@ -48,18 +49,18 @@ voice_clone:
       form:
         body: '{"carry_back":"voice-clone-invalid-format"}'
       expected:
-        http_status_any: [400, 422, 200]
-        code: 500
+        http_status_any: [ 400 ]
+        code: 1003
         message_contains_any: ["不支持的文件类型", "mp3/wav/m4a","FileInvalid"]
     - id: "VC_NEG_003"
       title: "语音克隆-音频超过10MB"
       category: "negative"
-      file_key: "valid_clone_50mb"
+      file_key: "valid_clone_open_audio"
       form:
         body: '{"carry_back":"voice-clone-oversize"}'
       expected:
-        http_status_any: [400, 422, 200]
-        code: 500
+        http_status_any: [400]
+        code: 1003
         message_contains_any: ["文件大小不能超过10MB", "10MB", "大小", "超过", "文件"]
     - id: "VC_NEG_004"
       title: "语音克隆-音频超过30s"
@@ -68,6 +69,16 @@ voice_clone:
       form:
         body: '{"carry_back":"voice-clone-oversize"}'
       expected:
-        http_status_any: [400, 422, 200]
-        code: 500
-        message_contains_any: ["文件大小不能超过30s", "30s", "大小", "超过", "文件"]
+        http_status_any: [400]
+        code: 1003
+        message_contains_any: ["音频时长不能超过30s", "30s", "大小", "超过", "文件"]
+    - id: "VC_NEG_005"
+      title: "语音克隆-音频文件为空"
+      category: "negative"
+      file_key: "empty_audio"
+      form:
+        body: '{"carry_back":"voice-clone-missing-file"}'
+      expected:
+        http_status_any: [ 400 ]
+        code: 1003
+        message_contains_any: [ "文件", "文件不能为空", "为空" ]

@@ -36,8 +36,9 @@ subtitle_erase:
       form:
         language_code: "zh"
       expected:
-        http_status_any: [400, 422, 500]
-        message_contains_any: ["file", "文件不能为空", "视频"]
+        http_status_any: [200, 400, 415, 422, 500]
+        code: 1002
+        message_contains_any: ["缺少请求参数", "file"]
     - id: "SE_NEG_002"
       title: "字幕擦除-视频格式不是MP4或MOV"
       category: "negative"
@@ -45,10 +46,21 @@ subtitle_erase:
       form:
         language_code: "zh"
       expected:
-        http_status_any: [200,400, 415, 422, 500]
-        code: 400
+        http_status_any: [200, 400, 415, 422, 500]
+        code: 1003
         message_contains_any: ["MP4", "MOV", "格式", "视频"]
-    # - id: "SE_NEG_003"
+    - id: "SE_NEG_003"
+      title: "字幕擦除-视频文件为空"
+      category: "negative"
+      file_key: "empty_audio"
+      form:
+        body: '{"carry_back":"voice-clone-missing-file"}'
+      expected:
+        http_status_any: [ 200, 400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "文件", "文件不能为空", "为空" ]
+
+    # - id: "SE_NEG_004"
     #   title: "字幕擦除-视频超过2GB"
     #   category: "negative"
     #   file_key: "oversize_video_2100mb"
@@ -62,7 +74,7 @@ subtitle_erase:
     # params: URL 查询参数（如 project_id），用于 GET 状态查询接口
     # ---
     - id: "SER_POS_001"
-      title: "字幕擦除-查询结果"
+      title: "查询字幕擦除-结果"
       category: "positive"
       params:
         project_id: "{{project_id}}"
@@ -70,9 +82,19 @@ subtitle_erase:
         http_status: 200
         code: 200
     - id: "SER_NEG_001"
-      title: "字幕擦除-缺失project_id"
+      title: "查询字幕擦除-缺失project_id"
       category: "negative"
       params: {}
       expected:
-        http_status_any: [400, 422, 500]
-        message_contains_any: ["project_id", "参数", "不能为空"]
+        http_status_any: [200, 400, 422, 500, 404]
+        code: 1002
+        message_contains_any: ["project_id", "缺少请求参数", "参数"]
+    - id: "SER_NEG_002"
+      title: "查询字幕擦除-project_id不存在"
+      category: "negative"
+      params:
+        project_id: "12345"
+      expected:
+        http_status_any: [ 200, 400, 422, 500, 404 ]
+        code: 1300
+        message_contains_any: [ "任务不存在" ]

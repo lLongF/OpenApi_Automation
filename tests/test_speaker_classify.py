@@ -10,11 +10,17 @@
 
 from __future__ import annotations
 
+import time
+
 import pytest
 
 from openapi_automation.clients.openapi_client import build_files
+from openapi_automation.core.assertions import response_json
 
 from .helpers import assert_case, case_ids, case_params, rendered
+
+SPEAKER_CLASSIFY_POLL_INTERVAL_SECONDS = 5
+SPEAKER_CLASSIFY_POLL_TIMEOUT_SECONDS = 300
 
 
 def pytest_generate_tests(metafunc):
@@ -63,6 +69,12 @@ def test_speaker_classify_status(api_client, test_data, common, speaker_status_c
     """
     case = rendered(speaker_status_case, common)
     case = _resolve_auto_speaker_classify_request_id(case, api_client, test_data, runtime_context)
+    if case.get("id") == "SCS_POS_001":
+        response = _poll_speaker_classify_success(api_client, case)
+        payload = assert_case(response, case)
+        assert _is_speaker_classify_success(payload or {}), payload
+        return
+
     response = api_client.speaker_classify_status(params=case.get("params", {}), auth=case.get("auth", "default"))
     assert_case(response, case)
 
@@ -89,7 +101,32 @@ def _submit_speaker_classify_and_get_request_id(api_client, test_data):
     bundle = build_files(test_data, {"file": "valid_audio"})
     with bundle as files:
         response = api_client.speaker_classify_submit(files=files, auth="default")
-    payload = response.json()
+    payload = response_json(response)
     request_id = (payload.get("data") or {}).get("request_id") or payload.get("request_id")
     assert request_id, f"说话人分类提交接口未返回 request_id，无法用于状态查询。响应: {payload!r}"
     return str(request_id)
+
+
+def _poll_speaker_classify_success(api_client, case):
+    """Poll speaker classify status until the async task succeeds."""
+    deadline = time.monotonic() + SPEAKER_CLASSIFY_POLL_TIMEOUT_SECONDS
+    last_payload = None
+
+    while True:
+        response = api_client.speaker_classify_status(params=case.get("params", {}), auth=case.get("auth", "default"))
+        last_payload = response_json(response)
+        if response.status_code == 200 and _is_speaker_classify_success(last_payload):
+            return response
+        if time.monotonic() >= deadline:
+            break
+        time.sleep(SPEAKER_CLASSIFY_POLL_INTERVAL_SECONDS)
+
+    raise AssertionError(
+        "说话人分类任务状态查询未在 "
+        f"{SPEAKER_CLASSIFY_POLL_TIMEOUT_SECONDS}s 内返回 success，最后响应: {last_payload!r}"
+    )
+
+
+def _is_speaker_classify_success(payload: dict) -> bool:
+    data = payload.get("data") or {}
+    return data.get("status") == "success" or payload.get("message") == "公共说话人分类完成" or data.get("message") == "公共说话人分类完成"

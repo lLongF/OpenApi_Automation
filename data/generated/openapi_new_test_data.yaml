@@ -1,5 +1,5 @@
 _meta:
-  generated_at: '2026-06-25T08:46:07.158148+00:00'
+  generated_at: '2026-07-15T03:45:43.966195+00:00'
   source: data/openapi/apifox_raw.json
   note: Generated draft only. Fill real request values, file_key, expected code, and assertions before merging into data/test_data/*.yaml.
 open_video_compose_status_get_001:
@@ -38,7 +38,28 @@ open_video_compose_status_get_001:
       - 必填
       - 缺少
       - 不能为空
-open_voice_separate_status_get_002:
+open_voice_list_get_002:
+  endpoint:
+    method: GET
+    path: /open/voice/list
+    summary: 查询公共音色列表
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: VL_POS_001
+    title: 查询公共音色列表-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    params:
+      name: replace-with-name
+      page_no: 1
+      page_size: 1
+open_voice_separate_status_get_003:
   endpoint:
     method: GET
     path: /open/voice/separate/status
@@ -74,7 +95,7 @@ open_voice_separate_status_get_002:
       - 必填
       - 缺少
       - 不能为空
-open_video_compose_tasks_post_003:
+open_video_compose_tasks_post_004:
   endpoint:
     method: POST
     path: /open/video-compose/tasks
@@ -124,7 +145,7 @@ open_video_compose_tasks_post_003:
       - 必填
       - 缺少
       - 不能为空
-open_voice_separate_post_004:
+open_voice_separate_post_005:
   endpoint:
     method: POST
     path: /open/voice/separate

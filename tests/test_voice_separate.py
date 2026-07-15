@@ -10,6 +10,7 @@
 
 from __future__ import annotations
 
+import time
 from typing import Any
 
 import pytest
@@ -18,6 +19,9 @@ from openapi_automation.clients.openapi_client import build_files
 from openapi_automation.core.assertions import response_json
 
 from .helpers import assert_case, case_ids, case_params, rendered
+
+VOICE_SEPARATE_POLL_INTERVAL_SECONDS = 5
+VOICE_SEPARATE_POLL_TIMEOUT_SECONDS = 300
 
 
 def pytest_generate_tests(metafunc):
@@ -53,6 +57,12 @@ def test_voice_separate_status(api_client, test_data, common, voice_separate_sta
     """[Live 测试] 查询背景音与人声分离任务状态。"""
     case = rendered(voice_separate_status_case, common)
     case = _resolve_auto_voice_separate_task_id(case, api_client, test_data, runtime_context)
+    if case.get("id") == "VSEPS_POS_001":
+        response = _poll_voice_separate_success(api_client, case)
+        payload = assert_case(response, case)
+        assert _is_voice_separate_success(payload or {}), payload
+        return
+
     response = api_client.voice_separate_status(params=case.get("params", {}), auth=case.get("auth", "default"))
     assert_case(response, case)
 
@@ -81,6 +91,31 @@ def _submit_voice_separate_and_get_task_id(api_client, test_data):
     task_id = _first_present(payload, ("data.taskId", "data.task_id", "taskId", "task_id"))
     assert task_id, f"背景音与人声分离提交接口未返回 task_id，无法用于状态查询。响应: {payload!r}"
     return str(task_id)
+
+
+def _poll_voice_separate_success(api_client, case):
+    """Poll voice separate status until the async task succeeds."""
+    deadline = time.monotonic() + VOICE_SEPARATE_POLL_TIMEOUT_SECONDS
+    last_payload = None
+
+    while True:
+        response = api_client.voice_separate_status(params=case.get("params", {}), auth=case.get("auth", "default"))
+        last_payload = response_json(response)
+        if response.status_code == 200 and _is_voice_separate_success(last_payload):
+            return response
+        if time.monotonic() >= deadline:
+            break
+        time.sleep(VOICE_SEPARATE_POLL_INTERVAL_SECONDS)
+
+    raise AssertionError(
+        "背景音与人声分离任务状态查询未在 "
+        f"{VOICE_SEPARATE_POLL_TIMEOUT_SECONDS}s 内返回 success，最后响应: {last_payload!r}"
+    )
+
+
+def _is_voice_separate_success(payload: dict[str, Any]) -> bool:
+    data = payload.get("data") or {}
+    return data.get("status") == "success" or payload.get("message") == "音频分离完成" or data.get("message") == "音频分离完成"
 
 
 def _first_present(payload: dict[str, Any], paths: tuple[str, ...]) -> Any:

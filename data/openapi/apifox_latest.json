@@ -1,6 +1,6 @@
 {
   "openapi_version": "3.0.1",
-  "operation_count": 20,
+  "operation_count": 21,
   "operations": {
     "GET /open/speaker-classify/status": {
       "method": "GET",
@@ -169,6 +169,43 @@
         "200"
       ],
       "summary": "获取任务列表",
+      "tags": []
+    },
+    "GET /open/voice/list": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "page_no",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "page_size",
+          "required": false,
+          "schema_type": "integer"
+        }
+      ],
+      "path": "/open/voice/list",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询公共音色列表",
       "tags": []
     },
     "GET /open/voice/separate/status": {
@@ -429,30 +466,6 @@
           "name": "api_key",
           "required": false,
           "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "mode",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "target_language",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "tos_path",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "user_prompt",
-          "required": false,
-          "schema_type": "string"
         }
       ],
       "path": "/open/videots/translate",
@@ -491,6 +504,36 @@
           "name": "api_key",
           "required": false,
           "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "description",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "gender",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "is_public",
+          "required": false,
+          "schema_type": "boolean"
+        },
+        {
+          "in": "query",
+          "name": "lang_code",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
+          "required": false,
+          "schema_type": "string"
         }
       ],
       "path": "/open/voice/zeroshot/clone",
@@ -522,5 +565,5 @@
     }
   },
   "source": "shanhai_apifox",
-  "synced_at": "2026-06-25T08:46:07.973275+00:00"
+  "synced_at": "2026-07-15T03:46:16.614403+00:00"
 }

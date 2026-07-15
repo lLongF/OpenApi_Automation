@@ -38,11 +38,13 @@ from tests.helpers import reset_report_item, set_report_item
 SUITE_NAMES = {
     "test_voice.py": "语音接口",
     "test_timbre_design.py": "音色设计接口",
+    "test_voice_list.py": "公共音色列表查询接口",
     "test_videots.py": "字幕翻译接口",
     "test_speaker_classify.py": "说话人分类接口",
     "test_voice_separate.py": "背景音与人声分离接口",
     "test_video_compose.py": "视频压制合成接口",
-    "test_subtitle_asr_speaker.py": "字幕擦除和asr语音识别接口",
+    "test_subtitle_erase.py": "字幕擦除接口",
+    "test_asr.py": "语音识别接口",
     "test_openapi_contract.py": "OpenAPI契约测试",
     "test_contract_data.py": "OpenAPI契约数据测试",
 }
@@ -166,8 +168,9 @@ def pytest_runtest_setup(item):
         for value in item.callspec.params.values():
             if isinstance(value, dict) and value.get("title"):
                 allure.dynamic.title(str(value["title"]))
+                allure.dynamic.story(str(value["title"]))
                 if value.get("id"):
-                    allure.dynamic.story(str(value["id"]))
+                    allure.dynamic.parameter("用例编号", str(value["id"]))
                 return
 
 

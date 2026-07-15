@@ -20,6 +20,9 @@ class ShanhaiOpenApiClient:
     def infer_voice(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/voice/zeroshot/infer", files=_multipart_files(files, data), auth=auth)
 
+    def public_voice_list(self, *, params: dict[str, Any] | None = None, auth: str = "default"):
+        return self.http.get("/open/voice/list", params=params or {}, auth=auth)
+
     def generate_timbre(self, *, json: dict[str, Any], auth: str = "default"):
         return self.http.post(
             "/open/timbre-design/generate",

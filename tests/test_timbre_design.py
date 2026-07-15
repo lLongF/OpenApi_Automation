@@ -92,4 +92,4 @@ def _generate_timbre_and_get_request_id(api_client, test_data) -> str:
 
 def _timbre_design_request_id(payload: dict[str, Any]) -> Any:
     data = payload.get("data") or {}
-    return data.get("request_id")  or payload.get("request_id") 
+    return data.get("request_id")  or payload.get("request_id")

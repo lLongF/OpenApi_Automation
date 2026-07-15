@@ -34,15 +34,12 @@
           "data": {
             "description": "",
             "items": {
-              "$ref": "#/components/schemas/MapObject"
+              "$ref": "#/components/schemas/MapObject",
+              "description": ""
             },
             "type": "array"
           },
           "info": {
-            "description": "",
-            "type": "string"
-          },
-          "requestId": {
             "description": "",
             "type": "string"
           }
@@ -56,36 +53,12 @@
             "type": "integer"
           },
           "data": {
-            "description": "",
-            "properties": {
-              "active_count": {
-                "type": "integer"
-              },
-              "disabled_count": {
-                "type": "integer"
-              },
-              "keys": {
-                "items": {
-                  "$ref": "#/components/schemas/keys"
-                },
-                "type": "array"
-              },
-              "total": {
-                "type": "integer"
-              },
-              "user_id": {
-                "type": "integer"
-              }
-            },
-            "type": "object"
+            "$ref": "#/components/schemas/MapObject",
+            "description": ""
           },
           "info": {
             "description": "",
             "type": "string"
-          },
-          "requestId": {
-            "description": "",
-            "type": "null"
           }
         },
         "type": "object"
@@ -119,6 +92,23 @@
             "type": "string"
           },
           "requestId": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponsePageResultVoiceSpeakerListItemVO": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageResultVoiceSpeakerListItemVO",
+            "description": ""
+          },
+          "info": {
             "description": "",
             "type": "string"
           }
@@ -222,10 +212,6 @@
           "info": {
             "description": "",
             "type": "string"
-          },
-          "requestId": {
-            "description": "",
-            "type": "string"
           }
         },
         "type": "object"
@@ -243,8 +229,21 @@
           "info": {
             "description": "",
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseVoiceInferResp": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
           },
-          "requestId": {
+          "data": {
+            "$ref": "#/components/schemas/VoiceInferResp",
+            "description": ""
+          },
+          "info": {
             "description": "",
             "type": "string"
           }
@@ -277,6 +276,24 @@
           "key": {
             "properties": {},
             "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "PageResultVoiceSpeakerListItemVO": {
+        "properties": {
+          "list": {
+            "description": "数据",
+            "items": {
+              "$ref": "#/components/schemas/VoiceSpeakerListItemVO",
+              "description": "cn.iocoder.lychee.openapi.model.response.voice.VoiceSpeakerListItemVO"
+            },
+            "type": "array"
+          },
+          "total": {
+            "description": "总量",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "type": "object"
@@ -371,15 +388,15 @@
       },
       "TimbreDesignResult": {
         "properties": {
-          "audioUrl": {
+          "audio_url": {
             "description": "音频完整URL",
             "type": "string"
           },
-          "outputDir": {
+          "output_dir": {
             "description": "输出目录UUID，用于后续克隆",
             "type": "string"
           },
-          "requestId": {
+          "request_id": {
             "description": "请求ID，用于查询状态",
             "type": "string"
           }
@@ -497,6 +514,23 @@
         },
         "type": "object"
       },
+      "VoiceInferResp": {
+        "properties": {
+          "audio_url": {
+            "description": "生成音频URL",
+            "type": "string"
+          },
+          "duration_seconds": {
+            "description": "生成音频时长（秒）",
+            "type": "number"
+          },
+          "request_id": {
+            "description": "请求ID",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "VoiceSeparateSubmitResponse": {
         "properties": {
           "audioPath": {
@@ -522,43 +556,31 @@
         },
         "type": "object"
       },
-      "keys": {
+      "VoiceSpeakerListItemVO": {
         "properties": {
-          "apiKey": {
-            "description": "",
+          "audio_url": {
+            "description": "试听音频完整URL（COS 拼接，可选）",
             "type": "string"
           },
-          "createTime": {
-            "description": "",
+          "created_at": {
+            "description": "创建时间",
             "type": "string"
           },
-          "experienceKey": {
-            "description": "",
+          "description": {
+            "description": "音色描述（可选）",
             "type": "string"
           },
-          "id": {
-            "description": "",
-            "format": "int64",
-            "type": "integer"
+          "is_public": {
+            "description": "是否公共音色",
+            "type": "boolean"
           },
-          "rateLimit": {
-            "default": 100,
-            "description": "",
-            "type": "integer"
-          },
-          "status": {
-            "default": 1,
-            "description": "0:禁用 1:启用",
-            "type": "integer"
-          },
-          "updateTime": {
-            "description": "",
+          "lang_code": {
+            "description": "语种代码（可选，clone 时传过就有，否则 null）",
             "type": "string"
           },
-          "userId": {
-            "description": "",
-            "format": "int64",
-            "type": "integer"
+          "name": {
+            "description": "公共音色展示名",
+            "type": "string"
           }
         },
         "type": "object"
@@ -606,7 +628,8 @@
                 "user_id": 1
               },
               "schema": {
-                "$ref": "#/components/schemas/MapObject"
+                "$ref": "#/components/schemas/MapObject",
+                "description": ""
               }
             }
           }
@@ -949,7 +972,8 @@
                 "text": "这是一段测试文本"
               },
               "schema": {
-                "$ref": "#/components/schemas/MapObject"
+                "$ref": "#/components/schemas/MapObject",
+                "description": ""
               }
             }
           }
@@ -1181,11 +1205,11 @@
         "parameters": [
           {
             "description": "",
-            "example": "",
+            "example": "{{api_key}}",
             "in": "header",
             "name": "api_key",
-            "required": false,
             "schema": {
+              "default": "{{api_key}}",
               "type": "string"
             }
           }
@@ -1201,23 +1225,38 @@
                     "format": "binary",
                     "type": "string"
                   },
-                  "mode": {
-                    "example": "",
+                  "file_url": {
+                    "description": "公网 HTTP/HTTPS SRT 地址",
+                    "example": "https://example.com/translated.srt",
+                    "examples": [
+                      "https://example.com/translated.srt"
+                    ],
+                    "maxLength": 2048,
                     "type": "string"
                   },
                   "target_language": {
-                    "example": "",
-                    "type": "string"
-                  },
-                  "tos_path": {
-                    "example": "",
+                    "description": "目标语言\n回译目标语言",
+                    "example": "zh",
+                    "examples": [
+                      "zh"
+                    ],
+                    "pattern": "[a-z]{2}(?:-[A-Z]{2}|-[A-Z][a-z]{3})?",
                     "type": "string"
                   },
                   "user_prompt": {
-                    "example": "",
+                    "default": "",
+                    "description": "用户提示词\n回译提示词",
+                    "example": "保持语气",
+                    "examples": [
+                      "保持语气"
+                    ],
+                    "maxLength": 2000,
                     "type": "string"
                   }
                 },
+                "required": [
+                  "target_language"
+                ],
                 "type": "object"
               }
             }
@@ -1303,11 +1342,11 @@
         "parameters": [
           {
             "description": "",
-            "example": "",
+            "example": "{{api_key}}",
             "in": "header",
             "name": "api_key",
-            "required": false,
             "schema": {
+              "default": "{{api_key}}",
               "type": "string"
             }
           }
@@ -1328,32 +1367,61 @@
                     "format": "binary",
                     "type": "string"
                   },
-                  "mode": {
-                    "example": "",
+                  "file_url_original": {
+                    "description": "原始字幕公网 URL",
+                    "example": "https://example.com/original.srt",
+                    "examples": [
+                      "https://example.com/original.srt"
+                    ],
+                    "maxLength": 2048,
                     "type": "string"
                   },
-                  "retranslation_items": {
-                    "example": "[{\"index\":1,\"feedback\":\"翻译更简洁口语化\"},{\"index\":3,\"feedback\":\"翻译不准确\"}]",
+                  "file_url_translated": {
+                    "description": "已翻译字幕公网 URL",
+                    "example": "https://example.com/translated.srt",
+                    "examples": [
+                      "https://example.com/translated.srt"
+                    ],
+                    "maxLength": 2048,
                     "type": "string"
+                  },
+                  "retranslation_items[0].feedback": {
+                    "example": "更口语化",
+                    "examples": [
+                      "更口语化"
+                    ],
+                    "type": ""
+                  },
+                  "retranslation_items[0].index": {
+                    "example": "1",
+                    "examples": [
+                      "1"
+                    ],
+                    "type": ""
                   },
                   "target_language": {
-                    "example": "en",
-                    "type": "string"
-                  },
-                  "tos_path_original": {
-                    "example": "",
-                    "format": "binary",
-                    "type": "string"
-                  },
-                  "tos_path_translated": {
-                    "example": "",
+                    "description": "目标语言",
+                    "example": "zh",
+                    "examples": [
+                      "zh"
+                    ],
+                    "pattern": "[a-z]{2}(?:-[A-Z]{2}|-[A-Z][a-z]{3})?",
                     "type": "string"
                   },
                   "user_prompt": {
-                    "example": "",
+                    "default": "",
+                    "description": "用户提示词\n翻译提示词",
+                    "example": "保持人名不变",
+                    "examples": [
+                      "保持人名不变"
+                    ],
+                    "maxLength": 2000,
                     "type": "string"
                   }
                 },
+                "required": [
+                  "target_language"
+                ],
                 "type": "object"
               }
             }
@@ -1799,50 +1867,11 @@
         "parameters": [
           {
             "description": "",
-            "in": "query",
-            "name": "tos_path",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "en",
-            "in": "query",
-            "name": "target_language",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "",
-            "in": "query",
-            "name": "user_prompt",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "direct",
-            "in": "query",
-            "name": "mode",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "",
+            "example": "{{api_key}}",
             "in": "header",
             "name": "api_key",
-            "required": false,
             "schema": {
+              "default": "{{api_key}}",
               "type": "string"
             }
           }
@@ -1858,16 +1887,33 @@
                     "format": "binary",
                     "type": "string"
                   },
-                  "mode": {
-                    "example": "",
+                  "file_url": {
+                    "description": "公网 HTTP/HTTPS SRT 地址",
+                    "example": "https://example.com/input.srt",
+                    "examples": [
+                      "https://example.com/input.srt"
+                    ],
+                    "maxLength": 2048,
                     "type": "string"
                   },
-                  "tos_path": {
-                    "example": "",
+                  "target_language": {
+                    "default": "en",
+                    "description": "目标语言",
+                    "example": "en",
+                    "examples": [
+                      "en"
+                    ],
+                    "pattern": "[a-z]{2}(?:-[A-Z]{2}|-[A-Z][a-z]{3})?",
                     "type": "string"
                   },
                   "user_prompt": {
-                    "example": "",
+                    "default": "",
+                    "description": "用户提示词\n翻译提示词",
+                    "example": "更口语化",
+                    "examples": [
+                      "更口语化"
+                    ],
+                    "maxLength": 2000,
                     "type": "string"
                   }
                 },
@@ -1901,6 +1947,69 @@
         },
         "security": [],
         "summary": "字幕翻译",
+        "tags": []
+      }
+    },
+    "/open/voice/list": {
+      "get": {
+        "deprecated": false,
+        "description": "查询公共音色列表",
+        "parameters": [
+          {
+            "description": "音色名，模糊匹配",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "页码，从 1 开始",
+            "in": "query",
+            "name": "page_no",
+            "required": false,
+            "schema": {
+              "default": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "每页条数，最大 100",
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "default": 20,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageResultVoiceSpeakerListItemVO"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "查询公共音色列表",
         "tags": []
       }
     },
@@ -2009,12 +2118,62 @@
         "description": "语音克隆\n上传音频进行声音克隆",
         "parameters": [
           {
-            "description": "",
-            "example": "",
-            "in": "header",
-            "name": "api_key",
+            "description": "是否发布为公共音色",
+            "example": "true",
+            "in": "query",
+            "name": "is_public",
             "required": false,
             "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "description": "公共音色名",
+            "example": "lady",
+            "in": "query",
+            "name": "name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "音色描述",
+            "example": "测试",
+            "in": "query",
+            "name": "description",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "zh",
+            "in": "query",
+            "name": "lang_code",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "famale",
+            "in": "query",
+            "name": "gender",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
               "type": "string"
             }
           }
@@ -2026,7 +2185,7 @@
               "schema": {
                 "properties": {
                   "audio": {
-                    "example": "file://C:\\Users\\Administrator\\Downloads\\split.mp3",
+                    "example": "file://C:\\Users\\Administrator\\Downloads\\西班牙-女.mp3",
                     "format": "binary",
                     "type": "string"
                   },
@@ -2047,8 +2206,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {},
-                  "type": "object"
+                  "$ref": "#/components/schemas/ApiResponseMapObject"
                 }
               }
             },
@@ -2064,7 +2222,7 @@
     "/open/voice/zeroshot/infer": {
       "post": {
         "deprecated": false,
-        "description": "语音推理\n使用克隆的声音生成语音",
+        "description": "语音推理 v2\n使用 form-data 字段传递推理参数，可选上传音频进行临时克隆后再推理",
         "parameters": [
           {
             "description": "",
@@ -2084,15 +2242,12 @@
               "schema": {
                 "properties": {
                   "audio": {
+                    "description": "参考克隆音频文件，可选",
                     "format": "binary",
                     "type": "string"
                   },
-                  "ref_text": {
-                    "description": "参考文本",
-                    "type": "string"
-                  },
                   "sample_rate": {
-                    "description": "采样率",
+                    "description": "采样率，默认44100",
                     "example": 44100,
                     "examples": [
                       44100
@@ -2100,35 +2255,40 @@
                     "type": "integer"
                   },
                   "speaker_id": {
-                    "description": "音色ID",
-                    "example": "ceee4c70-ba01-48d7-8ebb-0d076556ada2",
+                    "description": "音色ID；上传音频临时克隆时不传",
+                    "example": "550e8400-e29b-41d4-a716-446655440000",
                     "examples": [
                       "550e8400-e29b-41d4-a716-446655440000"
                     ],
                     "type": "string"
                   },
                   "speed": {
-                    "description": "语速",
+                    "description": "语速，默认1.0",
                     "example": 1,
                     "examples": [
                       1
                     ],
+                    "maximum": 2,
+                    "minimum": 0,
                     "type": "number"
                   },
                   "text": {
-                    "description": "推理文本",
-                    "example": "",
+                    "description": "推理文本，必填，最多10000个字符",
+                    "example": "你好，欢迎使用语音合成",
                     "examples": [
                       "你好，欢迎使用语音合成"
                     ],
+                    "maxLength": 10000,
                     "type": "string"
                   },
                   "volume": {
-                    "description": "音量",
+                    "description": "音量，默认1.0",
                     "example": 1,
                     "examples": [
                       1
                     ],
+                    "maximum": 2,
+                    "minimum": 0,
                     "type": "number"
                   }
                 },
@@ -2145,8 +2305,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "properties": {},
-                  "type": "object"
+                  "$ref": "#/components/schemas/ApiResponseVoiceInferResp"
                 }
               }
             },
