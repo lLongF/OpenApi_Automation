@@ -157,6 +157,23 @@
         },
         "type": "object"
       },
+      "ApiResponseTimbreDesignResult": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/TimbreDesignResult",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ApiResponseVideoCompositionSubmitResponse": {
         "properties": {
           "code": {
@@ -984,7 +1001,7 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TimbreDesignResult",
-                  "description": "音色设计结果"
+                  "description": ""
                 }
               }
             },
@@ -994,6 +1011,55 @@
         },
         "security": [],
         "summary": "音色设计",
+        "tags": []
+      }
+    },
+    "/open/timbre-design/generate-mimo": {
+      "post": {
+        "deprecated": false,
+        "description": "mimo 音色设计\n使用自然语言描述生成音色，限时免费",
+        "parameters": [
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "description": "年轻女性，声音清脆活泼",
+                "optimize_text": true,
+                "text": "你好，欢迎收听今天的节目"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/MapObject",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseTimbreDesignResult"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "mimo 音色设计",
         "tags": []
       }
     },
@@ -2280,6 +2346,14 @@
                     ],
                     "maxLength": 10000,
                     "type": "string"
+                  },
+                  "text_normalizer": {
+                    "description": "是否启用文本归一化；不传默认false",
+                    "example": "true",
+                    "examples": [
+                      true
+                    ],
+                    "type": "boolean"
                   },
                   "volume": {
                     "description": "音量，默认1.0",

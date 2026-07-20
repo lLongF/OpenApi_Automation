@@ -21,5 +21,6 @@ markers = [
     "smoke: core positive-path checks",
     "negative: error, auth, and invalid parameter checks",
     "boundary: boundary value checks",
+    "exception: exceptional and invalid-input checks",
     "openapi: OpenAPI/Swagger/Apifox contract synchronization checks",
 ]

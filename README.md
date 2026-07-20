@@ -59,6 +59,7 @@ http://127.0.0.1:8000/
 | 语音合成 `/open/voice/zeroshot/infer` | 可选参考音频 + 文本 | 音频 1s-30s、不超过 10MB；文本不超过 3000 字符 | `valid_clone_audio`；`valid_clone_1min_5mb`；`valid_clone_open_audio` |
 | 公共音色列表 `/open/voice/list` | 无文件 | 只使用 query 参数 `name/page_no/page_size` | 无 |
 | 音色设计 `/open/timbre-design/generate` | 无文件 | JSON 文本参数，`text` 不超过 500 字符 | 无 |
+| MIMO 音色设计 `/open/timbre-design/generate-mimo` | 无文件 | JSON 参数 `text`、`description`、`optimize_text` | 无 |
 | 字幕翻译/重译/回译 `/open/videots/*` | 字幕文件 | srt；不超过 1MB | `valid_subtitle`；`valid_subtitle_translated`；`empty_subtitle`；`invalid_subtitle`；`oversize_subtitle_11mb` 约 10.49MB |
 | 字幕擦除 `/open/subtitle/erase` | 视频 | mp4/mov；10s-60min；不超过 2GB | `valid_video` 约 1.30MB/20.2s；`invalid_video`；`empty_video` |
 | 语音识别 `/open/asr` | 音频 | mp3/wav/m4a；10s-60min；不超过 100MB | `valid_audio` 约 0.61MB/19.9s；`valid_speaker_5min_50mb` 约 50MB/5min；`oversize_speaker_12min` 约 10.99MB/12min；`valid_audio_65min` 约 14.88MB/65min；`valid_audio_205MB` 约 205MB；`invalid_audio`；`empty_audio` |
@@ -73,6 +74,7 @@ data/test_data/test_voice_clone.yaml        语音克隆
 data/test_data/test_voice_infer.yaml        语音合成
 data/test_data/test_voice_list.yaml         公共音色列表
 data/test_data/test_timbre_design.yaml      音色设计
+data/test_data/test_timbre_design_mimo.yaml MIMO 音色设计
 data/test_data/test_videots.yaml            字幕翻译/重译/回译
 data/test_data/test_subtitle_erase.yaml     字幕擦除
 data/test_data/test_asr.yaml                语音识别

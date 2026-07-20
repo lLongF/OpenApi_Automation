@@ -31,6 +31,14 @@ class ShanhaiOpenApiClient:
             headers={"Content-Type": "application/json"},
         )
 
+    def generate_mimo_timbre(self, *, json: dict[str, Any], auth: str = "default"):
+        return self.http.post(
+            "/open/timbre-design/generate-mimo",
+            json=json,
+            auth=auth,
+            headers={"Content-Type": "application/json"},
+        )
+
     def translate(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/videots/translate", files=_multipart_files(files, data), auth=auth)
 

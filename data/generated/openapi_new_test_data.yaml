@@ -1,5 +1,5 @@
 _meta:
-  generated_at: '2026-07-15T03:45:43.966195+00:00'
+  generated_at: '2026-07-17T08:42:11.388335+00:00'
   source: data/openapi/apifox_raw.json
   note: Generated draft only. Fill real request values, file_key, expected code, and assertions before merging into data/test_data/*.yaml.
 open_video_compose_status_get_001:
@@ -95,7 +95,27 @@ open_voice_separate_status_get_003:
       - 必填
       - 缺少
       - 不能为空
-open_video_compose_tasks_post_004:
+open_timbre_design_generate_mimo_post_004:
+  endpoint:
+    method: POST
+    path: /open/timbre-design/generate-mimo
+    summary: mimo 音色设计
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: TDGM_POS_001
+    title: mimo 音色设计-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    content_type: application/json
+    json:
+      key: {}
+open_video_compose_tasks_post_005:
   endpoint:
     method: POST
     path: /open/video-compose/tasks
@@ -145,7 +165,7 @@ open_video_compose_tasks_post_004:
       - 必填
       - 缺少
       - 不能为空
-open_voice_separate_post_005:
+open_voice_separate_post_006:
   endpoint:
     method: POST
     path: /open/voice/separate

@@ -65,7 +65,7 @@ voice_separate:
         srt: "invalid_subtitle"
       expected:
         http_status_any: [200, 400, 422, 500]
-        code: 1001
+        code: 1003
         message_contains_any: ["字幕文件仅支持srt格式","srt", "字幕", "格式", "文件", "FileInvalid"]
     - id: "VSEP_BOUNDARY_001"
       title: "背景音与人声分离-音频大小等于50MB"
@@ -103,7 +103,7 @@ voice_separate:
         srt: "oversize_subtitle_11mb"
       expected:
         http_status_any: [200, 400, 422, 500]
-        code: 1001
+        code: 1003
         message_contains_any: ["1MB", "字幕", "大小", "超过", "文件"]
   status_cases:
     # --- 字段说明 ---

@@ -1,6 +1,6 @@
 {
   "openapi_version": "3.0.1",
-  "operation_count": 21,
+  "operation_count": 22,
   "operations": {
     "GET /open/speaker-classify/status": {
       "method": "GET",
@@ -364,6 +364,25 @@
       "summary": "音色设计",
       "tags": []
     },
+    "POST /open/timbre-design/generate-mimo": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/timbre-design/generate-mimo",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "mimo 音色设计",
+      "tags": []
+    },
     "POST /open/video-compose/tasks": {
       "method": "POST",
       "operation_id": null,
@@ -565,5 +584,5 @@
     }
   },
   "source": "shanhai_apifox",
-  "synced_at": "2026-07-15T03:46:16.614403+00:00"
+  "synced_at": "2026-07-17T08:42:46.093819+00:00"
 }
