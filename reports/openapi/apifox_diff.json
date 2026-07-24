@@ -16,6 +16,41 @@
             "name": "task_id",
             "required": true,
             "schema_type": "string"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "required": true,
+            "schema_type": "string"
+          }
+        ],
+        "path": "/open/tasks/status",
+        "request_body_required": false,
+        "response_codes": [
+          "200"
+        ],
+        "summary": "统一查询任务状态",
+        "tags": []
+      },
+      "operation": "GET /open/tasks/status",
+      "type": "operation_added"
+    },
+    {
+      "new": {
+        "method": "GET",
+        "operation_id": null,
+        "parameters": [
+          {
+            "in": "header",
+            "name": "api_key",
+            "required": false,
+            "schema_type": "string"
+          },
+          {
+            "in": "query",
+            "name": "task_id",
+            "required": true,
+            "schema_type": "string"
           }
         ],
         "path": "/open/video-compose/status",
@@ -251,6 +286,17 @@
     {
       "new": {
         "in": "query",
+        "name": "clip_short",
+        "required": false,
+        "schema_type": "boolean"
+      },
+      "operation": "POST /open/voice/zeroshot/clone",
+      "parameter": "query:clip_short",
+      "type": "optional_parameter_added"
+    },
+    {
+      "new": {
+        "in": "query",
         "name": "description",
         "required": false,
         "schema_type": "string"
@@ -306,10 +352,10 @@
   ],
   "has_breaking_changes": false,
   "summary": {
-    "added": 6,
+    "added": 7,
     "breaking_changes": 0,
-    "changed": 9,
+    "changed": 10,
     "removed": 0,
-    "total_changes": 15
+    "total_changes": 17
   }
 }

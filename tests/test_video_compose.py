@@ -49,7 +49,12 @@ def test_video_compose_submit(api_client, test_data, common, video_compose_submi
         )
     bundle = build_files(test_data, case.get("files", {}))
     with bundle as files:
-        response = api_client.video_compose(files=files or None, params=case.get("params"), auth=case.get("auth", "default"))
+        response = api_client.video_compose(
+            files=files or None,
+            params=case.get("params"),
+            auth=case.get("auth", "default"),
+            streaming_upload=case.get("streaming_upload", False),
+        )
     payload = assert_case(response, case)
     if case.get("category") in {"positive", "boundary"} and payload:
         task_id = _first_present(payload, ("data.taskId", "data.task_id", "taskId", "task_id"))

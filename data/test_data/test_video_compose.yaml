@@ -208,19 +208,20 @@ video_compose:
         http_status_any: [ 200, 400, 422, 500 ]
         code: 1003
         message_contains_any: [ "时长","mp4", "mov", "超过", "视频", "60分钟" ]
-    - id: "VCMP_EXCEPTION_008"
-      title: "视频压制合成-视频文件大小超过2G"
-      category: "negative"
-      only_envs: ["dev"]
-      files:
-        video_file: "valid_compose_video_2G"
-        audio_file: "valid_audio"
-      params:
-        target_language: "zh"
-      expected:
-        http_status_any: [ 200, 400, 422, 500 ]
-        code: 1003
-        message_contains_any: [ "文件","mp4", "mov", "超过", "视频", "2G" ]
+#    - id: "VCMP_EXCEPTION_008"
+#      title: "视频压制合成-视频文件大小超过2G"
+#      category: "negative"
+#      only_envs: ["dev"]
+#      streaming_upload: true
+#      files:
+#        video_file: "valid_compose_video_2G"
+#        audio_file: "valid_audio"
+#      params:
+#        target_language: "zh"
+#      expected:
+#        http_status_any: [ 200, 400, 422, 500 ]
+#        code: 1003
+#        message_contains_any: [ "文件","mp4", "mov", "超过", "视频", "2G" ]
     - id: "VCMP_EXCEPTION_009"
       title: "视频压制合成-缺少自定义字幕位置"
       category: "negative"

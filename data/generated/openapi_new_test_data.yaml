@@ -1,8 +1,46 @@
 _meta:
-  generated_at: '2026-07-17T08:42:11.388335+00:00'
+  generated_at: '2026-07-24T03:34:38.683907+00:00'
   source: data/openapi/apifox_raw.json
   note: Generated draft only. Fill real request values, file_key, expected code, and assertions before merging into data/test_data/*.yaml.
-open_video_compose_status_get_001:
+open_tasks_status_get_001:
+  endpoint:
+    method: GET
+    path: /open/tasks/status
+    summary: 统一查询任务状态
+    operation_id: null
+    response_codes:
+    - '200'
+  cases:
+  - id: TS_POS_001
+    title: 统一查询任务状态-正向成功
+    category: positive
+    expected:
+      http_status: 200
+      code: 200
+      required_fields:
+      - code
+    params:
+      task_id: '{{task_id}}'
+      type: replace-with-type
+  - id: TS_NEG_001
+    title: 统一查询任务状态-缺少必填参数task_id
+    category: negative
+    params:
+      type: replace-with-type
+    expected:
+      http_status_any:
+      - 200
+      - 400
+      - 422
+      code_any:
+      - 400
+      - 422
+      message_contains_any:
+      - task_id
+      - 必填
+      - 缺少
+      - 不能为空
+open_video_compose_status_get_002:
   endpoint:
     method: GET
     path: /open/video-compose/status
@@ -38,7 +76,7 @@ open_video_compose_status_get_001:
       - 必填
       - 缺少
       - 不能为空
-open_voice_list_get_002:
+open_voice_list_get_003:
   endpoint:
     method: GET
     path: /open/voice/list
@@ -59,7 +97,7 @@ open_voice_list_get_002:
       name: replace-with-name
       page_no: 1
       page_size: 1
-open_voice_separate_status_get_003:
+open_voice_separate_status_get_004:
   endpoint:
     method: GET
     path: /open/voice/separate/status
@@ -95,7 +133,7 @@ open_voice_separate_status_get_003:
       - 必填
       - 缺少
       - 不能为空
-open_timbre_design_generate_mimo_post_004:
+open_timbre_design_generate_mimo_post_005:
   endpoint:
     method: POST
     path: /open/timbre-design/generate-mimo
@@ -115,7 +153,7 @@ open_timbre_design_generate_mimo_post_004:
     content_type: application/json
     json:
       key: {}
-open_video_compose_tasks_post_005:
+open_video_compose_tasks_post_006:
   endpoint:
     method: POST
     path: /open/video-compose/tasks
@@ -165,7 +203,7 @@ open_video_compose_tasks_post_005:
       - 必填
       - 缺少
       - 不能为空
-open_voice_separate_post_006:
+open_voice_separate_post_007:
   endpoint:
     method: POST
     path: /open/voice/separate

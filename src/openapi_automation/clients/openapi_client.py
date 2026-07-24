@@ -75,13 +75,37 @@ class ShanhaiOpenApiClient:
     def timbre_status(self, *, params: dict[str, Any], auth: str = "default"):
         return self.http.get("/open/timbre-design/status", params=params, auth=auth)
 
+    def task_status(self, *, params: dict[str, Any], auth: str = "default"):
+        return self.http.get("/open/tasks/status", params=params, auth=auth)
+
     def voice_separate(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/voice/separate", files=_multipart_files(files, data), auth=auth)
 
     def voice_separate_status(self, *, params: dict[str, Any], auth: str = "default"):
         return self.http.get("/open/voice/separate/status", params=params, auth=auth)
 
-    def video_compose(self, *, files: dict | None = None, params: dict | None = None, auth: str = "default"):
+    def video_compose(
+        self,
+        *,
+        files: dict | None = None,
+        params: dict | None = None,
+        auth: str = "default",
+        streaming_upload: bool = False,
+    ):
+        if streaming_upload:
+            try:
+                from requests_toolbelt.multipart.encoder import MultipartEncoder
+            except ImportError as exc:  # pragma: no cover - dependency validation
+                raise RuntimeError("requests-toolbelt is required for streaming video uploads") from exc
+
+            encoder = MultipartEncoder(fields=_multipart_files(files))
+            return self.http.post(
+                "/open/video-compose/tasks",
+                data=encoder,
+                params=params,
+                auth=auth,
+                headers={"Content-Type": encoder.content_type},
+            )
         return self.http.post("/open/video-compose/tasks", files=_multipart_files(files), params=params, auth=auth)
 
     def video_compose_status(self, *, params: dict[str, Any], auth: str = "default"):

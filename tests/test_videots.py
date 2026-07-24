@@ -57,9 +57,11 @@ def test_translate(api_client, test_data, common, translate_case, runtime_contex
         response = api_client.translate(files=files or None, data=case.get("form"), auth=case.get("auth", "default"))
     payload = assert_case(response, case)
     if case.get("category") == "positive" and payload:
-        task_id = (payload.get("data") or {}).get("task_id") or payload.get("task_id")
+        data = payload.get("data") or {}
+        task_id = data.get("task_id") or data.get("taskId") or payload.get("task_id") or payload.get("taskId")
         if task_id:
             runtime_context["task_id"] = str(task_id)
+            runtime_context["subtitle_translation_task_id"] = str(task_id)
 
 
 @pytest.mark.live

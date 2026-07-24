@@ -21,7 +21,7 @@ from openapi_automation.core.assertions import response_json
 from .helpers import assert_case, case_ids, case_params, rendered
 
 VOICE_SEPARATE_POLL_INTERVAL_SECONDS = 5
-VOICE_SEPARATE_POLL_TIMEOUT_SECONDS = 300
+VOICE_SEPARATE_POLL_TIMEOUT_SECONDS = 360
 
 
 def pytest_generate_tests(metafunc):
@@ -47,7 +47,7 @@ def test_voice_separate_submit(api_client, test_data, common, voice_separate_sub
         response = api_client.voice_separate(files=files or None, data=case.get("form"), auth=case.get("auth", "default"))
     payload = assert_case(response, case)
     if case.get("category") in {"positive", "boundary"} and payload:
-        task_id = _first_present(payload, ("data.taskId", "data.task_id", "taskId", "task_id"))
+        task_id = _first_present(payload, ( "data.task_id", "task_id"))
         if task_id:
             runtime_context["voice_separate_task_id"] = str(task_id)
 

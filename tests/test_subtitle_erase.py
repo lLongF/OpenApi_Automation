@@ -47,9 +47,13 @@ def test_subtitle_erase_submit(api_client, test_data, common, erase_submit_case,
         response = api_client.erase_subtitle(files=files or None, data=case.get("form"), auth=case.get("auth", "default"))
     payload = assert_case(response, case)
     if case.get("category") == "positive" and payload:
-        project_id = (payload.get("data") or {}).get("project_id") or payload.get("project_id")
+        data = payload.get("data") or {}
+        project_id = data.get("project_id") or payload.get("project_id")
         if project_id:
             runtime_context["project_id"] = str(project_id)
+        task_id = data.get("task_id") or data.get("taskId") or payload.get("task_id") or payload.get("taskId")
+        if task_id:
+            runtime_context["subtitle_erase_task_id"] = str(task_id)
 
 
 @pytest.mark.live

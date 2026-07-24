@@ -1,6 +1,6 @@
 {
   "openapi_version": "3.0.1",
-  "operation_count": 22,
+  "operation_count": 23,
   "operations": {
     "GET /open/speaker-classify/status": {
       "method": "GET",
@@ -50,6 +50,37 @@
         "200"
       ],
       "summary": "查询擦除结果",
+      "tags": []
+    },
+    "GET /open/tasks/status": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "task_id",
+          "required": true,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "type",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/tasks/status",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "统一查询任务状态",
       "tags": []
     },
     "GET /open/timbre-design/status": {
@@ -526,6 +557,12 @@
         },
         {
           "in": "query",
+          "name": "clip_short",
+          "required": false,
+          "schema_type": "boolean"
+        },
+        {
+          "in": "query",
           "name": "description",
           "required": false,
           "schema_type": "string"
@@ -584,5 +621,5 @@
     }
   },
   "source": "shanhai_apifox",
-  "synced_at": "2026-07-17T08:42:46.093819+00:00"
+  "synced_at": "2026-07-24T03:34:38.659969+00:00"
 }
