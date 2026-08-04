@@ -1,16 +1,13 @@
 # 接口名称：视频压制合成接口
 # 提交接口：POST /open/video-compose/tasks
-# 状态接口：GET /open/video-compose/status
-# 请求方式：提交接口使用 multipart/form-data + query params，状态接口使用 query params
+# 请求方式：提交接口使用 multipart/form-data + query params
 # 字段说明：
 # - video_file: 必填视频文件
 # - audio_file: 可选音频文件
 # - subtitle_file: 可选字幕文件
 # - target_language / subtitle_x / subtitle_y / subtitle_font_size / coordinate_width / coordinate_height: query 参数
 # 数据说明：
-# - submit_cases 维护视频压制合成提交用例
-# - status_cases 维护视频压制合成状态查询用例
-# 关联字段：提交接口返回 taskId/task_id，状态查询接口通过 params.task_id 查询。
+# - submit_cases 维护视频压制合成提交用例。
 
 video_compose:
   limit:
@@ -236,32 +233,3 @@ video_compose:
         http_status_any: [ 200, 400, 422, 500 ]
         code: 1001
         message_contains_any: [ "如需使用自定义字幕位置，必须同时传subtitle_x、subtitle_y、subtitle_font_size、coordinate_width、coordinate_height", "subtitle_y", "subtitle_font_size", "coordinate_width", "coordinate_height" ]
-  status_cases:
-    # --- 字段说明 ---
-    # params.task_id: 提交接口返回的任务 ID；占位值会在运行时替换为提交接口缓存值
-    # ---
-    - id: "VCMPS_POS_001"
-      title: "查询视频压制合成-任务状态"
-      category: "positive"
-      params:
-        task_id: "{{task_id}}"
-      expected:
-        http_status: 200
-        code: 200
-    - id: "VCMPS_NEG_001"
-      title: "查询视频压制合成-缺少task_id"
-      category: "negative"
-      params: {}
-      expected:
-        http_status_any: [200, 400, 404, 500]
-        code: 1002
-        message_contains_any: ["task_id", "参数", "不能为空", "缺少"]
-    - id: "VCMPS_EXCEPTION_001"
-      title: "查询视频压制合成-task_id不存在"
-      category: "exception"
-      params:
-        task_id: "not-exist-task-id"
-      expected:
-        http_status_any: [200, 404, 500]
-        code: 1300
-        message_contains_any: ["任务不存在", "task", "不存在", "失败"]

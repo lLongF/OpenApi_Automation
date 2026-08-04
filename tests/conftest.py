@@ -37,7 +37,6 @@ from tests.helpers import reset_report_item, set_report_item
 
 SUITE_NAMES = {
     "test_voice.py": "语音接口",
-    "test_timbre_design.py": "音色设计接口",
     "test_voice_list.py": "公共音色列表查询接口",
     "test_videots.py": "字幕翻译接口",
     "test_speaker_classify.py": "说话人分类接口",
@@ -47,6 +46,9 @@ SUITE_NAMES = {
     "test_asr.py": "语音识别接口",
     "test_openapi_contract.py": "OpenAPI契约测试",
     "test_contract_data.py": "OpenAPI契约数据测试",
+    "test_zz_unified_tasks_status.py": "统一任务状态查询接口",
+    "test_timbre_design_mimo.py": "MIMO 音色设计接口",
+    "test_user_voices.py": "个人音色管理接口",
 }
 
 

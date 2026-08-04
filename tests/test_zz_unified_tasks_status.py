@@ -63,10 +63,6 @@ def _submit_task_for_unified_status(task_type, api_client, test_data) -> str:
         from .test_speaker_classify import _submit_speaker_classify_and_get_request_id
 
         return _submit_speaker_classify_and_get_request_id(api_client, test_data)
-    if task_type == "timbre_design":
-        from .test_timbre_design import _generate_timbre_and_get_request_id
-
-        return _generate_timbre_and_get_request_id(api_client, test_data)
     if task_type == "subtitle_erase":
         from openapi_automation.clients.openapi_client import build_files
         from openapi_automation.core.assertions import response_json

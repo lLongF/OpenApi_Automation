@@ -2,14 +2,11 @@
 # 翻译接口：POST /open/videots/translate
 # 重译接口：POST /open/videots/retranslate
 # 回译接口：POST /open/videots/back-translation
-# 状态接口：GET /open/videots/status
-# 请求方式：提交类接口使用 multipart/form-data，状态接口使用 query params
+# 请求方式：提交类接口使用 multipart/form-data
 # 数据说明：
 # - translate_cases 维护字幕翻译提交用例
 # - retranslate_cases 维护字幕重译用例
-# - back_translation_cases 维护字幕回译用例
-# - status_cases 维护字幕翻译任务状态查询用例
-# 关联字段：翻译提交接口返回 task_id，状态查询接口通过 params.task_id 查询。
+# - back_translation_cases 维护字幕回译用例。
 
 videots:
   limit:
@@ -204,32 +201,3 @@ videots:
         http_status_any: [ 200,400, 415, 422, 500 ]
         code: 1003
         message_contains_any: [ "字幕文件不能超过1MB", "1MB", "大小", "超过", "文件" ]
-  status_cases:
-    # --- 字段说明 ---
-    # params: URL 查询参数（如 task_id / request_id），用于 GET 状态查询接口
-    # ---
-    - id: "VS_POS_001"
-      title: "查询字幕任务-任务状态"
-      category: "positive"
-      params:
-        task_id: "{{task_id}}"
-      expected:
-        http_status: 200
-        code: 200
-    - id: "VS_NEG_001"
-      title: "查询字幕任务-缺失task_id"
-      category: "negative"
-      params: {}
-      expected:
-        http_status_any: [ 200, 400, 422, 500, 404 ]
-        code: 1002
-        message_contains_any: ["task_id", "参数", "缺少请求参数"]
-    - id: "VS_NEG_002"
-      title: "查询字幕任务-task_id不存在"
-      category: "negative"
-      params:
-        task_id: "12345"
-      expected:
-        http_status_any: [ 200, 400, 422, 500, 404 ]
-        code: 1300
-        message_contains_any: [ "任务不存在" ]

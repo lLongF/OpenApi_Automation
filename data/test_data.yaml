@@ -7,8 +7,10 @@ includes:
   - data/test_data/files.yaml
   - data/test_data/test_voice_clone.yaml
   - data/test_data/test_voice_infer.yaml
-  - data/test_data/test_timbre_design.yaml
+  - data/test_data/test_timbre_design_mimo.yaml
   - data/test_data/test_videots.yaml
   - data/test_data/test_subtitle_erase.yaml
   - data/test_data/test_asr.yaml
   - data/test_data/test_speaker_classify.yaml
+  - data/test_data/test_user_voices.yaml
+  - data/test_data/test_tasks_status.yaml

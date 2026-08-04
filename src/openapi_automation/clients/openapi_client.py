@@ -20,16 +20,31 @@ class ShanhaiOpenApiClient:
     def infer_voice(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/voice/zeroshot/infer", files=_multipart_files(files, data), auth=auth)
 
-    def public_voice_list(self, *, params: dict[str, Any] | None = None, auth: str = "default"):
-        return self.http.get("/open/voice/list", params=params or {}, auth=auth)
-
-    def generate_timbre(self, *, json: dict[str, Any], auth: str = "default"):
+    def save_cloned_voice(self, *, json: dict[str, Any], auth: str = "default"):
         return self.http.post(
-            "/open/timbre-design/generate",
+            "/open/voice/zeroshot/save",
             json=json,
             auth=auth,
             headers={"Content-Type": "application/json"},
         )
+
+    def public_voice_list(self, *, params: dict[str, Any] | None = None, auth: str = "default"):
+        return self.http.get("/open/voice/list", params=params or {}, auth=auth)
+
+    def user_voices_page(self, *, params: dict[str, Any] | None = None, auth: str = "default"):
+        return self.http.get("/open/voice/user-voices/page", params=params or {}, auth=auth)
+
+    def update_user_voice(self, *, name: str | None, json: dict[str, Any], auth: str = "default"):
+        return self.http.put(
+            "/open/voice/user-voices",
+            params={"name": name},
+            json=json,
+            auth=auth,
+            headers={"Content-Type": "application/json"},
+        )
+
+    def delete_user_voice(self, *, name: str | None, auth: str = "default"):
+        return self.http.delete("/open/voice/user-voices", params={"name": name}, auth=auth)
 
     def generate_mimo_timbre(self, *, json: dict[str, Any], auth: str = "default"):
         return self.http.post(
@@ -48,9 +63,6 @@ class ShanhaiOpenApiClient:
     def back_translate(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/videots/back-translation", files=_multipart_files(files, data), auth=auth)
 
-    def videots_status(self, *, params: dict[str, Any], auth: str = "default"):
-        return self.http.get("/open/videots/status", params=params, auth=auth)
-
     def videots_download(self, *, params: dict[str, Any], auth: str = "default"):
         return self.http.get("/open/videots/download", params=params, auth=auth)
 
@@ -60,29 +72,17 @@ class ShanhaiOpenApiClient:
     def erase_subtitle(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/subtitle/erase", files=_multipart_files(files), params=data, auth=auth)
 
-    def erase_result(self, *, params: dict[str, Any], auth: str = "default"):
-        return self.http.get("/open/subtitle/erase/result", params=params, auth=auth)
-
     def asr_rest(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/asr", files=_multipart_files(files), params=data, auth=auth)
 
     def speaker_classify_submit(self, *, files: dict | None = None, auth: str = "default"):
         return self.http.post("/open/speaker-classify/submit", files=_multipart_files(files), auth=auth)
 
-    def speaker_classify_status(self, *, params: dict[str, Any], auth: str = "default"):
-        return self.http.get("/open/speaker-classify/status", params=params, auth=auth)
-
-    def timbre_status(self, *, params: dict[str, Any], auth: str = "default"):
-        return self.http.get("/open/timbre-design/status", params=params, auth=auth)
-
     def task_status(self, *, params: dict[str, Any], auth: str = "default"):
         return self.http.get("/open/tasks/status", params=params, auth=auth)
 
     def voice_separate(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/open/voice/separate", files=_multipart_files(files, data), auth=auth)
-
-    def voice_separate_status(self, *, params: dict[str, Any], auth: str = "default"):
-        return self.http.get("/open/voice/separate/status", params=params, auth=auth)
 
     def video_compose(
         self,
@@ -107,9 +107,6 @@ class ShanhaiOpenApiClient:
                 headers={"Content-Type": encoder.content_type},
             )
         return self.http.post("/open/video-compose/tasks", files=_multipart_files(files), params=params, auth=auth)
-
-    def video_compose_status(self, *, params: dict[str, Any], auth: str = "default"):
-        return self.http.get("/open/video-compose/status", params=params, auth=auth)
 
 
 def build_files(test_data: dict, mapping: dict[str, str] | None = None) -> MultipartFiles:

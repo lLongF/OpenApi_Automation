@@ -1,9 +1,9 @@
 {
   "openapi_version": "3.0.1",
-  "operation_count": 23,
+  "operation_count": 20,
   "operations": {
-    "GET /open/speaker-classify/status": {
-      "method": "GET",
+    "DELETE /open/voice/user-voices": {
+      "method": "DELETE",
       "operation_id": null,
       "parameters": [
         {
@@ -14,42 +14,17 @@
         },
         {
           "in": "query",
-          "name": "request_id",
+          "name": "name",
           "required": true,
           "schema_type": "string"
         }
       ],
-      "path": "/open/speaker-classify/status",
+      "path": "/open/voice/user-voices",
       "request_body_required": false,
       "response_codes": [
         "200"
       ],
-      "summary": "查询说话人分类状态",
-      "tags": []
-    },
-    "GET /open/subtitle/erase/result": {
-      "method": "GET",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "project_id",
-          "required": true,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/subtitle/erase/result",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "查询擦除结果",
+      "summary": "软删除个人音色（按 name 查询参数查找）",
       "tags": []
     },
     "GET /open/tasks/status": {
@@ -83,56 +58,6 @@
       "summary": "统一查询任务状态",
       "tags": []
     },
-    "GET /open/timbre-design/status": {
-      "method": "GET",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "request_id",
-          "required": true,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/timbre-design/status",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "音色设计状态查询",
-      "tags": []
-    },
-    "GET /open/video-compose/status": {
-      "method": "GET",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "task_id",
-          "required": true,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/video-compose/status",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "查询视频压制合成任务",
-      "tags": []
-    },
     "GET /open/videots/download": {
       "method": "GET",
       "operation_id": null,
@@ -156,31 +81,6 @@
         "200"
       ],
       "summary": "下载任务结果",
-      "tags": []
-    },
-    "GET /open/videots/status": {
-      "method": "GET",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "task_id",
-          "required": true,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/videots/status",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "查询任务状态",
       "tags": []
     },
     "GET /open/videots/tasks": {
@@ -239,7 +139,7 @@
       "summary": "查询公共音色列表",
       "tags": []
     },
-    "GET /open/voice/separate/status": {
+    "GET /open/voice/user-voices/page": {
       "method": "GET",
       "operation_id": null,
       "parameters": [
@@ -251,17 +151,53 @@
         },
         {
           "in": "query",
-          "name": "task_id",
-          "required": true,
+          "name": "age_value",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "gender_value",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "lang_code",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "page_no",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "page_size",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "timbre_value",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "voice_name",
+          "required": false,
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/separate/status",
+      "path": "/open/voice/user-voices/page",
       "request_body_required": false,
       "response_codes": [
         "200"
       ],
-      "summary": "查询背景音与人声分离任务状态",
+      "summary": "分页查询当前用户的个人音色",
       "tags": []
     },
     "POST /admin/api-key/create": {
@@ -374,25 +310,6 @@
         "200"
       ],
       "summary": "字幕擦除",
-      "tags": []
-    },
-    "POST /open/timbre-design/generate": {
-      "method": "POST",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/timbre-design/generate",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "音色设计",
       "tags": []
     },
     "POST /open/timbre-design/generate-mimo": {
@@ -554,42 +471,6 @@
           "name": "api_key",
           "required": false,
           "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "clip_short",
-          "required": false,
-          "schema_type": "boolean"
-        },
-        {
-          "in": "query",
-          "name": "description",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "gender",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "is_public",
-          "required": false,
-          "schema_type": "boolean"
-        },
-        {
-          "in": "query",
-          "name": "lang_code",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "name",
-          "required": false,
-          "schema_type": "string"
         }
       ],
       "path": "/open/voice/zeroshot/clone",
@@ -618,8 +499,52 @@
       ],
       "summary": "语音推理",
       "tags": []
+    },
+    "POST /open/voice/zeroshot/save": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/voice/zeroshot/save",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "保存克隆音色到用户音色库",
+      "tags": []
+    },
+    "PUT /open/voice/user-voices": {
+      "method": "PUT",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
+          "required": true,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/open/voice/user-voices",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "更新个人音色（按 name 查询参数查找）",
+      "tags": []
     }
   },
   "source": "shanhai_apifox",
-  "synced_at": "2026-07-24T03:34:38.659969+00:00"
+  "synced_at": "2026-08-04T07:11:28.482084+00:00"
 }

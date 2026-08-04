@@ -67,11 +67,9 @@ def _assert_voice_list_payload(payload: dict[str, Any], case: dict[str, Any]) ->
 
 def _assert_voice_item(item: Any) -> None:
     assert isinstance(item, dict), item
-    for field in ("name", "description", "lang_code", "is_public", "created_at", "audio_url"):
+    for field in ("name", "description", "lang_code", "audio_url"):
         assert field in item, item
     assert isinstance(item["name"], str) and item["name"].strip(), item
     assert item["description"] is None or isinstance(item["description"], str), item
     assert item["lang_code"] is None or isinstance(item["lang_code"], str), item
-    assert item["is_public"] is True, item
-    assert isinstance(item["created_at"], str) and item["created_at"].strip(), item
     assert isinstance(item["audio_url"], str) and item["audio_url"].strip(), item

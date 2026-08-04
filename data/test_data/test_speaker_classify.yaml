@@ -1,11 +1,8 @@
 # 接口名称：说话人分类接口
 # 提交接口：POST /open/speaker-classify/submit
-# 状态接口：GET /open/speaker-classify/status
-# 请求方式：提交接口使用 multipart/form-data，状态接口使用 query params
+# 请求方式：提交接口使用 multipart/form-data
 # 数据说明：
-# - submit_cases 维护说话人分类提交用例
-# - status_cases 维护说话人分类状态查询用例
-# 关联字段：提交接口返回 request_id，状态查询接口通过 params.request_id 查询。
+# - submit_cases 维护说话人分类提交用例。
 
 speaker_classify:
   limit:
@@ -57,32 +54,3 @@ speaker_classify:
         http_status_any: [ 200,400, 422, 500 ]
         code: 1003
         message_contains_any: [ "不支持的文件类型", "mp3/wav/m4a","FileInvalid" ]
-  status_cases:
-    # --- 字段说明 ---
-    # params: URL 查询参数（request_id），用于 GET 状态查询接口
-    # ---
-    - id: "SCS_POS_001"
-      title: "查询说话人分类-状态"
-      category: "positive"
-      params:
-        request_id: "{{request_id}}"
-      expected:
-        http_status: 200
-        code: 200
-    - id: "SCS_NEG_001"
-      title: "查询说话人分类-缺少request_id"
-      category: "negative"
-      params: {}
-      expected:
-        http_status_any: [ 200, 400, 422, 500, 404 ]
-        code: 1002
-        message_contains_any: [ "request_id", "缺少请求参数", "参数" ]
-    - id: "SCS_NEG_002"
-      title: "查询说话人分类-request_id不存在"
-      category: "negative"
-      params:
-        request_id: "12345"
-      expected:
-        http_status_any: [ 200, 400, 422, 500, 404 ]
-        code: 1300
-        message_contains_any: [ "任务不存在" ]

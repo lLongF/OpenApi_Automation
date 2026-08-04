@@ -1,7 +1,7 @@
 # 接口名称：统一查询任务状态
 # 接口路径：GET /open/tasks/status
 # 轮询策略：每 5 秒查询一次，最多 300 秒。
-# task_id 来自对应提交接口；speaker_classify 和 timbre_design 使用其 request_id。
+# task_id 来自对应提交接口；speaker_classify 使用其 request_id。
 
 tasks_status:
   poll_interval_seconds: 5
@@ -48,15 +48,6 @@ tasks_status:
       category: "positive"
       type: "speaker_classify"
       context_key: "speaker_classify_request_id"
-      expected:
-        http_status: 200
-        code: 200
-        final_status: "completed"
-    - id: "UTS_POS_006"
-      title: "统一查询任务状态-音色设计"
-      category: "positive"
-      type: "timbre_design"
-      context_key: "timbre_request_id"
       expected:
         http_status: 200
         code: 200

@@ -1,30 +1,6 @@
 {
   "components": {
     "schemas": {
-      "ApiResponseJSONObject": {
-        "properties": {
-          "code": {
-            "description": "",
-            "type": "integer"
-          },
-          "data": {
-            "description": "",
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "info": {
-            "description": "",
-            "type": "string"
-          },
-          "requestId": {
-            "description": "",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "ApiResponseListMapObject": {
         "properties": {
           "code": {
@@ -38,6 +14,24 @@
               "description": ""
             },
             "type": "array"
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ApiResponseLong": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "description": "",
+            "format": "int64",
+            "type": "integer"
           },
           "info": {
             "description": "",
@@ -98,6 +92,23 @@
         },
         "type": "object"
       },
+      "ApiResponsePageResultUserVoiceToneListItemVO": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "$ref": "#/components/schemas/PageResultUserVoiceToneListItemVO",
+            "description": ""
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "ApiResponsePageResultVoiceSpeakerListItemVO": {
         "properties": {
           "code": {
@@ -109,27 +120,6 @@
             "description": ""
           },
           "info": {
-            "description": "",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ApiResponseSpeakerClassifyStatusRespDTO": {
-        "properties": {
-          "code": {
-            "description": "",
-            "type": "integer"
-          },
-          "data": {
-            "$ref": "#/components/schemas/SpeakerClassifyStatusRespDTO",
-            "description": ""
-          },
-          "info": {
-            "description": "",
-            "type": "string"
-          },
-          "requestId": {
             "description": "",
             "type": "string"
           }
@@ -212,27 +202,6 @@
         },
         "type": "object"
       },
-      "ApiResponseVideoCompositionTaskResponse": {
-        "properties": {
-          "code": {
-            "description": "",
-            "type": "integer"
-          },
-          "data": {
-            "$ref": "#/components/schemas/VideoCompositionTaskResponse",
-            "description": ""
-          },
-          "info": {
-            "description": "",
-            "type": "string"
-          },
-          "requestId": {
-            "description": "",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
       "ApiResponseVideoTSBaseResponse": {
         "properties": {
           "code": {
@@ -241,23 +210,6 @@
           },
           "data": {
             "$ref": "#/components/schemas/VideoTSBaseResponse",
-            "description": ""
-          },
-          "info": {
-            "description": "",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "ApiResponseVideoTSTaskStatusResponse": {
-        "properties": {
-          "code": {
-            "description": "",
-            "type": "integer"
-          },
-          "data": {
-            "$ref": "#/components/schemas/VideoTSTaskStatusResponse",
             "description": ""
           },
           "info": {
@@ -305,10 +257,45 @@
         },
         "type": "object"
       },
+      "ApiResponseVoid": {
+        "properties": {
+          "code": {
+            "description": "",
+            "type": "integer"
+          },
+          "data": {
+            "description": "",
+            "type": "null"
+          },
+          "info": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "MapObject": {
         "properties": {
           "key": {
             "$ref": "#/components/schemas/key"
+          }
+        },
+        "type": "object"
+      },
+      "PageResultUserVoiceToneListItemVO": {
+        "properties": {
+          "list": {
+            "description": "数据",
+            "items": {
+              "$ref": "#/components/schemas/UserVoiceToneListItemVO",
+              "description": "cn.iocoder.lychee.openapi.model.response.voice.UserVoiceToneListItemVO"
+            },
+            "type": "array"
+          },
+          "total": {
+            "description": "总量",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "type": "object"
@@ -327,81 +314,6 @@
             "description": "总量",
             "format": "int64",
             "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "SpeakerClassifySegmentDTO": {
-        "properties": {
-          "content": {
-            "description": "文本内容",
-            "type": "string"
-          },
-          "end": {
-            "description": "结束时间",
-            "type": "string"
-          },
-          "spk": {
-            "description": "角色名",
-            "type": "string"
-          },
-          "start": {
-            "description": "开始时间",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "SpeakerClassifyStatusRespDTO": {
-        "properties": {
-          "asrDuration": {
-            "description": "ASR 识别时长",
-            "type": "number"
-          },
-          "durationMs": {
-            "description": "算法耗时",
-            "type": "number"
-          },
-          "error": {
-            "description": "错误信息",
-            "type": "string"
-          },
-          "message": {
-            "description": "任务消息",
-            "type": "string"
-          },
-          "progress": {
-            "description": "任务进度",
-            "type": "integer"
-          },
-          "requestId": {
-            "description": "算法 request_id",
-            "type": "string"
-          },
-          "spkResult": {
-            "description": "说话人分类结果",
-            "items": {
-              "$ref": "#/components/schemas/SpeakerClassifySegmentDTO",
-              "description": "说话人分类片段"
-            },
-            "type": "array"
-          },
-          "status": {
-            "description": "任务状态: pending/running/success/error",
-            "type": "string"
-          },
-          "taskId": {
-            "description": "算法 task_id",
-            "type": "string"
-          },
-          "taskName": {
-            "description": "任务名称",
-            "type": "string"
-          },
-          "timestamps": {
-            "description": "算法时间戳块",
-            "properties": {},
-            "type": "object"
           }
         },
         "type": "object"
@@ -431,19 +343,6 @@
           },
           "request_id": {
             "description": "请求ID，用于查询状态",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "TimbreDesignStatusResult": {
-        "properties": {
-          "audioPath": {
-            "description": "音频路径（success时返回）",
-            "type": "string"
-          },
-          "status": {
-            "description": "任务状态（pending/running/success/failed）",
             "type": "string"
           }
         },
@@ -479,45 +378,53 @@
         },
         "type": "object"
       },
+      "UserVoiceToneListItemVO": {
+        "properties": {
+          "age_value": {
+            "description": "",
+            "type": "string"
+          },
+          "audio_url": {
+            "description": "",
+            "type": "string"
+          },
+          "create_time": {
+            "description": "",
+            "type": "string"
+          },
+          "description": {
+            "description": "",
+            "type": "string"
+          },
+          "gender_value": {
+            "description": "",
+            "type": "string"
+          },
+          "lang_code": {
+            "description": "",
+            "type": "string"
+          },
+          "timbre_value": {
+            "description": "",
+            "type": "string"
+          },
+          "update_time": {
+            "description": "",
+            "type": "string"
+          },
+          "voice_name": {
+            "description": "",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "VideoCompositionSubmitResponse": {
         "properties": {
           "status": {
             "description": "",
             "examples": [
               "pending"
-            ],
-            "type": "string"
-          },
-          "taskId": {
-            "description": "",
-            "examples": [
-              "2e7a0c98-3b5d-4c20-9c0a-8ec0e6c5e8ad"
-            ],
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "VideoCompositionTaskResponse": {
-        "properties": {
-          "errorMessage": {
-            "description": "",
-            "examples": [
-              "视频合成超时"
-            ],
-            "type": "string"
-          },
-          "resultPath": {
-            "description": "",
-            "examples": [
-              "https://example.com/openapi/video-compose/2026/06/23/task/result.mp4"
-            ],
-            "type": "string"
-          },
-          "status": {
-            "description": "",
-            "examples": [
-              "completed"
             ],
             "type": "string"
           },
@@ -539,35 +446,6 @@
           },
           "status": {
             "description": "状态",
-            "type": "string"
-          },
-          "taskId": {
-            "description": "任务ID",
-            "type": "string"
-          }
-        },
-        "type": "object"
-      },
-      "VideoTSTaskStatusResponse": {
-        "properties": {
-          "downloadUrl": {
-            "description": "下载URL",
-            "type": "string"
-          },
-          "error": {
-            "description": "错误信息",
-            "type": "string"
-          },
-          "message": {
-            "description": "状态消息",
-            "type": "string"
-          },
-          "progress": {
-            "description": "进度百分比（0-100）",
-            "type": "integer"
-          },
-          "status": {
-            "description": "状态（pending/processing/completed/failed）",
             "type": "string"
           },
           "taskId": {
@@ -643,6 +521,93 @@
           },
           "name": {
             "description": "公共音色展示名",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "VoiceToneSaveReqVO": {
+        "properties": {
+          "age_value": {
+            "description": "年龄字典值",
+            "type": "string"
+          },
+          "description": {
+            "description": "音色描述（可选）",
+            "maxLength": 500,
+            "type": "string"
+          },
+          "gender_value": {
+            "description": "性别字典值",
+            "type": "string"
+          },
+          "lang_code": {
+            "description": "语种 code",
+            "examples": [
+              "zh"
+            ],
+            "maxLength": 20,
+            "type": "string"
+          },
+          "request_id": {
+            "description": "clone 接口返回的 request_id（32 hex 无短横线）",
+            "type": "string"
+          },
+          "text": {
+            "description": "试听文本（可选，缺省走中文默认）",
+            "examples": [
+              "欢迎使用我的克隆音色"
+            ],
+            "maxLength": 500,
+            "type": "string"
+          },
+          "timbre_value": {
+            "description": "音色类别字典值",
+            "type": "string"
+          },
+          "voice_name": {
+            "description": "音色名称",
+            "maxLength": 100,
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "voice_name",
+          "lang_code",
+          "gender_value",
+          "age_value",
+          "timbre_value"
+        ],
+        "type": "object"
+      },
+      "VoiceToneUpdateReqVO": {
+        "properties": {
+          "age_value": {
+            "description": "",
+            "type": "string"
+          },
+          "description": {
+            "description": "",
+            "maxLength": 500,
+            "type": "string"
+          },
+          "gender_value": {
+            "description": "",
+            "type": "string"
+          },
+          "lang_code": {
+            "description": "",
+            "maxLength": 20,
+            "type": "string"
+          },
+          "timbre_value": {
+            "description": "",
+            "type": "string"
+          },
+          "voice_name": {
+            "description": "",
+            "maxLength": 100,
             "type": "string"
           }
         },
@@ -778,49 +743,6 @@
         },
         "security": [],
         "summary": "语音识别",
-        "tags": []
-      }
-    },
-    "/open/speaker-classify/status": {
-      "get": {
-        "deprecated": false,
-        "description": "查询说话人分类状态\n查询分类任务状态",
-        "parameters": [
-          {
-            "description": "",
-            "in": "query",
-            "name": "request_id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "{{api_key}}",
-            "in": "header",
-            "name": "api_key",
-            "schema": {
-              "default": "{{api_key}}",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseSpeakerClassifyStatusRespDTO"
-                }
-              }
-            },
-            "description": "",
-            "headers": {}
-          }
-        },
-        "security": [],
-        "summary": "查询说话人分类状态",
         "tags": []
       }
     },
@@ -967,57 +889,13 @@
         "tags": []
       }
     },
-    "/open/subtitle/erase/result": {
-      "get": {
-        "deprecated": false,
-        "description": "查询擦除结果\n查询字幕擦除任务结果",
-        "parameters": [
-          {
-            "description": "",
-            "example": "",
-            "in": "query",
-            "name": "project_id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "{{api_key}}",
-            "in": "header",
-            "name": "api_key",
-            "schema": {
-              "default": "{{api_key}}",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseObject"
-                }
-              }
-            },
-            "description": "",
-            "headers": {}
-          }
-        },
-        "security": [],
-        "summary": "查询擦除结果",
-        "tags": []
-      }
-    },
     "/open/tasks/status": {
       "get": {
         "deprecated": false,
-        "description": "统一查询任务状态\n按 type 和 task_id 查询异步任务状态及结果。type 取值：subtitle_translation=字幕翻译；subtitle_erase=字幕擦除；video_compose=视频压制合成；voice_separate=背景音与人声分离；speaker_classify=说话人识别；timbre_design=音色设计。说话人识别和音色设计的 task_id 传入其提交接口返回的 request_id。",
+        "description": "统一查询任务状态\n按 type 和 task_id 查询异步任务状态及结果。type 取值：subtitle_translation=字幕翻译；subtitle_erase=字幕擦除；video_compose=视频压制合成；voice_separate=背景音与人声分离；speaker_classify=说话人识别。说话人识别和音色设计的 task_id 传入其提交接口返回的 request_id。",
         "parameters": [
           {
-            "description": "subtitle_translation=字幕翻译；subtitle_erase=字幕擦除；video_compose=视频压制合成；voice_separate=背景音与人声分离；speaker_classify=说话人识别；timbre_design=音色设计",
+            "description": "subtitle_translation=字幕翻译；subtitle_erase=字幕擦除；video_compose=视频压制合成；voice_separate=背景音与人声分离；speaker_classify=说话人识别；",
             "in": "query",
             "name": "type",
             "required": true,
@@ -1060,60 +938,6 @@
         },
         "security": [],
         "summary": "统一查询任务状态",
-        "tags": []
-      }
-    },
-    "/open/timbre-design/generate": {
-      "post": {
-        "deprecated": false,
-        "description": "音色设计\n生成音色，限时免费",
-        "parameters": [
-          {
-            "description": "",
-            "example": "{{api_key}}",
-            "in": "header",
-            "name": "api_key",
-            "schema": {
-              "default": "{{api_key}}",
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "example": {
-                "accentValue": "1",
-                "ageValue": "2",
-                "genderValue": "1",
-                "langCode": "zh",
-                "pitchValue": "4",
-                "styleValue": "1",
-                "text": "这是一段测试文本"
-              },
-              "schema": {
-                "$ref": "#/components/schemas/MapObject",
-                "description": ""
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TimbreDesignResult",
-                  "description": ""
-                }
-              }
-            },
-            "description": "",
-            "headers": {}
-          }
-        },
-        "security": [],
-        "summary": "音色设计",
         "tags": []
       }
     },
@@ -1163,93 +987,6 @@
         },
         "security": [],
         "summary": "mimo 音色设计",
-        "tags": []
-      }
-    },
-    "/open/timbre-design/status": {
-      "get": {
-        "deprecated": false,
-        "description": "音色设计状态查询\n查询音色设计任务状态",
-        "parameters": [
-          {
-            "description": "",
-            "in": "query",
-            "name": "request_id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "{{api_key}}",
-            "in": "header",
-            "name": "api_key",
-            "schema": {
-              "default": "{{api_key}}",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TimbreDesignStatusResult",
-                  "description": "音色设计状态查询结果"
-                }
-              }
-            },
-            "description": "",
-            "headers": {}
-          }
-        },
-        "security": [],
-        "summary": "音色设计状态查询",
-        "tags": []
-      }
-    },
-    "/open/video-compose/status": {
-      "get": {
-        "deprecated": false,
-        "description": "查询视频压制合成任务\n查询异步任务状态；任务成功后返回完整result_url供用户下载",
-        "parameters": [
-          {
-            "description": "提交任务返回的task_id",
-            "in": "query",
-            "name": "task_id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "{{api_key}}",
-            "in": "header",
-            "name": "api_key",
-            "schema": {
-              "default": "{{api_key}}",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVideoCompositionTaskResponse"
-                }
-              }
-            },
-            "description": "",
-            "headers": {}
-          }
-        },
-        "security": [],
-        "summary": "查询视频压制合成任务",
         "tags": []
       }
     },
@@ -1621,100 +1358,6 @@
         },
         "security": [],
         "summary": "重新翻译",
-        "tags": []
-      }
-    },
-    "/open/videots/status": {
-      "get": {
-        "deprecated": false,
-        "description": "查询任务状态\n查询Video-TS翻译任务的实时状态",
-        "parameters": [
-          {
-            "description": "",
-            "in": "query",
-            "name": "task_id",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "",
-            "example": "{{api_key}}",
-            "in": "header",
-            "name": "api_key",
-            "schema": {
-              "default": "{{api_key}}",
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "example": {
-                  "code": 200,
-                  "data": {
-                    "billingInfo": {
-                      "pricingInfo": [
-                        {
-                          "completionTokens": 241,
-                          "inputPricePer1kTokens": 0.0012,
-                          "modelName": "doubao-seed-translation-250915",
-                          "outputPricePer1kTokens": 0.0036,
-                          "promptTokens": 764,
-                          "totalTokens": 1005
-                        },
-                        {
-                          "completionTokens": 8201,
-                          "inputPricePer1kTokens": 0.0009,
-                          "modelName": "doubao-seed-2-0-lite-260215",
-                          "outputPricePer1kTokens": 0.0054,
-                          "promptTokens": 3236,
-                          "totalTokens": 11437
-                        },
-                        {
-                          "completionTokens": 450,
-                          "inputPricePer1kTokens": 0.0003,
-                          "modelName": "doubao-seed-1-6-flash-250828",
-                          "outputPricePer1kTokens": 0.003,
-                          "promptTokens": 887,
-                          "totalTokens": 1337
-                        }
-                      ],
-                      "totalCost": 0.050601,
-                      "totalTokens": 13779
-                    },
-                    "downloadUrl": "5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh_translated_en.srt",
-                    "error": null,
-                    "message": "翻译任务完成",
-                    "progress": 100,
-                    "result": {
-                      "failedTranslations": 3,
-                      "inputPath": "/PMAIGC/code/video_ts_api/uploads/5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh.srt",
-                      "outputPath": "/PMAIGC/code/video_ts_api/outputs/5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_5a9dbf10-81b3-4ac5-8d86-acdd0669d88d_001-en-shanhai-translated-zh_translated_en.srt",
-                      "targetLanguage": "en",
-                      "totalSubtitles": 28,
-                      "translatedSubtitles": 28
-                    },
-                    "status": "completed",
-                    "taskId": "5a9dbf10-81b3-4ac5-8d86-acdd0669d88d"
-                  },
-                  "info": "success",
-                  "requestId": "d16840f9-7f83-4986-b9cc-1fcad2640719"
-                },
-                "schema": {
-                  "$ref": "#/components/schemas/ApiResponseVideoTSTaskStatusResponse"
-                }
-              }
-            },
-            "description": "",
-            "headers": {}
-          }
-        },
-        "security": [],
-        "summary": "查询任务状态",
         "tags": []
       }
     },
@@ -2238,15 +1881,15 @@
         "tags": []
       }
     },
-    "/open/voice/separate/status": {
-      "get": {
+    "/open/voice/user-voices": {
+      "delete": {
         "deprecated": false,
-        "description": "查询背景音与人声分离任务状态\n查询异步任务状态，成功时返回 vocals_url/no_vocals_url",
+        "description": "软删除个人音色（按 name 查询参数查找）",
         "parameters": [
           {
             "description": "",
             "in": "query",
-            "name": "task_id",
+            "name": "name",
             "required": true,
             "schema": {
               "type": "string"
@@ -2268,7 +1911,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseJSONObject"
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             },
@@ -2277,48 +1920,97 @@
           }
         },
         "security": [],
-        "summary": "查询背景音与人声分离任务状态",
+        "summary": "软删除个人音色（按 name 查询参数查找）",
+        "tags": []
+      },
+      "put": {
+        "deprecated": false,
+        "description": "更新个人音色（按 name 查询参数查找）",
+        "parameters": [
+          {
+            "description": "",
+            "in": "query",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceToneUpdateReqVO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLong"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "更新个人音色（按 name 查询参数查找）",
         "tags": []
       }
     },
-    "/open/voice/zeroshot/clone": {
-      "post": {
+    "/open/voice/user-voices/page": {
+      "get": {
         "deprecated": false,
-        "description": "语音克隆\n上传音频进行声音克隆",
+        "description": "分页查询当前用户的个人音色",
         "parameters": [
           {
-            "description": "是否发布为公共音色",
-            "example": "true",
+            "description": "页码，从 1 开始",
+            "example": 1,
             "in": "query",
-            "name": "is_public",
+            "name": "page_no",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "integer"
             }
           },
           {
-            "description": "公共音色名",
-            "example": "lady",
+            "description": "每页条数，最大 1000",
+            "example": 10,
             "in": "query",
-            "name": "name",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "音色名称，模糊匹配",
+            "in": "query",
+            "name": "voice_name",
             "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "description": "音色描述",
-            "example": "测试",
-            "in": "query",
-            "name": "description",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "语种",
-            "example": "zh",
+            "description": "语种 code",
             "in": "query",
             "name": "lang_code",
             "required": false,
@@ -2327,25 +2019,66 @@
             }
           },
           {
-            "description": "性别",
-            "example": "famale",
+            "description": "性别字典值 system_user_sex",
             "in": "query",
-            "name": "gender",
+            "name": "gender_value",
             "required": false,
             "schema": {
               "type": "string"
             }
           },
           {
-            "description": "是否裁剪参考音频，默认 false",
-            "example": "false",
+            "description": "年龄字典值 age_category",
             "in": "query",
-            "name": "clip_short",
+            "name": "age_value",
             "required": false,
             "schema": {
-              "type": "boolean"
+              "type": "string"
             }
           },
+          {
+            "description": "音色类型字典值 voice_type",
+            "in": "query",
+            "name": "timbre_value",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageResultUserVoiceToneListItemVO"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "分页查询当前用户的个人音色",
+        "tags": []
+      }
+    },
+    "/open/voice/zeroshot/clone": {
+      "post": {
+        "deprecated": false,
+        "description": "语音克隆\n上传音频进行声音克隆",
+        "parameters": [
           {
             "description": "",
             "example": "{{api_key}}",
@@ -2435,7 +2168,7 @@
                   },
                   "speaker_id": {
                     "description": "音色ID；上传音频临时克隆时不传",
-                    "example": "550e8400-e29b-41d4-a716-446655440000",
+                    "example": "晓夏",
                     "examples": [
                       "550e8400-e29b-41d4-a716-446655440000"
                     ],
@@ -2502,6 +2235,60 @@
         },
         "security": [],
         "summary": "语音推理",
+        "tags": []
+      }
+    },
+    "/open/voice/zeroshot/save": {
+      "post": {
+        "deprecated": false,
+        "description": "保存克隆音色到用户音色库",
+        "parameters": [
+          {
+            "description": "",
+            "example": "{{api_key}}",
+            "in": "header",
+            "name": "api_key",
+            "schema": {
+              "default": "{{api_key}}",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "age_value": "1",
+                "description": "save3",
+                "gender_value": "1",
+                "lang_code": "zh",
+                "request_id": "7f7b12f983a34eb6892d167cea202e33",
+                "text": "欢迎使用我的克隆音色",
+                "timbre_value": "1",
+                "voice_name": "save3"
+              },
+              "schema": {
+                "$ref": "#/components/schemas/VoiceToneSaveReqVO",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseLong"
+                }
+              }
+            },
+            "description": "",
+            "headers": {}
+          }
+        },
+        "security": [],
+        "summary": "保存克隆音色到用户音色库",
         "tags": []
       }
     }

@@ -21,7 +21,7 @@ class HttpClient:
             connect=config.retry.total,
             backoff_factor=config.retry.backoff_factor,
             status_forcelist=config.retry.status_forcelist,
-            allowed_methods=frozenset({"GET", "POST"}),
+            allowed_methods=frozenset({"GET", "POST", "PUT", "DELETE"}),
         )
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("https://", adapter)
@@ -56,3 +56,9 @@ class HttpClient:
 
     def post(self, path: str, **kwargs: Any) -> requests.Response:
         return self.request("POST", path, **kwargs)
+
+    def put(self, path: str, **kwargs: Any) -> requests.Response:
+        return self.request("PUT", path, **kwargs)
+
+    def delete(self, path: str, **kwargs: Any) -> requests.Response:
+        return self.request("DELETE", path, **kwargs)

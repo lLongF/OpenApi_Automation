@@ -50,12 +50,12 @@ def test_openapi_normalizer_extracts_operations():
 def test_openapi_diff_detects_breaking_required_parameter_added():
     """[单元测试-契约] 验证差异检测工具能正确识别「参数从可选变为必填」的破坏性变更。
 
-    模拟接口：GET /open/videots/status（视频翻译状态查询）
+    模拟接口：GET /open/tasks/status（统一任务状态查询）
     - task_id 参数从 required=false 变为 required=true -> 检测为 parameter_became_required
     """
     old = {
         "operations": {
-            "GET /open/videots/status": {
+            "GET /open/tasks/status": {
                 "parameters": [{"name": "task_id", "in": "query", "required": False, "schema_type": "string"}],
                 "request_body_required": False,
                 "response_codes": ["200"],
@@ -64,7 +64,7 @@ def test_openapi_diff_detects_breaking_required_parameter_added():
     }
     new = {
         "operations": {
-            "GET /open/videots/status": {
+            "GET /open/tasks/status": {
                 "parameters": [{"name": "task_id", "in": "query", "required": True, "schema_type": "string"}],
                 "request_body_required": False,
                 "response_codes": ["200"],

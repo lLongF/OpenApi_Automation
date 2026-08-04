@@ -1,6 +1,6 @@
 # OpenAPI 接口自动化
 
-基于 `pytest` 的 OpenAPI 接口自动化测试项目，覆盖语音克隆、语音合成、音色设计、字幕翻译、视频字幕/ASR、说话人分类、OpenAPI 契约检查等接口。
+基于 `pytest` 的 OpenAPI 接口自动化测试项目，覆盖语音克隆、语音合成、个人音色管理、MIMO 音色设计、字幕翻译、视频字幕/ASR、说话人分类、OpenAPI 契约检查等接口。
 
 项目提供两种使用方式：
 
@@ -46,7 +46,7 @@ powershell -ExecutionPolicy Bypass -File scripts/start_web.ps1 -Port 8000
 打开：
 
 ```text
-http://127.0.0.1:8000/
+http://127.0.0.1:8088/allure-report
 ```
 
 ## 上传文件与测试数据要求
@@ -58,7 +58,7 @@ http://127.0.0.1:8000/
 | 语音克隆 `/open/voice/zeroshot/clone` | 音频 | mp3/wav/m4a；1s-30s；不超过 10MB | `valid_clone_audio` 约 0.61MB/19.9s；`valid_clone_open_audio` 约 14.80MB/20.2s；`valid_clone_1min_5mb` 约 5.85MB/2.1min；`empty_audio`；`valid_video` 用于格式错误 |
 | 语音合成 `/open/voice/zeroshot/infer` | 可选参考音频 + 文本 | 音频 1s-30s、不超过 10MB；文本不超过 3000 字符 | `valid_clone_audio`；`valid_clone_1min_5mb`；`valid_clone_open_audio` |
 | 公共音色列表 `/open/voice/list` | 无文件 | 只使用 query 参数 `name/page_no/page_size` | 无 |
-| 音色设计 `/open/timbre-design/generate` | 无文件 | JSON 文本参数，`text` 不超过 500 字符 | 无 |
+| 个人音色保存/查询/更新/删除 `/open/voice/zeroshot/save`、`/open/voice/user-voices/*` | 克隆请求 ID 或无文件 | 保存需要克隆 `request_id` 和个人音色属性；查询支持分页与属性筛选 | 克隆时使用 `valid_clone_audio` |
 | MIMO 音色设计 `/open/timbre-design/generate-mimo` | 无文件 | JSON 参数 `text`、`description`、`optimize_text` | 无 |
 | 字幕翻译/重译/回译 `/open/videots/*` | 字幕文件 | srt；不超过 1MB | `valid_subtitle`；`valid_subtitle_translated`；`empty_subtitle`；`invalid_subtitle`；`oversize_subtitle_11mb` 约 10.49MB |
 | 字幕擦除 `/open/subtitle/erase` | 视频 | mp4/mov；10s-60min；不超过 2GB | `valid_video` 约 1.30MB/20.2s；`invalid_video`；`empty_video` |
@@ -73,7 +73,7 @@ http://127.0.0.1:8000/
 data/test_data/test_voice_clone.yaml        语音克隆
 data/test_data/test_voice_infer.yaml        语音合成
 data/test_data/test_voice_list.yaml         公共音色列表
-data/test_data/test_timbre_design.yaml      音色设计
+data/test_data/test_user_voices.yaml        个人音色保存/查询/更新/删除
 data/test_data/test_timbre_design_mimo.yaml MIMO 音色设计
 data/test_data/test_videots.yaml            字幕翻译/重译/回译
 data/test_data/test_subtitle_erase.yaml     字幕擦除

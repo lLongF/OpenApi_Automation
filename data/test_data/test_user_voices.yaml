@@ -1,0 +1,414 @@
+# 接口名称：当前用户个人音色管理
+# 覆盖接口：
+# - POST   /open/voice/zeroshot/save
+# - GET    /open/voice/user-voices/page
+# - PUT    /open/voice/user-voices
+# - DELETE /open/voice/user-voices
+#
+# 正向流程用例由测试代码动态生成唯一 voice_name，并在结束时软删除，避免污染测试账户数据。
+# 文档成功示例为 code=0；现网部分接口使用 code=200，因此成功断言同时兼容两种响应。
+
+user_voice_save:
+  cases:
+    - id: "UVS_POS_001"
+      title: "保存克隆音色-完整必填字段后按名称查询验证"
+      category: "positive"
+      technique: "state-flow"
+      use_clone_request_id: true
+      use_unique_voice_name: true
+      json:
+        request_id: "replace-at-runtime"
+        voice_name: "replace-at-runtime"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+        text: "欢迎使用我的克隆音色"
+        description: "自动化保存的个人音色"
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "UVS_POS_002"
+      title: "保存克隆音色-省略可选文本和描述"
+      category: "positive"
+      technique: "equivalence"
+      use_clone_request_id: true
+      use_unique_voice_name: true
+      json:
+        request_id: "replace-at-runtime"
+        voice_name: "replace-at-runtime"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "UVS_NEG_001"
+      title: "保存克隆音色-缺少request_id"
+      category: "negative"
+      technique: "equivalence"
+      json:
+        voice_name: "missing-request-id"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status:  400
+        code:  1001
+        message_contains_any: ["request_id", "不能为空"]
+
+    - id: "UVS_NEG_002"
+      title: "保存克隆音色-request_id为空"
+      category: "negative"
+      technique: "equivalence"
+      json:
+        request_id: ""
+        voice_name: "empty-request-id"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "request_id", "不能为空" ]
+
+    - id: "UVS_NEG_003"
+      title: "保存克隆音色-缺少voice_name"
+      category: "negative"
+      technique: "equivalence"
+      use_clone_request_id: true
+      json:
+        request_id: "replace-at-runtime"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "音色名称", "音色名称不能为空" ]
+
+    - id: "UVS_NEG_004"
+      title: "保存克隆音色-voice_name为空"
+      category: "negative"
+      technique: "equivalence"
+      use_clone_request_id: true
+      json:
+        request_id: "replace-at-runtime"
+        voice_name: ""
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "音色名称", "音色名称不能为空" ]
+
+    - id: "UVS_NEG_005"
+      title: "保存克隆音色-缺少lang_code"
+      category: "negative"
+      technique: "equivalence"
+      use_clone_request_id: true
+      use_unique_voice_name: true
+      json:
+        request_id: "replace-at-runtime"
+        voice_name: "replace-at-runtime"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "语种code", "语种code不能为空" ]
+
+    - id: "UVS_NEG_006"
+      title: "保存克隆音色-缺少gender_value"
+      category: "negative"
+      technique: "equivalence"
+      use_clone_request_id: true
+      use_unique_voice_name: true
+      json:
+        request_id: "not-exist-request-id"
+        voice_name: "missing-gender-value"
+        lang_code: "zh"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "性别", "性别不能为空" ]
+
+    - id: "UVS_NEG_007"
+      title: "保存克隆音色-缺少age_value"
+      category: "negative"
+      technique: "equivalence"
+      use_clone_request_id: true
+      use_unique_voice_name: true
+      json:
+        request_id: "not-exist-request-id"
+        voice_name: "missing-age-value"
+        lang_code: "zh"
+        gender_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "年龄", "年龄不能为空" ]
+
+    - id: "UVS_NEG_008"
+      title: "保存克隆音色-缺少timbre_value"
+      category: "negative"
+      technique: "equivalence"
+      use_clone_request_id: true
+      use_unique_voice_name: true
+      json:
+        request_id: "not-exist-request-id"
+        voice_name: "missing-timbre-value"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "音色类别", "音色类别不能为空" ]
+
+    - id: "UVS_NEG_009"
+      title: "保存克隆音色-request_id不存在"
+      category: "negative"
+      technique: "exception"
+      json:
+        request_id: "not-exist-request-id"
+        voice_name: "invalid-request-id"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "request_id", "request_id 必须是32位十六进制字符串" ]
+
+    - id: "UVS_NEG_010"
+      title: "保存克隆音色-voice_name已存在"
+      category: "negative"
+      technique: "scenario"
+      use_existing_voice_name: true
+      use_clone_request_id: true
+      json:
+        request_id: "replace-at-runtime"
+        voice_name: "replace-at-runtime"
+        lang_code: "zh"
+        gender_value: "1"
+        age_value: "1"
+        timbre_value: "1"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "音色名已存在", "音色名称已存在" ]
+
+user_voice_page:
+  cases:
+    - id: "UVP_POS_001"
+      title: "分页查询个人音色-不传筛选条件"
+      category: "positive"
+      technique: "positive"
+      params:
+        page_no: 1
+        page_size: 20
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "UVP_EQ_001"
+      title: "分页查询个人音色-不存在名称返回空列表"
+      category: "positive"
+      technique: "equivalence"
+      use_absent_voice_name: true
+      expect_empty_result: true
+      params:
+        page_no: 1
+        page_size: 20
+      expected:
+        http_status: 200
+        code:  200
+
+    - id: "UVP_BND_001"
+      title: "分页查询个人音色-page_no最小有效值1"
+      category: "boundary"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 1
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "UVP_BND_002"
+      title: "分页查询个人音色-page_size最大有效值1000"
+      category: "boundary"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 1000
+      expected:
+        http_status: 200
+        code:  200
+
+    - id: "UVP_NEG_004"
+      title: "分页查询个人音色-page_no为非整数"
+      category: "negative"
+      technique: "equivalence"
+      params:
+        page_no: "not-an-integer"
+        page_size: 20
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "page_no", "参数类型不匹配: page_no" ]
+
+    - id: "UVP_SCN_001"
+      title: "分页查询个人音色-名称和四类属性组合筛选"
+      category: "positive"
+      technique: "scenario"
+      create_voice: true
+      use_all_filters: true
+      params:
+        page_no: 1
+        page_size: 20
+      expected:
+        http_status: 200
+        code:  200
+
+user_voice_update:
+  cases:
+    - id: "UVU_POS_001"
+      title: "更新个人音色-改名和属性后按新名称查询校验"
+      category: "positive"
+      technique: "state-flow"
+      workflow: "rename_and_edit"
+      json:
+        lang_code: "zh"
+        gender_value: "2"
+        age_value: "2"
+        timbre_value: "2"
+        description: "更新后的个人音色描述"
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "UVU_POS_002"
+      title: "更新个人音色-仅更新可选描述字段"
+      category: "positive"
+      technique: "equivalence"
+      workflow: "description_only"
+      json:
+        description: "仅修改描述字段"
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "UVU_NEG_001"
+      title: "更新个人音色-缺少name查询参数"
+      category: "negative"
+      technique: "equivalence"
+      name: null
+      json:
+        description: "缺少名称"
+      expected:
+        http_status:  400
+        code: 1002
+        message_contains_any: [ "name", "缺少请求参数: name" ]
+
+    - id: "UVU_NEG_002"
+      title: "更新个人音色-name为空"
+      category: "negative"
+      technique: "equivalence"
+      name: ""
+      json:
+        description: "空名称"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "name", "name 不能为空" ]
+
+    - id: "UVU_NEG_003"
+      title: "更新个人音色-name不存在"
+      category: "negative"
+      technique: "exception"
+      name: "not-exist-user-voice"
+      json:
+        description: "不存在名称"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "个人音色", "个人音色不存在" ]
+
+    - id: "UVU_NEG_004"
+      title: "更新个人音色-新voice_name为空"
+      category: "negative"
+      technique: "equivalence"
+      create_voice: true
+      json:
+        voice_name: ""
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "voice_name", "voice_name 不能为空" ]
+
+    - id: "UVU_NEG_005"
+      title: "更新个人音色-修改为已存在的voice_name"
+      category: "negative"
+      technique: "scenario"
+      workflow: "duplicate_voice_name"
+      json: {}
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "音色名已存在", "音色名称已存在" ]
+
+user_voice_delete:
+  cases:
+    - id: "UVD_POS_001"
+      title: "软删除个人音色-删除后按名称查询为空"
+      category: "positive"
+      technique: "state-flow"
+      workflow: "delete_and_verify_absent"
+      expected:
+        http_status: 200
+        code:  200
+
+    - id: "UVD_NEG_001"
+      title: "软删除个人音色-缺少name查询参数"
+      category: "negative"
+      technique: "equivalence"
+      name: null
+      expected:
+        http_status: 400
+        code: 1002
+        message_contains_any: [ "name", "缺少请求参数: name" ]
+
+    - id: "UVD_NEG_002"
+      title: "软删除个人音色-name为空"
+      category: "negative"
+      technique: "equivalence"
+      name: ""
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "name", "name 不能为空" ]
+
+    - id: "UVD_NEG_003"
+      title: "软删除个人音色-name不存在"
+      category: "negative"
+      technique: "exception"
+      name: "not-exist-user-voice"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: [ "个人音色", "个人音色不存在" ]
