@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 $env:ALLURE_NO_ANALYTICS = "1"
 
 if (-not $EnvName) {
-    $EnvName = "dev"
+    $EnvName = "test"
 }
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")

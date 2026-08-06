@@ -1,12 +1,22 @@
 # Mock files: keep only small fixtures required by tests; large files are generated locally.
 data/mock_files/
 
-# Generated test reports and local tool installs.
+# Local Python/IDE artifacts.
 __pycache__/
+*.py[cod]
+.pytest_cache/
 .idea/
-reports/report.html
-reports/allure-results/
-reports/allure-report/
-reports/runs/
-reports/web*.log
+.venv/
+
+# Local credentials and environment overrides.
+.env
+.env.*
+!.env.example
+config/env.local.yaml
+
+# Generated reports, logs, and contract-sync output.
+reports/
+data/generated/
+data/openapi/apifox_raw.json
+data/openapi/apifox_latest.json
 tools/allure/

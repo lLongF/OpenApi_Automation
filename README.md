@@ -92,7 +92,11 @@ data/test_data/test_video_compose.yaml      视频压制合成
 
 ```text
 config/
-  env.yaml                    环境配置
+  env.yaml                    默认环境及环境配置目录
+  environments/
+    dev.yaml                  开发环境非敏感配置
+    test.yaml                 测试环境非敏感配置
+    prod.yaml                 生产环境非敏感配置
   openapi_sources.yaml        Apifox / OpenAPI 同步配置
 
 data/test_data/

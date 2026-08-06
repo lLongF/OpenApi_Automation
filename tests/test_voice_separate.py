@@ -41,7 +41,7 @@ def test_voice_separate_submit(api_client, test_data, common, voice_separate_sub
             runtime_context["voice_separate_task_id"] = str(task_id)
 def _submit_voice_separate_and_get_task_id(api_client, test_data):
     """提交一次任务，返回统一任务状态查询所需 task_id。"""
-    bundle = build_files(test_data, {"audio": "valid_audio", "srt": "valid_subtitle"})
+    bundle = build_files(test_data, {"audio": "valid_clone_open_audio", "srt": "invalid_video"})
     with bundle as files:
         response = api_client.voice_separate(files=files, auth="default")
     payload = response_json(response)

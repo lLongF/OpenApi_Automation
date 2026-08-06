@@ -65,10 +65,23 @@ def load_yaml(path: str | Path) -> dict[str, Any]:
 def load_env_config(env_name: str | None = None) -> EnvConfig:
     raw = load_yaml("config/env.yaml")
     selected = env_name or os.getenv("TEST_ENV") or raw["default"]
-    envs = raw["environments"]
-    if selected not in envs:
-        raise KeyError(f"Unknown TEST_ENV={selected!r}. Available: {', '.join(envs)}")
-    item = envs[selected]
+    # Keep support for the original combined format while new installations use
+    # one non-secret YAML file per environment.
+    if "environments" in raw:
+        envs = raw["environments"]
+        if selected not in envs:
+            raise KeyError(f"Unknown TEST_ENV={selected!r}. Available: {', '.join(envs)}")
+        item = envs[selected]
+    else:
+        environment_dir = raw.get("environment_dir", "config/environments")
+        config_path = Path(environment_dir) / f"{selected}.yaml"
+        try:
+            item = load_yaml(config_path)
+        except FileNotFoundError as exc:
+            available = sorted(path.stem for path in (PROJECT_ROOT / environment_dir).glob("*.yaml"))
+            raise KeyError(
+                f"Unknown TEST_ENV={selected!r}. Available: {', '.join(available) or 'none'}"
+            ) from exc
     timeout = TimeoutConfig(**item["timeout"])
     retry = RetryConfig(
         total=int(item["retry"]["total"]),
@@ -80,9 +93,9 @@ def load_env_config(env_name: str | None = None) -> EnvConfig:
         base_url=item["base_url"].rstrip("/"),
         api_key_env=item["api_key_env"],
         user_id_value=str(item["user_id"]) if item.get("user_id") is not None else None,
-        user_id_env=item["user_id_env"],
+        user_id_env=item.get("user_id_env", "SHANHAI_USER_ID"),
         admin_token_value=str(item["admin_token"]) if item.get("admin_token") is not None else None,
-        admin_token_env=item["admin_token_env"],
+        admin_token_env=item.get("admin_token_env", "SHANHAI_ADMIN_TOKEN"),
         timeout=timeout,
         retry=retry,
     )

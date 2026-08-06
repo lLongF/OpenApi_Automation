@@ -29,8 +29,8 @@ voice_separate:
       title: "背景音与人声分离-上传合法音频和字幕"
       category: "positive"
       files:
-        audio: "valid_audio"
-        srt: "valid_subtitle"
+        audio: "valid_clone_open_audio"
+        srt: "invalid_video"
       expected:
         http_status: 200
         code: 200

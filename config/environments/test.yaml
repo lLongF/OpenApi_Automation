@@ -1,0 +1,11 @@
+base_url: "http://101.126.88.189:46062/openapi"
+api_key_env: "SHANHAI_API_KEY"
+user_id_env: "SHANHAI_USER_ID"
+admin_token_env: "SHANHAI_ADMIN_TOKEN"
+timeout:
+  connect: 60
+  read: 300
+retry:
+  total: 1
+  backoff_factor: 0.2
+  status_forcelist: [429, 500, 502, 503, 504]
