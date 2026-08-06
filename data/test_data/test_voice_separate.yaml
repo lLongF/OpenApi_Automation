@@ -1,0 +1,104 @@
+# 接口名称：背景音与人声分离接口
+# 提交接口：POST /open/voice/separate
+# 接口 ID：475265043
+# 请求方式：提交接口使用 multipart/form-data
+# 限制说明：
+# - 音频时长 <= 10 分钟
+# - 音频文件大小 <= 50MB
+# - 音频格式支持 wav、mp3、m4a 等常见格式
+# - 字幕文件大小 <= 1MB
+# - 字幕文件格式为 srt
+# 数据说明：
+# - submit_cases 维护背景音与人声分离提交用例。
+
+voice_separate:
+  limit:
+    input: "audio and optional subtitle"
+    audio_duration: "<=10min"
+    audio_max_size: "50MB"
+    audio_formats: ["wav", "mp3", "m4a"]
+    subtitle_max_size: "1MB"
+    subtitle_format: "srt"
+  submit_cases:
+    # --- 字段说明 ---
+    # files: 多文件映射，格式为 {接口字段名: files块中的key}
+    # audio: 必填音频文件字段
+    # srt: 可选字幕文件字段
+    # ---
+    - id: "VSEP_POS_001"
+      title: "背景音与人声分离-上传合法音频和字幕"
+      category: "positive"
+      files:
+        audio: "valid_clone_open_audio"
+        srt: "invalid_video"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VSEP_NEG_001"
+      title: "背景音与人声分离-缺少音频文件"
+      category: "negative"
+      files:
+        audio: "empty_audio"
+        srt: "valid_subtitle"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["audio", "file", "文件", "不能为空", "缺少"]
+    - id: "VSEP_NEG_002"
+      title: "背景音与人声分离-音频格式错误"
+      category: "negative"
+      files:
+        audio: "invalid_audio"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["不支持的文件类型，请上传wav/mp3/m4a/aac/flac格式文件","wav", "mp3", "m4a", "格式", "音频", "FileInvalid"]
+    - id: "VSEP_NEG_003"
+      title: "背景音与人声分离-字幕格式错误"
+      category: "negative"
+      files:
+        audio: "valid_audio"
+        srt: "invalid_subtitle"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["字幕文件仅支持srt格式","srt", "字幕", "格式", "文件", "FileInvalid"]
+    - id: "VSEP_BOUNDARY_001"
+      title: "背景音与人声分离-音频大小等于50MB"
+      category: "boundary"
+      files:
+        audio: "valid_speaker_5min_50mb"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VSEP_EXCEPTION_001"
+      title: "背景音与人声分离-音频超过50MB"
+      category: "exception"
+      files:
+        audio: "oversize_speaker_51mb"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["50M", "50MB", "大小", "超过", "文件"]
+    - id: "VSEP_EXCEPTION_002"
+      title: "背景音与人声分离-音频时长超过10分钟"
+      category: "exception"
+      files:
+        audio: "oversize_speaker_12min"
+        srt: "valid_subtitle"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["10分钟", "时长", "超过", "音频"]
+    - id: "VSEP_EXCEPTION_003"
+      title: "背景音与人声分离-字幕文件超过1MB"
+      category: "exception"
+      files:
+        audio: "valid_audio"
+        srt: "oversize_subtitle_11mb"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["1MB", "字幕", "大小", "超过", "文件"]

@@ -1,0 +1,112 @@
+# 接口名称：统一查询任务状态
+# 接口路径：GET /open/tasks/status
+# 轮询策略：每 5 秒查询一次，最多 300 秒。
+# task_id 来自对应提交接口；speaker_classify 使用其 request_id。
+
+tasks_status:
+  poll_interval_seconds: 5
+  poll_timeout_seconds: 300
+  cases:
+    - id: "UTS_POS_001"
+      title: "统一查询任务状态-字幕翻译"
+      category: "positive"
+      type: "subtitle_translation"
+      context_key: "subtitle_translation_task_id"
+      expected:
+        http_status: 200
+        code: 200
+        final_status: "completed"
+    - id: "UTS_POS_002"
+      title: "统一查询任务状态-字幕擦除"
+      category: "positive"
+      type: "subtitle_erase"
+      context_key: "subtitle_erase_task_id"
+      expected:
+        http_status: 200
+        code: 200  
+        final_status: "completed"
+    - id: "UTS_POS_003"
+      title: "统一查询任务状态-视频压制合成"
+      category: "positive"
+      type: "video_compose"
+      context_key: "video_compose_task_id"
+      expected:
+        http_status: 200
+        code: 200
+        final_status: "completed"
+    - id: "UTS_POS_004"
+      title: "统一查询任务状态-背景音与人声分离"
+      category: "positive"
+      type: "voice_separate"
+      context_key: "voice_separate_task_id"
+      expected:
+        http_status: 200
+        code: 200
+        final_status: "completed"
+    - id: "UTS_POS_005"
+      title: "统一查询任务状态-说话人识别"
+      category: "positive"
+      type: "speaker_classify"
+      context_key: "speaker_classify_request_id"
+      expected:
+        http_status: 200
+        code: 200
+        final_status: "completed"
+    - id: "UTS_NEG_001"
+      title: "统一查询任务状态-缺少type"
+      category: "negative"
+      params:
+        task_id: "not-exist-task-id"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 1001, 1002]
+        message_contains_any: ["type", "请求参数", "缺少"]
+    - id: "UTS_NEG_002"
+      title: "统一查询任务状态-缺少task_id"
+      category: "negative"
+      params:
+        type: "subtitle_translation"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [400, 422, 1001, 1002]
+        message_contains_any: ["task_id", "缺少请求参数",  "缺少"]
+    - id: "UTS_NEG_003"
+      title: "统一查询任务状态-不支持的type"
+      category: "negative"
+      params:
+        type: "not-supported-type"
+        task_id: "not-exist-task-id"
+      expected:
+        http_status_any: [200, 400, 404, 422, 500]
+        code_any: [400, 404, 422, 1001, 1002, 1300]
+        message_contains_any: ["type", "类型", "不支持", "任务"]
+    - id: "UTS_NEG_004"
+      title: "统一查询任务状态-task_id不存在"
+      category: "negative"
+      params:
+        type: "subtitle_translation"
+        task_id: "123456"
+      expected:
+        http_status_any: [404, 400, 422, 500]
+        code_any: [1300, 422, 1001, 1002]
+        message_contains_any: ["task_id", "任务不存在"]
+    - id: "UTS_NEG_05"
+      title: "统一查询任务状态-task_id为空"
+      category: "negative"
+      params:
+        type: "subtitle_translation"
+        task_id: ""
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [1300, 422, 1001, 1002]
+        message_contains_any: ["task_id", "不能为空", "为空"]
+    - id: "UTS_NEG_06"
+      title: "统一查询任务状态-type为空"
+      category: "negative"
+      params:
+        type: ""
+        task_id: "347325030591365512"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code_any: [1300, 422, 1001, 1002]
+        message_contains_any: ["type", "不能为空", "为空"]

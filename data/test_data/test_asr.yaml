@@ -1,0 +1,99 @@
+# 接口名称： 语音识别接口
+# 提交接口：POST /open/asr
+# 接口 ID：ASR REST
+# 请求方式：提交接口使用 multipart/form-data
+# 限制说明：
+# - 音频时长 10s-60min
+# - 音频文件大小 <= 100MB
+# - 音频格式支持 mp3、wav、m4a
+# 数据说明：
+# - rest_cases 维护 ASR 语音识别 REST 提交用例
+asr:
+  limit:
+    input: "audio"
+    duration: "10s-60min"
+    max_size: "100MB"
+    formats: ["mp3", "wav", "m4a"]
+  rest_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key / form: 表单字段
+    # ---
+    - id: "ASR_POS_001"
+      title: "语音识别-上传合法音频"
+      category: "positive"
+      file_key: "valid_audio"
+      form:
+        language: "zh"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.text"]
+    - id: "ASR_BOUNDARY_001"
+      title: "语音识别-上传50MB音频"
+      category: "boundary"
+      file_key: "valid_speaker_5min_50mb"
+      form:
+        language: "zh"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.text"]
+    - id: "ASR_BOUNDARY_002"
+      title: "语音识别-上传12分钟音频"
+      category: "boundary"
+      file_key: "oversize_speaker_12min"
+      form:
+        language: "zh"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.text"]
+    - id: "ASR_NEG_001"
+      title: "语音识别-缺失音频文件"
+      category: "negative"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [400, 422, 500]
+        code: 1002
+        message_contains_any: ["file", "文件", "参数"]
+    - id: "ASR_NEG_002"
+      title: "语音识别-音频格式错误"
+      category: "negative"
+      file_key: "invalid_audio"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [200, 400, 415, 422, 500]
+        code: 1003
+        message_contains_any: ["mp3", "wav", "m4a", "格式", "音频"]
+    - id: "ASR_NEG_003"
+      title: "语音识别-音频格式错误"
+      category: "negative"
+      file_key: "empty_audio"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [ 200, 400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "文件不能为空", "文件", "为空" ]
+    - id: "ASR_NEG_004"
+      title: "语音识别-上传超过60分钟音频"
+      category: "negative"
+      file_key: "valid_audio_65min"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [ 200, 400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "音频时长不能超过60分钟", "文件", "60分钟" ]
+    - id: "ASR_NEG_005"
+      title: "语音识别-上传超过100MB音频"
+      category: "negative"
+      file_key: "valid_audio_205MB"
+      form:
+        language: "zh"
+      expected:
+        http_status_any: [ 200, 400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "文件大小不能超过100MB", "100MB", "文件" ]

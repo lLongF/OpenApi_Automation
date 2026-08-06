@@ -1,0 +1,160 @@
+# 接口名称：公共音色列表查询接口
+# 接口路径：GET /open/voice/list
+# 请求方式：query params
+# 数据说明：
+# - cases 维护公共音色列表查询用例
+# - 覆盖正向、异常、边界值、等价类、场景法等测试设计方法
+# 文档来源：山海智影 API 接口文档 - 十一. 公共音色列表查询接口
+
+voice_list:
+  cases:
+    # --- 字段说明 ---
+    # params: URL 查询参数（name / page_no / page_size）
+    # technique: 测试设计方法（positive / exception / boundary / equivalence / scenario）
+    # expected_empty_result: 期望返回空列表的场景校验
+    # ---
+    - id: "VL_POS_001"
+      title: "查询公共音色列表-不传参数查询全部公共音色"
+      category: "positive"
+      technique: "positive"
+      params: {}
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_POS_002"
+      title: "查询公共音色列表-按名称模糊查询"
+      category: "positive"
+      technique: "positive"
+      params:
+        name: "磁性"
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_NEG_003"
+      title: "查询公共音色列表-page_no为0"
+      category: "negative"
+      technique: "equivalence"
+      params:
+        page_no: 0
+        page_size: 20
+      expected:
+        http_status: 200
+        code: 200
+
+#    - id: "VL_NEG_004"
+#      title: "查询公共音色列表-page_no为非数字"
+#      category: "negative"
+#      technique: "equivalence"
+#      params:
+#        page_no: "abc"
+#        page_size: 20
+#      expected:
+#        http_status_any: [400, 422, 500]
+#        code_any: [400, 1001, 1002]
+#        message_contains_any: ["page_no", "ParamError", "参数", "integer"]
+
+    - id: "VL_NEG_005"
+      title: "查询公共音色列表-page_size为0"
+      category: "negative"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 0
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_NEG_006"
+      title: "查询公共音色列表-page_size超过最大值"
+      category: "negative"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 1001
+      expected:
+        http_status_any: [200,400, 422, 500]
+        code: 1001
+        message_contains_any: ["page_size", "不能超过", "1000", "最大"]
+
+    - id: "VL_BND_001"
+      title: "查询公共音色列表-page_no最小有效值1"
+      category: "boundary"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 20
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_BND_002"
+      title: "查询公共音色列表-page_size最小有效值1"
+      category: "boundary"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 1
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_BND_003"
+      title: "查询公共音色列表-page_size最大有效值1000"
+      category: "boundary"
+      technique: "boundary"
+      params:
+        page_no: 1
+        page_size: 1000
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_EQ_001"
+      title: "查询公共音色列表-name为空字符串等价于不筛选"
+      category: "positive"
+      technique: "equivalence"
+      params:
+        name: ""
+        page_no: 1
+        page_size: 20
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_EQ_002"
+      title: "查询公共音色列表-name不存在返回空列表"
+      category: "positive"
+      technique: "equivalence"
+      expected_empty_result: true
+      params:
+        name: "voice-list-not-exist-zzzzzz"
+        page_no: 1
+        page_size: 20
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_SCN_001"
+      title: "查询公共音色列表-分页查询第2页每页5条"
+      category: "positive"
+      technique: "scenario"
+      params:
+        page_no: 2
+        page_size: 5
+      expected:
+        http_status: 200
+        code: 200
+
+    - id: "VL_SCN_002"
+      title: "查询公共音色列表-名称筛选结合分页查询"
+      category: "positive"
+      technique: "scenario"
+      params:
+        name: "女声"
+        page_no: 1
+        page_size: 5
+      expected:
+        http_status: 200
+        code: 200

@@ -1,0 +1,13 @@
+# 公共变量配置
+# 用途：提供跨接口复用的占位变量，运行时会被接口返回值或手工配置值替换。
+# 说明：
+# - speaker_id: 语音克隆返回的 speaker_id / request_id，用于语音合成接口
+# - task_id: 字幕翻译、视频合成、音频分离等任务类接口的任务 ID
+# - project_id: 字幕擦除提交接口返回的项目 ID
+# - request_id: 音色设计、说话人分类等接口返回的请求 ID
+
+common:
+  speaker_id: "replace-with-valid-speaker-id"
+  task_id: "replace-with-valid-task-id"
+  project_id: "replace-with-valid-project-id"
+  request_id: "replace-with-valid-request-id"

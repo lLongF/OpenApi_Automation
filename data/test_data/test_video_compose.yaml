@@ -1,0 +1,235 @@
+# 接口名称：视频压制合成接口
+# 提交接口：POST /open/video-compose/tasks
+# 请求方式：提交接口使用 multipart/form-data + query params
+# 字段说明：
+# - video_file: 必填视频文件
+# - audio_file: 可选音频文件
+# - subtitle_file: 可选字幕文件
+# - target_language / subtitle_x / subtitle_y / subtitle_font_size / coordinate_width / coordinate_height: query 参数
+# 数据说明：
+# - submit_cases 维护视频压制合成提交用例。
+
+video_compose:
+  limit:
+    input: "video with optional audio and subtitle"
+    video_file: "required"
+    video_duration: "10s-60min"
+    video_max_size: "2GB"
+    video_formats: ["mp4", "mov"]
+    audio_file: "optional"
+    audio_duration: "<=10min"
+    audio_max_size: "50MB"
+    audio_formats: ["wav", "mp3", "m4a"]
+    subtitle_file: "optional"
+    subtitle_max_size: "1MB"
+    subtitle_format: "srt"
+    subtitle_font_size: "12-96"
+  submit_cases:
+    # --- 字段说明 ---
+    # files: 多文件映射，格式为 {接口字段名: files块中的key}
+    # params: URL query 参数
+    # ---
+    - id: "VCMP_POS_001"
+      title: "视频压制合成-上传视频音频字幕"
+      category: "positive"
+      files:
+        video_file: "valid_video"
+        audio_file: "valid_audio"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_x: 50
+        subtitle_y: 980
+        subtitle_font_size: 40
+        coordinate_width: 720
+        coordinate_height: 1280
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VCMP_NEG_001"
+      title: "视频压制合成-缺少视频文件"
+      category: "negative"
+      files:
+        video_file: "empty_video"
+        audio_file: "valid_audio"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["video_file", "video", "文件", "不能为空", "缺少"]
+    - id: "VCMP_NEG_002"
+      title: "视频压制合成-视频格式错误"
+      category: "negative"
+      files:
+        video_file: "invalid_video"
+        audio_file: "valid_audio"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["mp4", "mov", "格式", "视频", "FileInvalid"]
+    - id: "VCMP_NEG_003"
+      title: "视频压制合成-字幕格式错误"
+      category: "negative"
+      files:
+        video_file: "valid_video"
+        subtitle_file: "invalid_subtitle"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["srt", "字幕", "格式", "文件", "FileInvalid"]
+    - id: "VCMP_BOUNDARY_001"
+      title: "视频压制合成-字幕字号最小边界12"
+      category: "boundary"
+      files:
+        video_file: "valid_compose_video"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_font_size: 12
+        subtitle_x: 50
+        subtitle_y: 980
+        coordinate_width: 720
+        coordinate_height: 1280
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VCMP_BOUNDARY_002"
+      title: "视频压制合成-字幕字号最大边界96"
+      category: "boundary"
+      files:
+        video_file: "valid_compose_video"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_font_size: 96
+        subtitle_x: 50
+        subtitle_y: 980
+        coordinate_width: 720
+        coordinate_height: 1280
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VCMP_EXCEPTION_001"
+      title: "视频压制合成-音频格式异常"
+      category: "exception"
+      files:
+        video_file: "valid_video"
+        audio_file: "invalid_audio"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["不支持的文件类型", "音频", "格式", "mp3","wav"]
+    - id: "VCMP_EXCEPTION_002"
+      title: "视频压制合成-音频文件超过50MB"
+      category: "exception"
+      files:
+        video_file: "valid_video"
+        audio_file: "oversize_speaker_51mb"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["50M", "50MB", "大小", "超过", "音频", "文件"]
+    - id: "VCMP_EXCEPTION_003"
+      title: "视频压制合成-音频时长超过10分钟"
+      category: "exception"
+      files:
+        video_file: "valid_video"
+        audio_file: "oversize_speaker_12min"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["10分钟", "时长", "超过", "音频"]
+    - id: "VCMP_EXCEPTION_004"
+      title: "视频压制合成-字幕文件超过1MB"
+      category: "exception"
+      files:
+        video_file: "valid_video"
+        audio_file: "valid_audio"
+        subtitle_file: "oversize_subtitle_11mb"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [200, 400, 422, 500]
+        code: 1003
+        message_contains_any: ["1MB", "字幕", "大小", "超过", "文件"]
+    - id: "VCMP_EXCEPTION_005"
+      title: "视频压制合成-字幕压制时缺少target_language"
+      category: "exception"
+      files:
+        video_file: "valid_video"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: ""
+      expected:
+        http_status_any: [ 200, 400, 422, 500 ]
+        code: 1002
+        message_contains_any: [ "target_language不能为空", "为空", "target_language" ]
+    - id: "VCMP_EXCEPTION_006"
+      title: "视频压制合成-视频文件小于10秒"
+      category: "negative"
+      files:
+        video_file: "valid_compose_video_9s"
+        audio_file: "valid_audio"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [ 200, 400, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "视频时长不能少于10秒", "时长", "视频", "10秒" ]
+    - id: "VCMP_EXCEPTION_007"
+      title: "视频压制合成-视频文件超过60分钟"
+      category: "negative"
+      files:
+        video_file: "valid_compose_video_60min"
+        audio_file: "valid_audio"
+      params:
+        target_language: "zh"
+      expected:
+        http_status_any: [ 200, 400, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "时长","mp4", "mov", "超过", "视频", "60分钟" ]
+#    - id: "VCMP_EXCEPTION_008"
+#      title: "视频压制合成-视频文件大小超过2G"
+#      category: "negative"
+#      only_envs: ["dev"]
+#      streaming_upload: true
+#      files:
+#        video_file: "valid_compose_video_2G"
+#        audio_file: "valid_audio"
+#      params:
+#        target_language: "zh"
+#      expected:
+#        http_status_any: [ 200, 400, 422, 500 ]
+#        code: 1003
+#        message_contains_any: [ "文件","mp4", "mov", "超过", "视频", "2G" ]
+    - id: "VCMP_EXCEPTION_009"
+      title: "视频压制合成-缺少自定义字幕位置"
+      category: "negative"
+      files:
+        video_file: "valid_video"
+        audio_file: "valid_audio"
+        subtitle_file: "valid_subtitle"
+      params:
+        target_language: "zh"
+        subtitle_x: 50
+      expected:
+        http_status_any: [ 200, 400, 422, 500 ]
+        code: 1001
+        message_contains_any: [ "如需使用自定义字幕位置，必须同时传subtitle_x、subtitle_y、subtitle_font_size、coordinate_width、coordinate_height", "subtitle_y", "subtitle_font_size", "coordinate_width", "coordinate_height" ]

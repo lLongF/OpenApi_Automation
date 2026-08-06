@@ -1,0 +1,2 @@
+"""Shanhai OpenAPI automation framework."""
+

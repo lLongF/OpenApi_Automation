@@ -1,0 +1,203 @@
+# 接口名称：字幕翻译接口
+# 翻译接口：POST /open/videots/translate
+# 重译接口：POST /open/videots/retranslate
+# 回译接口：POST /open/videots/back-translation
+# 请求方式：提交类接口使用 multipart/form-data
+# 数据说明：
+# - translate_cases 维护字幕翻译提交用例
+# - retranslate_cases 维护字幕重译用例
+# - back_translation_cases 维护字幕回译用例。
+
+videots:
+  limit:
+    input: "subtitle file"
+    max_size: "1MB"
+    format: "srt"
+  translate_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key
+    # form: multipart 表单字段（target_language / user_prompt / mode 等）
+    # ---
+    - id: "VT_POS_001"
+      title: "字幕翻译-上传合法SRT文件"
+      category: "positive"
+      file_key: "valid_subtitle"
+      form:
+        target_language: "en"
+        user_prompt: "正式场合使用"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id"]
+    - id: "VT_POS_002"
+      title: "字幕翻译-上传合法file_url文件链接"
+      category: "positive"
+      form:
+        file_url: "http://dev-1321001571.tos-cn-guangzhou.volces.com/uploads/001-en-shanhai-translated-zh.srt"
+        target_language: "en"
+        user_prompt: "正式场合使用"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: [ "data.task_id" ]
+    - id: "VT_POS_003"
+      title: "字幕翻译-上传合法SRT文件和 合法file_url文件链接"
+      category: "positive"
+      file_key: "valid_subtitle"
+      form:
+        file_url: "http://dev-1321001571.tos-cn-guangzhou.volces.com/uploads/001-en-shanhai-translated-zh.srt"
+        target_language: "en"
+        user_prompt: "正式场合使用"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: [ "data.task_id" ]
+    - id: "VT_NEG_001"
+      title: "字幕翻译-缺失字幕文件"
+      category: "negative"
+      file_key: "empty_subtitle"
+      form:
+        target_language: "en"
+      expected:
+        http_status_any: [ 200, 400, 415, 422, 500 ]
+        code: 1002
+        message_contains_any: [ "file或tos_path至少传一个", "file", "为空" ]
+    - id: "VT_NEG_002"
+      title: "字幕翻译-字幕文件格式不是srt"
+      category: "negative"
+      file_key: "invalid_subtitle"
+      form:
+        target_language: "en"
+      expected:
+        http_status_any: [200,400, 415, 422, 500]
+        code: 1003
+        message_contains_any: ["字幕文件仅支持srt格式", "格式", "字幕", "文件"]
+    - id: "VT_NEG_003"
+      title: "字幕翻译-字幕文件超过1MB"
+      category: "negative"
+      file_key: "oversize_subtitle_11mb"
+      form:
+        target_language: "en"
+      expected:
+        http_status_any: [200,400, 415, 422, 500]
+        code: 1003
+        message_contains_any: ["字幕文件不能超过1MB", "1MB", "大小", "超过", "文件"]
+    - id: "VT_NEG_004"
+      title: "字幕翻译-file_url文件链接不是srt"
+      category: "negative"
+      form:
+        file_url: "http://dev-1321001571.tos-cn-guangzhou.volces.com/files/%E5%A5%BD%E4%B8%80%E4%B8%AA%E4%B9%96%E4%B9%96%E5%A5%B3-01-%E8%AF%91%E5%88%B6%E9%9F%B3%E9%A2%91_%E5%BC%80BGM.wav"
+        target_language: "en"
+      expected:
+        http_status_any: [ 200,400, 415, 422, 500 ]
+        code: 1010
+        message_contains_any: [ "file_url必须指向.srt文件", "srt", "file_url" ]
+    - id: "VT_NEG_005"
+      title: "字幕翻译-file_url文件链接超过1MB"
+      category: "negative"
+      form:
+        file_url: "http://dev-1321001571.tos-cn-guangzhou.volces.com/files/%E9%9D%92%E8%9B%99%E7%8E%8B%E5%AD%90-%E5%AD%97%E5%B9%95_11MB.srt"
+        target_language: "en"
+      expected:
+        http_status_any: [ 200,400, 415, 422, 500 ]
+        code: 1010
+        message_contains_any: [ "字幕文件不能超过1MB", "1MB", "大小", "超过", "文件" ]
+  retranslate_cases:
+    # --- 字段说明 ---
+    # files: 多文件映射，格式为 {form字段名: files块中的key}
+    # form: 表单字段（retranslation_items 等）
+    # ---
+    - id: "VR_POS_001"
+      title: "字幕重译-上传原字幕和译文字幕"
+      category: "positive"
+      files:
+        file_original: "valid_subtitle"
+        file_translated: "valid_subtitle_translated"
+      form:
+        target_language: "en"
+        retranslation_items: '[{"index":1,"feedback":"翻译更简洁口语化"}]'
+      expected:
+        http_status: 200
+        code: 200
+#    - id: "VR_NEG_001"
+#      title: "字幕重译-retranslation_items不是JSON"
+#      category: "negative"
+#      files:
+#        file_original: "valid_subtitle"
+#        file_translated: "valid_subtitle_translated"
+#      form:
+#        target_language: "en"
+#        retranslation_items: "1"
+#      expected:
+#        http_status_any: [ 200, 400, 422, 502]
+#        code: 1500
+#        message_contains_any: ["重新翻译任务提交失败", "重新翻译", "失败"]
+    - id: "VR_NEG_002"
+      title: "字幕重译-字幕文件格式不是srt"
+      category: "negative"
+      files:
+        file_original: "invalid_subtitle"
+        file_translated: "invalid_subtitle"
+      form:
+        target_language: "en"
+        retranslation_items: '[{"index":1,"feedback":"翻译更简洁口语化"}]'
+      expected:
+        http_status_any: [ 200,400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "字幕文件仅支持srt格式", "格式", "字幕", "文件" ]
+    - id: "VR_NEG_003"
+      title: "字幕重译-字幕文件超过1MB"
+      category: "negative"
+      files:
+        file_original: "oversize_subtitle_11mb"
+        file_translated: "oversize_subtitle_11mb"
+      form:
+        target_language: "en"
+        retranslation_items: '[{"index":1,"feedback":"翻译更简洁口语化"}]'
+      expected:
+        http_status_any: [ 200,400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "字幕文件不能超过1MB", "1MB", "大小", "超过", "文件" ]
+  back_translation_cases:
+    # --- 字段说明 ---
+    # file_key: 上传单个文件引用key / form: 表单字段
+    # ---
+    - id: "VB_POS_001"
+      title: "字幕回译-上传合法SRT文件"
+      category: "positive"
+      file_key: "valid_subtitle_translated"
+      form:
+        target_language: "en"
+      expected:
+        http_status: 200
+        code: 200
+    - id: "VB_NEG_001"
+      title: "字幕回译-字幕文件格式错误"
+      category: "negative"
+      file_key: "invalid_subtitle"
+      form:
+        target_language: "en"
+      expected:
+        http_status_any: [200,400, 415, 422, 500]
+        code: 1003
+        message_contains_any: ["srt", "格式", "字幕", "文件", "失败"]
+    - id: "VB_NEG_002"
+      title: "字幕回译-字幕文件格式不是srt"
+      category: "negative"
+      file_key: "invalid_subtitle"
+      form:
+        target_language: "en"
+      expected:
+        http_status_any: [ 200,400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "字幕文件仅支持srt格式", "格式", "字幕", "文件" ]
+    - id: "VB_NEG_003"
+      title: "字幕回译-字幕文件超过1MB"
+      category: "negative"
+      file_key: "oversize_subtitle_11mb"
+      form:
+        target_language: "en"
+      expected:
+        http_status_any: [ 200,400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "字幕文件不能超过1MB", "1MB", "大小", "超过", "文件" ]

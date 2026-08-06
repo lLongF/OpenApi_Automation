@@ -1,0 +1,16 @@
+﻿# 测试数据已按接口拆分维护。
+# 运行时由 src/openapi_automation/core/config.py 的 load_test_data() 自动合并 data/test_data/*.yaml。
+# 请不要在这里新增接口用例；请到 data/test_data/ 下对应文件维护。
+
+includes:
+  - data/test_data/common.yaml
+  - data/test_data/files.yaml
+  - data/test_data/test_voice_clone.yaml
+  - data/test_data/test_voice_infer.yaml
+  - data/test_data/test_timbre_design_mimo.yaml
+  - data/test_data/test_videots.yaml
+  - data/test_data/test_subtitle_erase.yaml
+  - data/test_data/test_asr.yaml
+  - data/test_data/test_speaker_classify.yaml
+  - data/test_data/test_user_voices.yaml
+  - data/test_data/test_tasks_status.yaml

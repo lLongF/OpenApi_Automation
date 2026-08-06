@@ -1,0 +1,121 @@
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+
+@dataclass(frozen=True)
+class RetryConfig:
+    total: int
+    backoff_factor: float
+    status_forcelist: tuple[int, ...]
+
+
+@dataclass(frozen=True)
+class TimeoutConfig:
+    connect: float
+    read: float
+
+    @property
+    def requests_tuple(self) -> tuple[float, float]:
+        return self.connect, self.read
+
+
+@dataclass(frozen=True)
+class EnvConfig:
+    name: str
+    base_url: str
+    api_key_env: str
+    user_id_value: str | None
+    user_id_env: str
+    admin_token_value: str | None
+    admin_token_env: str
+    timeout: TimeoutConfig
+    retry: RetryConfig
+
+    @property
+    def api_key(self) -> str | None:
+        return os.getenv(self.api_key_env)
+
+    @property
+    def user_id(self) -> str | None:
+        return os.getenv(self.user_id_env) or self.user_id_value
+
+    @property
+    def admin_token(self) -> str | None:
+        return os.getenv(self.admin_token_env) or self.admin_token_value
+
+
+def load_yaml(path: str | Path) -> dict[str, Any]:
+    resolved = PROJECT_ROOT / path if not Path(path).is_absolute() else Path(path)
+    with resolved.open("r", encoding="utf-8") as file:
+        loaded = yaml.safe_load(file) or {}
+    if not isinstance(loaded, dict):
+        raise TypeError(f"YAML root must be a mapping: {resolved}")
+    return loaded
+
+
+def load_env_config(env_name: str | None = None) -> EnvConfig:
+    raw = load_yaml("config/env.yaml")
+    selected = env_name or os.getenv("TEST_ENV") or raw["default"]
+    # Keep support for the original combined format while new installations use
+    # one non-secret YAML file per environment.
+    if "environments" in raw:
+        envs = raw["environments"]
+        if selected not in envs:
+            raise KeyError(f"Unknown TEST_ENV={selected!r}. Available: {', '.join(envs)}")
+        item = envs[selected]
+    else:
+        environment_dir = raw.get("environment_dir", "config/environments")
+        config_path = Path(environment_dir) / f"{selected}.yaml"
+        try:
+            item = load_yaml(config_path)
+        except FileNotFoundError as exc:
+            available = sorted(path.stem for path in (PROJECT_ROOT / environment_dir).glob("*.yaml"))
+            raise KeyError(
+                f"Unknown TEST_ENV={selected!r}. Available: {', '.join(available) or 'none'}"
+            ) from exc
+    timeout = TimeoutConfig(**item["timeout"])
+    retry = RetryConfig(
+        total=int(item["retry"]["total"]),
+        backoff_factor=float(item["retry"]["backoff_factor"]),
+        status_forcelist=tuple(item["retry"].get("status_forcelist", [])),
+    )
+    return EnvConfig(
+        name=selected,
+        base_url=item["base_url"].rstrip("/"),
+        api_key_env=item["api_key_env"],
+        user_id_value=str(item["user_id"]) if item.get("user_id") is not None else None,
+        user_id_env=item.get("user_id_env", "SHANHAI_USER_ID"),
+        admin_token_value=str(item["admin_token"]) if item.get("admin_token") is not None else None,
+        admin_token_env=item.get("admin_token_env", "SHANHAI_ADMIN_TOKEN"),
+        timeout=timeout,
+        retry=retry,
+    )
+
+
+def load_test_data() -> dict[str, Any]:
+    split_dir = project_path("data/test_data")
+    if not split_dir.exists():
+        return load_yaml("data/test_data.yaml")
+
+    merged: dict[str, Any] = {}
+    for path in sorted(split_dir.glob("*.yaml")):
+        item = load_yaml(path)
+        duplicate_keys = set(merged) & set(item)
+        if duplicate_keys:
+            names = ", ".join(sorted(duplicate_keys))
+            raise KeyError(f"Duplicate test data section(s) in {path}: {names}")
+        merged.update(item)
+    return merged
+
+
+def project_path(path: str | Path) -> Path:
+    return PROJECT_ROOT / path if not Path(path).is_absolute() else Path(path)

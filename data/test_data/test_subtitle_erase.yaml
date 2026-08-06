@@ -1,0 +1,68 @@
+# 接口名称：字幕擦除接口
+# 提交接口：POST /open/subtitle/erase
+# 请求方式：提交接口使用 multipart/form-data
+# 数据说明：
+# - submit_cases 维护字幕擦除提交用例。
+
+subtitle_erase:
+  limit:
+    input: "video"
+    duration: "10s-60min"
+    max_size: "2GB"
+    formats: ["mp4", "mov"]
+  submit_cases:
+    # --- 字段说明 ---
+    # file_key: 上传文件引用key / form: 表单字段
+    # ---
+    - id: "SE_POS_001"
+      title: "字幕擦除-上传合法MP4视频"
+      category: "positive"
+      file_key: "valid_video"
+      form:
+        name: "api-auto-erase"
+        language_code: "zh"
+        subtitle_mode: 0
+        do_not_encrypt_link: "true"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.project_id"]
+    - id: "SE_NEG_001"
+      title: "字幕擦除-缺失视频文件"
+      category: "negative"
+      form:
+        language_code: "zh"
+      expected:
+        http_status_any: [200, 400, 415, 422, 500]
+        code: 1002
+        message_contains_any: ["缺少请求参数", "file"]
+    - id: "SE_NEG_002"
+      title: "字幕擦除-视频格式不是MP4或MOV"
+      category: "negative"
+      file_key: "invalid_video"
+      form:
+        language_code: "zh"
+      expected:
+        http_status_any: [200, 400, 415, 422, 500]
+        code: 1003
+        message_contains_any: ["MP4", "MOV", "格式", "视频"]
+    - id: "SE_NEG_003"
+      title: "字幕擦除-视频文件为空"
+      category: "negative"
+      file_key: "empty_audio"
+      form:
+        body: '{"carry_back":"voice-clone-missing-file"}'
+      expected:
+        http_status_any: [ 200, 400, 415, 422, 500 ]
+        code: 1003
+        message_contains_any: [ "文件", "文件不能为空", "为空" ]
+
+    # - id: "SE_NEG_004"
+    #   title: "字幕擦除-视频超过2GB"
+    #   category: "negative"
+    #   file_key: "oversize_video_2100mb"
+    #   form:
+    #     language_code: "zh"
+    #   expected:
+    #     http_status_any: [400, 413, 422, 500]
+    #     message_contains_any: ["2G", "2GB", "大小", "超过", "文件"]
