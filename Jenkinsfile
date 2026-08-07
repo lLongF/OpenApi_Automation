@@ -22,9 +22,10 @@ pipeline {
     stage('创建虚拟环境并安装依赖') {
       steps {
         bat '''
-          python -m venv .venv
-          .venv\\Scripts\\python -m pip install --upgrade pip
-          .venv\\Scripts\\python -m pip install -r requirements.txt
+        rmdir /s /q .venv
+        python -m venv .venv
+        .venv\\Scripts\\python -m pip install --upgrade pip
+        .venv\\Scripts\\python -m pip install -r requirements.txt
         '''
       }
     }
@@ -38,10 +39,12 @@ pipeline {
           script {
             def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
             def syncOption = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
-
+            // windows bat执行pytest命令
             bat """
-              set TEST_ENV=test
-              .venv\\Scripts\\python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir --junitxml=reports\\junit.xml
+            set TEST_ENV=test
+            set SHANHAI_USER_ID=${SHANHAI_USER_ID}
+            set SHANHAI_ADMIN_TOKEN=${SHANHAI_ADMIN_TOKEN}
+            .venv\\Scripts\\python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir=reports\\allure-results --junitxml=reports\\junit.xml
             """
           }
         }
