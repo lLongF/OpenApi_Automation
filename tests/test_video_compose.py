@@ -58,6 +58,8 @@ def _submit_video_compose_and_get_task_id(api_client, test_data):
             params={
                 "target_language": "zh",
                 "subtitle_font_size": 24,
+                "subtitle_x": 80,
+                "subtitle_y": 950,
                 "coordinate_width": 1920,
                 "coordinate_height": 1080,
             },
