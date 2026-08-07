@@ -1,5 +1,5 @@
 pipeline {
-  agent { agent any }
+  agent any
 
   options {
     timestamps()
@@ -24,8 +24,8 @@ pipeline {
         sh '''
         rm -rf .venv
         python3 -m venv .venv
-        .venv/bin/python -m pip install --upgrade pip
-        .venv/bin/python -m pip install -r requirements.txt
+        .venv/bin/python -m pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+        .venv/bin/python -m pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
         '''
       }
     }
