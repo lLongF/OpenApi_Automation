@@ -1,5 +1,3 @@
-# Mock files: keep only small fixtures required by tests; large files are generated locally.
-data/mock_files/
 
 # Local Python/IDE artifacts.
 __pycache__/
