@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'windows-api-test' }
+  agent { label 'local-agent' }
 
   options {
     timestamps()
@@ -14,17 +14,17 @@ pipeline {
   stages {
     stage('检查运行环境') {
       steps {
-        bat 'python --version'
-        bat 'git --version'
+        sh 'python3 --version'
+        sh 'git --version'
       }
     }
 
     stage('创建虚拟环境并安装依赖') {
       steps {
-        bat '''
-          python -m venv .venv
-          .venv\\Scripts\\python -m pip install --upgrade pip
-          .venv\\Scripts\\python -m pip install -r requirements.txt
+        sh '''
+python3 -m venv .venv
+.venv/bin/python3 -m pip install --upgrade pip
+.venv/bin/python3 -m pip install -r requirements.txt
         '''
       }
     }
@@ -39,9 +39,9 @@ pipeline {
             def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
             def syncOption = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
 
-            bat """
-              set TEST_ENV=test
-              .venv\\Scripts\\python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir --junitxml=reports\\junit.xml
+            sh """
+export TEST_ENV=test
+.venv/bin/python3 -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir --junitxml=reports/junit.xml
             """
           }
         }
@@ -53,6 +53,13 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'reports/junit.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
+    }
+    failure {
+      // 测试失败，流水线标记失败，上游发布流水线可以检测这个结果，阻断发布
+      echo "❌接口自动化用例失败，阻断预发布流程"
+    }
+    success {
+      echo "✅全部自动化用例执行通过，允许进入预发布流程"
     }
   }
 }
