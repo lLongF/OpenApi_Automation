@@ -42,9 +42,10 @@ pipeline {
 
             sh """
             export TEST_ENV=test
-            export SHANHAI_USER_ID=${SHANHAI_USER_ID}
-            export SHANHAI_ADMIN_TOKEN=${SHANHAI_ADMIN_TOKEN}
-            .venv/bin/python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir=reports/allure-results --junitxml=reports/junit.xml
+            export SHANHAI_USER_ID='${SHANHAI_USER_ID}'
+            export SHANHAI_ADMIN_TOKEN='${SHANHAI_ADMIN_TOKEN}'
+            mkdir -p reports
+            .venv/bin/python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
             """
           }
         }
