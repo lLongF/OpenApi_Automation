@@ -16,10 +16,10 @@ pipeline {
       steps {
         sh 'python3 --version'
         sh 'git --version'
-        // 每次构建自动同步测试媒体素材，防止clean workspace删除data/mock_files
+        // 直接从容器内jenkins_home目录复制素材到工作区
         sh '''
-        docker exec jenkins rm -rf /var/jenkins_home/workspace/测试冒烟测试/data/mock_files
-        docker cp /tmp/mock_extract/mock_files jenkins:/var/jenkins_home/workspace/测试冒烟测试/data/
+        rm -rf data/mock_files
+        cp -r /var/jenkins_home/mock_media_fixtures data/mock_files
         '''
       }
     }
