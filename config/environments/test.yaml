@@ -1,6 +1,8 @@
 base_url: "http://101.126.88.189:46062/openapi"
 api_key_env: "SHANHAI_API_KEY"
+user_id: "85"
 user_id_env: "SHANHAI_USER_ID"
+admin_token: "lychee@2026"
 admin_token_env: "SHANHAI_ADMIN_TOKEN"
 timeout:
   connect: 60
