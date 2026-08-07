@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'windows-api-test' }
+  agent { agent any }
 
   options {
     timestamps()
@@ -14,18 +14,18 @@ pipeline {
   stages {
     stage('检查运行环境') {
       steps {
-        bat 'python --version'
-        bat 'git --version'
+        sh 'python3 --version'
+        sh 'git --version'
       }
     }
 
     stage('创建虚拟环境并安装依赖') {
       steps {
-        bat '''
-        rmdir /s /q .venv
-        python -m venv .venv
-        .venv\\Scripts\\python -m pip install --upgrade pip
-        .venv\\Scripts\\python -m pip install -r requirements.txt
+        sh '''
+        rm -rf .venv
+        python3 -m venv .venv
+        .venv/bin/python -m pip install --upgrade pip
+        .venv/bin/python -m pip install -r requirements.txt
         '''
       }
     }
@@ -39,12 +39,12 @@ pipeline {
           script {
             def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
             def syncOption = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
-            // windows bat执行pytest命令
-            bat """
-            set TEST_ENV=test
-            set SHANHAI_USER_ID=${SHANHAI_USER_ID}
-            set SHANHAI_ADMIN_TOKEN=${SHANHAI_ADMIN_TOKEN}
-            .venv\\Scripts\\python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir=reports\\allure-results --junitxml=reports\\junit.xml
+
+            sh """
+            export TEST_ENV=test
+            export SHANHAI_USER_ID=${SHANHAI_USER_ID}
+            export SHANHAI_ADMIN_TOKEN=${SHANHAI_ADMIN_TOKEN}
+            .venv/bin/python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir=reports/allure-results --junitxml=reports/junit.xml
             """
           }
         }
