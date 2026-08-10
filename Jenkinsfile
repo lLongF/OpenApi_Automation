@@ -6,6 +6,10 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '15'))
   }
 
+  tools {
+    allure 'allure' // 对应全局工具里的名称
+  }
+
   parameters {
     choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'], description: 'smoke：核心用例；all：全部测试用例')
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '执行前同步 Apifox/OpenAPI 并生成用例模板')
@@ -16,8 +20,7 @@ pipeline {
       steps {
         sh 'python3 --version'
         sh 'git --version'
-        sh 'allure --version' // 校验容器allure‑cli是否可用，不可用此处会报错
-        // 直接从容器内jenkins_home目录复制素材到工作区
+        sh 'allure --version' // 现在由 Jenkins 工具提供
         sh '''
         rm -rf data/mock_files
         cp -r /var/jenkins_home/mock_media_fixtures data/mock_files
@@ -55,9 +58,8 @@ pipeline {
               currentBuild.result = 'UNSTABLE'
             }
 
-            // 本地allure‑cli生成静态HTML报告输出到 reports/allure‑report
+            // Jenkins 工具提供 allure，生成静态报告
             sh '''
-            mkdir -p reports
             allure generate reports/allure-results -o reports/allure-report --clean
             '''
           }
@@ -71,7 +73,7 @@ pipeline {
       junit allowEmptyResults: true, testResults: 'reports/junit.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
 
-      // 1. Pytest‑HTML 报告：reports/report.html
+      // 1. Pytest HTML 报告
       publishHTML(target: [
         allowMissing: true,
         alwaysLinkToLastBuild: true,
@@ -81,7 +83,7 @@ pipeline {
         reportName: 'Pytest HTML 测试报告'
       ])
 
-      // 2. Allure静态HTML报告：reports/allure‑report/index.html
+      // 2. Allure 静态 HTML 报告
       publishHTML(target: [
         allowMissing: true,
         alwaysLinkToLastBuild: true,
