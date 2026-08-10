@@ -45,13 +45,12 @@ pipeline {
             def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
             def syncOption = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
 
-            sh """
+            // withCredentials会把变量注入shell环境，sh脚本内部直接读取环境变量，不再用${}插值
+            sh returnStatus: true, script: '''
             export TEST_ENV=test
-            export SHANHAI_USER_ID='${SHANHAI_USER_ID}'
-            export SHANHAI_ADMIN_TOKEN='${SHANHAI_ADMIN_TOKEN}'
             mkdir -p reports
-            .venv/bin/python -m pytest tests --live --env test ${marker} ${syncOption} --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
-            """
+            .venv/bin/python -m pytest tests --live --env test ''' + marker + ''' ''' + syncOption + ''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
+            '''
           }
         }
       }
@@ -62,7 +61,7 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'reports/junit.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-      // 发布pytest生成的简易html报告 report.html
+      // 发布pytest‑html报告
       publishHTML([
         allowMissing: false,
         alwaysLinkToLastBuild: true,
@@ -71,6 +70,8 @@ pipeline {
         reportFiles: 'report.html',
         reportName: '冒烟测试HTML报告'
       ])
+      // 发布Allure测试报告（Jenkins需预先安装Allure Plugin插件）
+      allure includeProperties: false, jdk: '', results: [[path: 'reports/allure-results']]
     }
   }
 }
