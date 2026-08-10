@@ -6,10 +6,6 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '15'))
   }
 
-  tools {
-    allure 'allure' // 对应全局工具里的名称
-  }
-
   parameters {
     choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'], description: 'smoke：核心用例；all：全部测试用例')
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '执行前同步 Apifox/OpenAPI 并生成用例模板')
@@ -20,7 +16,7 @@ pipeline {
       steps {
         sh 'python3 --version'
         sh 'git --version'
-        sh 'allure --version' // 现在由 Jenkins 工具提供
+        // 直接从容器内jenkins_home目录复制素材到工作区
         sh '''
         rm -rf data/mock_files
         cp -r /var/jenkins_home/mock_media_fixtures data/mock_files
@@ -49,18 +45,11 @@ pipeline {
             def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
             def syncOption = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
 
-            def exitCode = sh returnStatus: true, script: '''
+            // withCredentials会把变量注入shell环境，sh脚本内部直接读取环境变量，不再用${}插值
+            sh returnStatus: true, script: '''
             export TEST_ENV=test
             mkdir -p reports
             .venv/bin/python -m pytest tests --live --env test ''' + marker + ''' ''' + syncOption + ''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
-            '''
-            if(exitCode != 0){
-              currentBuild.result = 'UNSTABLE'
-            }
-
-            // Jenkins 工具提供 allure，生成静态报告
-            sh '''
-            allure generate reports/allure-results -o reports/allure-report --clean
             '''
           }
         }
@@ -72,26 +61,17 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'reports/junit.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-
-      // 1. Pytest HTML 报告
-      publishHTML(target: [
-        allowMissing: true,
+      // 发布pytest‑html报告
+      publishHTML([
+        allowMissing: false,
         alwaysLinkToLastBuild: true,
         keepAll: true,
         reportDir: 'reports',
         reportFiles: 'report.html',
-        reportName: 'Pytest HTML 测试报告'
+        reportName: '冒烟测试HTML报告'
       ])
-
-      // 2. Allure 静态 HTML 报告
-      publishHTML(target: [
-        allowMissing: true,
-        alwaysLinkToLastBuild: true,
-        keepAll: true,
-        reportDir: 'reports/allure-report',
-        reportFiles: 'index.html',
-        reportName: 'Allure 测试报告'
-      ])
+      // 发布Allure测试报告（Jenkins需预先安装Allure Plugin插件）
+      allure includeProperties: false, jdk: '', results: [[path: 'reports/allure-results']]
     }
   }
 }
