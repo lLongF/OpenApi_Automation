@@ -16,6 +16,7 @@ pipeline {
       steps {
         sh 'python3 --version'
         sh 'git --version'
+        sh 'allure --version' // 校验容器allure‑cli是否可用，不可用此处会报错
         // 直接从容器内jenkins_home目录复制素材到工作区
         sh '''
         rm -rf data/mock_files
@@ -45,11 +46,19 @@ pipeline {
             def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
             def syncOption = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
 
-            // withCredentials会把变量注入shell环境，sh脚本内部直接读取环境变量，不再用${}插值
-            sh returnStatus: true, script: '''
+            def exitCode = sh returnStatus: true, script: '''
             export TEST_ENV=test
             mkdir -p reports
             .venv/bin/python -m pytest tests --live --env test ''' + marker + ''' ''' + syncOption + ''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
+            '''
+            if(exitCode != 0){
+              currentBuild.result = 'UNSTABLE'
+            }
+
+            // 本地allure‑cli生成静态HTML报告输出到 reports/allure‑report
+            sh '''
+            mkdir -p reports
+            allure generate reports/allure-results -o reports/allure-report --clean
             '''
           }
         }
@@ -61,17 +70,26 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'reports/junit.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-      // 发布pytest‑html报告
-      publishHTML([
-        allowMissing: false,
+
+      // 1. Pytest‑HTML 报告：reports/report.html
+      publishHTML(target: [
+        allowMissing: true,
         alwaysLinkToLastBuild: true,
         keepAll: true,
         reportDir: 'reports',
         reportFiles: 'report.html',
-        reportName: '冒烟测试HTML报告'
+        reportName: 'Pytest HTML 测试报告'
       ])
-      // 发布Allure测试报告（Jenkins需预先安装Allure Plugin插件）
-      allure includeProperties: false, jdk: '', results: [[path: 'reports/allure-results']]
+
+      // 2. Allure静态HTML报告：reports/allure‑report/index.html
+      publishHTML(target: [
+        allowMissing: true,
+        alwaysLinkToLastBuild: true,
+        keepAll: true,
+        reportDir: 'reports/allure-report',
+        reportFiles: 'index.html',
+        reportName: 'Allure 测试报告'
+      ])
     }
   }
 }
