@@ -62,6 +62,15 @@ pipeline {
     always {
       junit allowEmptyResults: true, testResults: 'reports/junit.xml'
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
+      // 发布pytest生成的简易html报告 report.html
+      publishHTML([
+        allowMissing: false,
+        alwaysLinkToLastBuild: true,
+        keepAll: true,
+        reportDir: 'reports',
+        reportFiles: 'report.html',
+        reportName: '冒烟测试HTML报告'
+      ])
     }
   }
 }
