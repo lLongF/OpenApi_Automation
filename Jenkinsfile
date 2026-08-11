@@ -2,20 +2,22 @@ pipeline {
   agent any
   options { timestamps() }
   parameters {
-    choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'])
-    booleanParam(name: 'SYNC_OPENAPI', defaultValue: false)
+    choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'], description: '测试范围')
+    booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '是否同步openapi用例')
   }
   stages {
-    stage('调试-检查测试素材') {
+    stage('下载测试媒体素材(绕过git‑lfs)') {
       steps {
         sh '''
-        git lfs version || echo "git lfs 未安装"
-        git config --list | grep lfs
-        git lfs pull || true
-        echo "===== 打印音视频素材文件大小 ====="
-        find . -name "*.wav" -o -name "*.mp3" -o -name "*.mp4" | xargs ls -lh
-        echo "===== 判断是否为LFS指针文件 ====="
-        find . -name "*.wav" -o -name "*.mp3" -o -name "*.mp4" -exec head -5 {} \\;
+        echo "清空原有assets媒体目录"
+        rm -rf ./test_assets
+        mkdir -p ./test_assets
+        # ========== 这里替换成你内网可访问的素材压缩包地址 ==========
+        wget -O test_assets.tar.gz http://内网静态地址/test_media_assets.tar.gz
+        tar -zxvf test_assets.tar.gz -C ./test_assets
+        rm -f test_assets.tar.gz
+        echo "===== 校验解压后媒体文件大小 ====="
+        find ./test_assets -name "*.wav" -o -name "*.mp3" -o -name "*.mp4" | xargs ls -lh
         '''
       }
     }
@@ -39,7 +41,7 @@ pipeline {
         '''
       }
     }
-    stage('执行测试') {
+    stage('执行冒烟测试') {
       steps {
         script {
           def allureHome = tool('allure')
@@ -54,6 +56,8 @@ pipeline {
             def syncOpt = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
             sh returnStatus: true, script: '''
               export TEST_ENV=test
+              # 告诉pytest素材读取目录，指向我们wget解压出来的目录，不再读取git lfs指针文件
+              export TEST_ASSETS_ROOT="./test_assets"
               mkdir -p reports
               .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
             '''
@@ -69,7 +73,7 @@ pipeline {
       archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
       publishHTML(target: [
         allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
-        reportDir: 'reports', reportFiles: 'report.html', reportName: 'Pytest HTML'
+        reportDir: 'reports', reportFiles: 'report.html', reportName: 'Pytest HTML Report'
       ])
       publishHTML(target: [
         allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
