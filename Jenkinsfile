@@ -1,7 +1,6 @@
 pipeline {
   agent any
   options { timestamps() }
-  tools { allure 'allure' } // 对应全局工具别名
   parameters {
     choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'])
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false)
@@ -9,8 +8,13 @@ pipeline {
   stages {
     stage('检查环境') {
       steps {
-        sh 'python3 --version'
-        sh 'allure --version'
+        script {
+          // 获取全局工具allure的根目录，显式拿到bin路径
+          def allureHome = tool('allure')
+          env.ALLURE_BIN = "${allureHome}/bin/allure"
+          sh 'python3 --version'
+          sh "${env.ALLURE_BIN} --version"
+        }
       }
     }
     stage('安装依赖') {
@@ -25,6 +29,10 @@ pipeline {
     }
     stage('执行测试') {
       steps {
+        script {
+          def allureHome = tool('allure')
+          env.ALLURE_BIN = "${allureHome}/bin/allure"
+        }
         withCredentials([
           string(credentialsId: 'test-user-id', variable: 'SHANHAI_USER_ID'),
           string(credentialsId: 'test-admin-token', variable: 'SHANHAI_ADMIN_TOKEN')
@@ -37,7 +45,8 @@ pipeline {
               mkdir -p reports
               .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
             '''
-            sh 'allure generate reports/allure-results -o reports/allure-report --clean'
+            // 不再直接写allure，使用环境变量完整二进制路径
+            sh "${env.ALLURE_BIN} generate reports/allure-results -o reports/allure-report --clean"
           }
         }
       }
