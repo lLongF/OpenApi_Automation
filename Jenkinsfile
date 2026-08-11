@@ -10,7 +10,11 @@ pipeline {
       steps {
         sh '''
         git lfs version || echo "git lfs 未安装"
-        git lfs pull
+        # 配置LFS走SSH协议，规避内网HTTPS 443连接拒绝问题
+        git config lfs.https://gitlab.lycheeai.com.cn/longfang/openapi_automation.git/.lfs.url git@gitlab.lycheeai.com.cn:longfang/openapi_automation.git
+        # || true：LFS拉取网络失败不阻断流水线，继续往下执行
+        git lfs pull || true
+        echo "===== 打印音视频素材文件大小 ====="
         find . -name "*.wav" -o -name "*.mp3" -o -name "*.mp4" | xargs ls -lh
         '''
       }
@@ -54,7 +58,7 @@ pipeline {
               mkdir -p reports
               .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
             '''
-            // 不再直接写allure，使用环境变量完整二进制路径
+            // 使用完整allure二进制路径生成报告
             sh "${env.ALLURE_BIN} generate reports/allure-results -o reports/allure-report --clean"
           }
         }
