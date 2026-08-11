@@ -36,6 +36,9 @@ def test_unified_task_status(api_client, common, test_data, task_status_case, ru
 
 
 def _task_id(case, runtime_context, api_client, test_data) -> str:
+    if case.get("always_submit_task"):
+        return str(_submit_task_for_unified_status(case["type"], api_client, test_data))
+
     task_id = runtime_context.get(case["context_key"])
     if task_id:
         return str(task_id)

@@ -24,6 +24,12 @@ python -m pytest tests --live --clean-alluredir
 powershell -ExecutionPolicy Bypass -File scripts/generate_allure_report.ps1
 ```
 
+运行单独的用例示例：
+
+```powershell
+python -m pytest "tests/test_zz_unified_tasks_status.py::test_unified_task_status[UTS_POS_004]" --live --env test --no-openapi-case-sync
+```
+
 常用报告位置：
 
 ```text

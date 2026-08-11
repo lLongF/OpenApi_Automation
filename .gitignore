@@ -13,6 +13,8 @@ __pycache__/
 .env.*
 !.env.example
 config/env.local.yaml
+config/openapi_sources.yaml
+config/environments
 
 # Generated reports, logs, and contract-sync output.
 reports/
