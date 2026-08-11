@@ -6,21 +6,6 @@ pipeline {
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '是否同步openapi用例')
   }
   stages {
-    stage('Git LFS SSH模式拉取素材') {
-      steps {
-        sh '''
-        # CI环境不要执行 git lfs install，会操作hooks报错
-        git config lfs.sshcommand ssh || true
-        git config lfs.transfer.ssh true || true
-        # --skip-repo 跳过安装hooks，仅执行下载
-        git lfs pull --skip-repo || true
-        echo "====校验媒体文件是否为真实二进制===="
-        ls -lh test_assets/*.wav test_assets/*.mp3 test_assets/*.mp4 2>/dev/null || true
-        echo "====查看第一个文件头部判断是否LFS指针===="
-        head -c 200 test_assets/valid_audio.wav 2>/dev/null || echo "文件不存在"
-        '''
-      }
-    }
     stage('检查环境') {
       steps {
         script {
@@ -29,6 +14,11 @@ pipeline {
           sh 'python3 --version'
           sh "${env.ALLURE_BIN} --version"
         }
+        // 【关键！恢复旧版成功逻辑，拷贝jenkins全局预置媒体fixture】
+        sh '''
+        rm -rf data/mock_files
+        cp -r /var/jenkins_home/mock_media_fixtures data/mock_files
+        '''
       }
     }
     stage('安装依赖') {
