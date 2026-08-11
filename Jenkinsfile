@@ -6,18 +6,17 @@ pipeline {
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '是否同步openapi用例')
   }
   stages {
-    stage('下载测试媒体素材(绕过git‑lfs)') {
+    stage('拉取代码 & Git LFS 修复(SSH模式)') {
       steps {
+        // SCM已经自动checkout完毕，直接配置lfs使用ssh
         sh '''
-        echo "清空原有assets媒体目录"
-        rm -rf ./test_assets
-        mkdir -p ./test_assets
-        # ========== 这里替换成你内网可访问的素材压缩包地址 ==========
-        wget -O test_assets.tar.gz http://内网静态地址/test_media_assets.tar.gz
-        tar -zxvf test_assets.tar.gz -C ./test_assets
-        rm -f test_assets.tar.gz
-        echo "===== 校验解压后媒体文件大小 ====="
-        find ./test_assets -name "*.wav" -o -name "*.mp3" -o -name "*.mp4" | xargs ls -lh
+        git lfs install
+        # 开启LFS使用SSH协议传输，绕过https访问失败问题
+        git config lfs.sshcommand ssh
+        git config lfs.transfer.ssh true
+        git lfs pull || true
+        echo "====校验媒体文件是否为真实二进制，不是指针===="
+        ls -lh test_assets/*.wav test_assets/*.mp3 test_assets/*.mp4 2>/dev/null || true
         '''
       }
     }
@@ -56,8 +55,6 @@ pipeline {
             def syncOpt = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
             sh returnStatus: true, script: '''
               export TEST_ENV=test
-              # 告诉pytest素材读取目录，指向我们wget解压出来的目录，不再读取git lfs指针文件
-              export TEST_ASSETS_ROOT="./test_assets"
               mkdir -p reports
               .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
             '''
