@@ -6,6 +6,15 @@ pipeline {
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false)
   }
   stages {
+    stage('调试-检查测试素材') {
+      steps {
+        sh '''
+        git lfs version || echo "git lfs 未安装"
+        git lfs pull
+        find . -name "*.wav" -o -name "*.mp3" -o -name "*.mp4" | xargs ls -lh
+        '''
+      }
+    }
     stage('检查环境') {
       steps {
         script {
