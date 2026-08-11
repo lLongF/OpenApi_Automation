@@ -6,17 +6,18 @@ pipeline {
     booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '是否同步openapi用例')
   }
   stages {
-    stage('拉取代码 & Git LFS 修复(SSH模式)') {
+    stage('Git LFS SSH模式拉取素材') {
       steps {
-        // SCM已经自动checkout完毕，直接配置lfs使用ssh
         sh '''
-        git lfs install
-        # 开启LFS使用SSH协议传输，绕过https访问失败问题
-        git config lfs.sshcommand ssh
-        git config lfs.transfer.ssh true
-        git lfs pull || true
-        echo "====校验媒体文件是否为真实二进制，不是指针===="
+        # CI环境不要执行 git lfs install，会操作hooks报错
+        git config lfs.sshcommand ssh || true
+        git config lfs.transfer.ssh true || true
+        # --skip-repo 跳过安装hooks，仅执行下载
+        git lfs pull --skip-repo || true
+        echo "====校验媒体文件是否为真实二进制===="
         ls -lh test_assets/*.wav test_assets/*.mp3 test_assets/*.mp4 2>/dev/null || true
+        echo "====查看第一个文件头部判断是否LFS指针===="
+        head -c 200 test_assets/valid_audio.wav 2>/dev/null || echo "文件不存在"
         '''
       }
     }
