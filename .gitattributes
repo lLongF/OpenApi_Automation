@@ -1,2 +1,2 @@
 # Store all test media fixtures in Git LFS, including large boundary-test files.
-data/mock_files/** filter=lfs diff=lfs merge=lfs -text
+

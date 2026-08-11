@@ -42,7 +42,7 @@ pipeline {
           string(credentialsId: 'test-admin-token', variable: 'SHANHAI_ADMIN_TOKEN')
         ]) {
           script {
-            def marker = params.TEST_SCOPE == 'smoke' ? '-m smoke' : ''
+            def marker = ''
             def syncOpt = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
             sh returnStatus: true, script: '''
               export TEST_ENV=test
