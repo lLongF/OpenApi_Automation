@@ -6,7 +6,7 @@
 # - 新增文件类用例时，先把文件放到 data/mock_files/，再在这里增加 key
 
 files:
-  valid_audio: "data/mock_files/青蛙王子-译制音频_关BGM.wav"
+  valid_audio: "data/mock_files/积极热情.wav"
   valid_clone_audio: "data/mock_files/青蛙王子-译制音频_关BGM.wav"
   valid_clone_open_audio: "data/mock_files/青蛙王子-译制音频_开BGM.wav"
   empty_audio: "data/mock_files/empty_audio.wav"
