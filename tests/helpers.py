@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 from contextvars import ContextVar
+import hashlib
 import json
 from typing import Any
 
@@ -22,6 +23,7 @@ except ImportError:  # pragma: no cover
     allure = None
 
 ATTACHMENT_LIMIT = 50_000
+BODY_PREVIEW_LIMIT = 1_024
 SENSITIVE_HEADERS = {"api_key", "x-admin-token", "authorization"}
 _CURRENT_REPORT_ITEM: ContextVar[Any | None] = ContextVar("_CURRENT_REPORT_ITEM", default=None)
 CATEGORY_LABELS = {
@@ -245,7 +247,17 @@ def _safe_body(body: Any) -> Any:
     if body is None:
         return None
     if isinstance(body, bytes):
-        return _truncate(body.decode("utf-8", errors="replace"))
+        # Request bodies can contain large multipart uploads.  Do not decode the
+        # whole payload just to produce a report attachment: it can exhaust the
+        # test process memory before the actual response is asserted.
+        preview = body[:BODY_PREVIEW_LIMIT].decode("utf-8", errors="replace")
+        return {
+            "type": "binary",
+            "size_bytes": len(body),
+            "sha256": hashlib.sha256(body).hexdigest(),
+            "preview": _truncate(preview, BODY_PREVIEW_LIMIT),
+            "preview_truncated": len(body) > BODY_PREVIEW_LIMIT,
+        }
     return _truncate(str(body))
 
 

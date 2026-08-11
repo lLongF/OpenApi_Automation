@@ -1,3 +1,5 @@
+# Mock files: keep only small fixtures required by tests; large files are generated locally.
+data/mock_files/
 
 # Local Python/IDE artifacts.
 __pycache__/
@@ -11,6 +13,8 @@ __pycache__/
 .env.*
 !.env.example
 config/env.local.yaml
+config/openapi_sources.yaml
+config/environments/test.yaml
 
 # Generated reports, logs, and contract-sync output.
 reports/

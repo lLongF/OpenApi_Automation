@@ -39,6 +39,8 @@ tasks_status:
       category: "positive"
       type: "voice_separate"
       context_key: "voice_separate_task_id"
+      # 始终创建独立任务，避免依赖前序用例写入的运行期状态。
+      always_submit_task: true
       expected:
         http_status: 200
         code: 200
