@@ -1,8 +1,8 @@
 {
   "openapi_version": "3.0.1",
-  "operation_count": 20,
+  "operation_count": 18,
   "operations": {
-    "DELETE /open/voice/user-voices": {
+    "DELETE /user-voices": {
       "method": "DELETE",
       "operation_id": null,
       "parameters": [
@@ -19,43 +19,12 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/user-voices",
+      "path": "/user-voices",
       "request_body_required": false,
       "response_codes": [
         "200"
       ],
       "summary": "软删除个人音色（按 name 查询参数查找）",
-      "tags": []
-    },
-    "GET /open/tasks/status": {
-      "method": "GET",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "task_id",
-          "required": true,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "type",
-          "required": true,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/tasks/status",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "统一查询任务状态",
       "tags": []
     },
     "GET /open/videots/download": {
@@ -102,7 +71,7 @@
       "summary": "获取任务列表",
       "tags": []
     },
-    "GET /open/voice/list": {
+    "GET /tasks/status": {
       "method": "GET",
       "operation_id": null,
       "parameters": [
@@ -114,32 +83,26 @@
         },
         {
           "in": "query",
-          "name": "name",
-          "required": false,
+          "name": "task_id",
+          "required": true,
           "schema_type": "string"
         },
         {
           "in": "query",
-          "name": "page_no",
-          "required": false,
-          "schema_type": "integer"
-        },
-        {
-          "in": "query",
-          "name": "page_size",
-          "required": false,
-          "schema_type": "integer"
+          "name": "type",
+          "required": true,
+          "schema_type": "string"
         }
       ],
-      "path": "/open/voice/list",
+      "path": "/tasks/status",
       "request_body_required": false,
       "response_codes": [
         "200"
       ],
-      "summary": "查询公共音色列表",
+      "summary": "统一查询任务状态",
       "tags": []
     },
-    "GET /open/voice/user-voices/page": {
+    "GET /user-voices/page": {
       "method": "GET",
       "operation_id": null,
       "parameters": [
@@ -192,12 +155,49 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/user-voices/page",
+      "path": "/user-voices/page",
       "request_body_required": false,
       "response_codes": [
         "200"
       ],
       "summary": "分页查询当前用户的个人音色",
+      "tags": []
+    },
+    "GET /voice-list": {
+      "method": "GET",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "page_no",
+          "required": false,
+          "schema_type": "integer"
+        },
+        {
+          "in": "query",
+          "name": "page_size",
+          "required": false,
+          "schema_type": "integer"
+        }
+      ],
+      "path": "/voice-list",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "查询公共音色列表",
       "tags": []
     },
     "POST /admin/api-key/create": {
@@ -225,32 +225,7 @@
       "summary": "创建API Key",
       "tags": []
     },
-    "POST /open/asr": {
-      "method": "POST",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "language",
-          "required": false,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/asr",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "语音识别",
-      "tags": []
-    },
-    "POST /open/speaker-classify/submit": {
+    "POST /audio-separations": {
       "method": "POST",
       "operation_id": null,
       "parameters": [
@@ -261,129 +236,12 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/speaker-classify/submit",
+      "path": "/audio-separations",
       "request_body_required": false,
       "response_codes": [
         "200"
       ],
-      "summary": "提交说话人分类任务",
-      "tags": []
-    },
-    "POST /open/subtitle/erase": {
-      "method": "POST",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "do_not_encrypt_link",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "language_code",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "name",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "subtitle_mode",
-          "required": false,
-          "schema_type": "integer"
-        }
-      ],
-      "path": "/open/subtitle/erase",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "字幕擦除",
-      "tags": []
-    },
-    "POST /open/timbre-design/generate-mimo": {
-      "method": "POST",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/timbre-design/generate-mimo",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "mimo 音色设计",
-      "tags": []
-    },
-    "POST /open/video-compose/tasks": {
-      "method": "POST",
-      "operation_id": null,
-      "parameters": [
-        {
-          "in": "header",
-          "name": "api_key",
-          "required": false,
-          "schema_type": "string"
-        },
-        {
-          "in": "query",
-          "name": "coordinate_height",
-          "required": false,
-          "schema_type": "integer"
-        },
-        {
-          "in": "query",
-          "name": "coordinate_width",
-          "required": false,
-          "schema_type": "integer"
-        },
-        {
-          "in": "query",
-          "name": "subtitle_font_size",
-          "required": false,
-          "schema_type": "integer"
-        },
-        {
-          "in": "query",
-          "name": "subtitle_x",
-          "required": false,
-          "schema_type": "integer"
-        },
-        {
-          "in": "query",
-          "name": "subtitle_y",
-          "required": false,
-          "schema_type": "integer"
-        },
-        {
-          "in": "query",
-          "name": "target_language",
-          "required": false,
-          "schema_type": "string"
-        }
-      ],
-      "path": "/open/video-compose/tasks",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "提交视频压制合成任务",
+      "summary": "提交背景音与人声分离任务",
       "tags": []
     },
     "POST /open/videots/back-translation": {
@@ -424,7 +282,7 @@
       "summary": "重新翻译",
       "tags": []
     },
-    "POST /open/videots/translate": {
+    "POST /speaker-diarizations": {
       "method": "POST",
       "operation_id": null,
       "parameters": [
@@ -435,7 +293,69 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/videots/translate",
+      "path": "/speaker-diarizations",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "提交说话人分类任务",
+      "tags": []
+    },
+    "POST /subtitle-erasures": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "do_not_encrypt_link",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "language_code",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "subtitle_mode",
+          "required": false,
+          "schema_type": "integer"
+        }
+      ],
+      "path": "/subtitle-erasures",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "字幕擦除",
+      "tags": []
+    },
+    "POST /subtitle-translations": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/subtitle-translations",
       "request_body_required": false,
       "response_codes": [
         "200"
@@ -443,7 +363,7 @@
       "summary": "字幕翻译",
       "tags": []
     },
-    "POST /open/voice/separate": {
+    "POST /tts/clone": {
       "method": "POST",
       "operation_id": null,
       "parameters": [
@@ -452,28 +372,45 @@
           "name": "api_key",
           "required": false,
           "schema_type": "string"
-        }
-      ],
-      "path": "/open/voice/separate",
-      "request_body_required": false,
-      "response_codes": [
-        "200"
-      ],
-      "summary": "提交背景音与人声分离任务",
-      "tags": []
-    },
-    "POST /open/voice/zeroshot/clone": {
-      "method": "POST",
-      "operation_id": null,
-      "parameters": [
+        },
         {
-          "in": "header",
-          "name": "api_key",
+          "in": "query",
+          "name": "clip_short",
+          "required": false,
+          "schema_type": "boolean"
+        },
+        {
+          "in": "query",
+          "name": "description",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "gender",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "is_public",
+          "required": false,
+          "schema_type": "boolean"
+        },
+        {
+          "in": "query",
+          "name": "lang_code",
+          "required": false,
+          "schema_type": "string"
+        },
+        {
+          "in": "query",
+          "name": "name",
           "required": false,
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/zeroshot/clone",
+      "path": "/tts/clone",
       "request_body_required": false,
       "response_codes": [
         "200"
@@ -481,7 +418,7 @@
       "summary": "语音克隆",
       "tags": []
     },
-    "POST /open/voice/zeroshot/infer": {
+    "POST /tts/infer": {
       "method": "POST",
       "operation_id": null,
       "parameters": [
@@ -492,7 +429,7 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/zeroshot/infer",
+      "path": "/tts/infer",
       "request_body_required": false,
       "response_codes": [
         "200"
@@ -500,7 +437,7 @@
       "summary": "语音推理",
       "tags": []
     },
-    "POST /open/voice/zeroshot/save": {
+    "POST /tts/save": {
       "method": "POST",
       "operation_id": null,
       "parameters": [
@@ -511,7 +448,7 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/zeroshot/save",
+      "path": "/tts/save",
       "request_body_required": false,
       "response_codes": [
         "200"
@@ -519,7 +456,26 @@
       "summary": "保存克隆音色到用户音色库",
       "tags": []
     },
-    "PUT /open/voice/user-voices": {
+    "POST /voice-design": {
+      "method": "POST",
+      "operation_id": null,
+      "parameters": [
+        {
+          "in": "header",
+          "name": "api_key",
+          "required": false,
+          "schema_type": "string"
+        }
+      ],
+      "path": "/voice-design",
+      "request_body_required": false,
+      "response_codes": [
+        "200"
+      ],
+      "summary": "mimo 音色设计",
+      "tags": []
+    },
+    "PUT /user-voices": {
       "method": "PUT",
       "operation_id": null,
       "parameters": [
@@ -536,7 +492,7 @@
           "schema_type": "string"
         }
       ],
-      "path": "/open/voice/user-voices",
+      "path": "/user-voices",
       "request_body_required": false,
       "response_codes": [
         "200"
@@ -546,5 +502,5 @@
     }
   },
   "source": "shanhai_apifox",
-  "synced_at": "2026-08-03T12:05:36.776116+00:00"
+  "synced_at": "2026-08-13T03:15:17.094057+00:00"
 }
