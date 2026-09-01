@@ -112,7 +112,6 @@ for result_path in sorted(results_dir.glob("*-result.json")):
     case_name = result.get("name") or result.get("fullName") or "未命名用例"
     interface = ""
     response_info = ""
-    assertion_info = (result.get("statusDetails") or {}).get("message", "")
     for parameter in result.get("parameters", []):
         if parameter.get("name") == "Full interface URL":
             interface = str(parameter.get("value", "")).strip("'")
@@ -124,13 +123,11 @@ for result_path in sorted(results_dir.glob("*-result.json")):
             interface = content
         elif attachment_name == "HTTP response" and content:
             response_info = content
-        elif attachment_name == "Failure reason" and content:
-            assertion_info  = content
+       
     failures.append({
         "case_name": case_name,
         "interface": interface or "未从 Allure 报告中提取到接口",
         "response_info": response_info or "未从 Allure 报告中提取到接口响应信息",
-        "assertion_info": assertion_info  or "未从 Allure 报告中提取到断言信息",
     })
 
 if not failures:
@@ -138,7 +135,6 @@ if not failures:
         "case_name": "未找到失败用例",
         "interface": "未从 Allure 报告中提取到接口",
         "response_info": "请确认 reports/allure-results 已生成并被保留。",
-        "assertion_info": "未从 Allure 报告中提取到断言信息。",
     })
 newline = chr(10)
 
@@ -149,12 +145,7 @@ for index, item in enumerate(failures[:5], start=1):
         width=1200,
         placeholder=" ...（响应已截断）",
     )
-    assertion_info = textwrap.shorten(
-        " ".join(item["assertion_info"].split()),
-        width=800,
-        placeholder=" ...（断言已截断）",
-    )
-
+    
     items.append(newline.join([
         "### 失败用例 {}：{}".format(index, item["case_name"]),
         "> 接口：`{}`".format(item["interface"]),
@@ -163,11 +154,6 @@ for index, item in enumerate(failures[:5], start=1):
         "**接口响应信息：**",
         "```text",
         response_info,
-        "```",
-        "",
-        "**断言信息：**",
-        "```text",
-        assertion_info,
         "```",
     ]))
 
