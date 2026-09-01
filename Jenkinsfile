@@ -67,7 +67,6 @@ pipeline {
                 reportDir: 'reports/allure-report', reportFiles: 'index.html', reportName: 'Allure Report'
             ])
         }
-        // unstable 和 failure 复用同一份企微告警脚本
         unstable {
             sendWecomNotice()
         }
@@ -77,9 +76,6 @@ pipeline {
     }
 }
 
-/**
- * 抽成共享函数：企微机器人告警
- */
 def sendWecomNotice() {
     withCredentials([
         string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
@@ -92,7 +88,7 @@ import textwrap
 from pathlib import Path
 
 results_dir = Path("reports/allure-results")
-build = f"#{os.getenv('BUILD_NUMBER', 'unknown')}"
+build = "#" + os.getenv("BUILD_NUMBER", "unknown")
 title = "OpenAPI 自动化测试报告"
 failures = []
 
@@ -113,13 +109,11 @@ for result_path in sorted(results_dir.glob("*-result.json")):
         continue
     case_name = result.get("name") or result.get("fullName") or "未命名用例"
     interface = ""
-    # 优先取 Allure 参数中的完整接口 URL。
     for parameter in result.get("parameters", []):
         if parameter.get("name") == "Full interface URL":
             interface = str(parameter.get("value", "")).strip("'")
             break
     error_log = (result.get("statusDetails") or {}).get("message", "")
-    # 再从附件补充接口 URL 和失败原因。
     for attachment in result.get("attachments", []):
         attachment_name = attachment.get("name")
         content = read_attachment(attachment.get("source"))
@@ -147,30 +141,32 @@ for index, item in enumerate(failures[:5], start=1):
         width=1200,
         placeholder=" ...（响应已截断）",
     )
-    items.append(
-        f"### 失败用例 {index}：{item['case_name']}\\n"
-        f"> 接口：`{item['interface']}`\\n"
-        f"> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
-        f"**接口响应信息：**\n```text\n{error_log}\n```"
-    )
+    part1 = "### 失败用例 " + str(index) + "：" + item['case_name'] + "\\n"
+    part2 = "> 接口：`" + item['interface'] + "`\\n"
+    part3 = "> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
+    part4 = "**接口响应信息：**\\n```text\\n" + error_log + "\\n```"
+    items.append(part1 + part2 + part3 + part4)
 
 remaining = len(failures) - 5
-extra = f"\\n\\n另有 {remaining} 条失败用例未展示。" if remaining > 0 else ""
+extra = ""
+if remaining > 0:
+    extra = "\\n\\n另有 " + str(remaining) + " 条失败用例未展示。"
 
-content = (
-    f"## {title}\\n"
-    f"> 构建：{build}\\n"
-    f"> 报告：OpenAPI 接口自动化测试\\n"
-    f"> 描述：执行接口自动化回归测试\\n"
-    f"> 结果：<font color=\\"warning\\">失败（共 {len(failures)} 条）</font>\\n\\n"
-    + "\\n\\n".join(items)
-    + extra
-)
+content = "## " + title + "\\n"
+content += "> 构建：" + build + "\\n"
+content += "> 报告：OpenAPI 接口自动化测试\\n"
+content += "> 描述：执行接口自动化回归测试\\n"
+content += "> 结果：<font color=\\"warning\\">失败（共 " + str(len(failures)) + " 条）</font>\\n\\n"
+content += "\\n\\n".join(items)
+content += extra
 
-print(json.dumps(
-    {"msgtype": "markdown", "markdown": {"content": content}},
-    ensure_ascii=False,
-))
+payload = {
+    "msgtype": "markdown",
+    "markdown": {
+        "content": content
+    }
+}
+print(json.dumps(payload, ensure_ascii=False))
 PY
 
 curl --fail --silent --show-error \
