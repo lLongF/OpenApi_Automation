@@ -134,7 +134,7 @@ for index, item in enumerate(failures[:5], start=1):
         f"### 失败用例 {index}：{item['case_name']}\\n"
         f"> 接口：`{item['interface']}`\\n"
         f"> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
-        f"**错误日志：**\\n```text\\n{error_log}\\n```"
+        f"**接口响应信息：**\n```text\n{response_info}\n```"
     )
 remaining = len(failures) - 5
 extra = f"\\n\\n另有 {remaining} 条失败用例未展示。" if remaining > 0 else ""
