@@ -144,7 +144,7 @@ for index, item in enumerate(failures[:5], start=1):
     part1 = "### 失败用例 " + str(index) + "：" + item['case_name'] + "\\n"
     part2 = "> 接口：`" + item['interface'] + "`\\n"
     part3 = "> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
-    part4 = "**接口响应信息：**\\n```text\\n" + error_log + "\\n```"
+    part4 = "**接口响应信息：**\\n```text\\n" + response_info + "\\n```"
     items.append(part1 + part2 + part3 + part4)
 
 remaining = len(failures) - 5
