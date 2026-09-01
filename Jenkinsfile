@@ -75,6 +75,9 @@ pipeline {
         unstable {
             sendWecomNotify()
         }
+        success {
+            sendWecomSuccessNotify()
+        }
     }
 }
 
@@ -183,5 +186,43 @@ curl --fail --silent --show-error \
     --header 'Content-Type: application/json' \
     --data-binary @reports/wecom-failure.json
         '''
+    }
+}
+
+def sendWecomSuccessNotify() {
+    withCredentials([
+        string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
+    ]) {
+        sh '''
+mkdir -p reports
+
+python3 - <<'PY' > reports/wecom-success.json
+import json
+import os
+
+title = "OpenAPI 自动化测试报告"
+build = os.getenv("BUILD_NUMBER", "unknown")
+
+content = "\\n".join([
+    "## {}".format(title),
+    "> 构建：#{}".format(build),
+    "> 报告：OpenAPI 接口自动化测试",
+    "> 描述：执行接口自动化回归测试",
+    '> 结果：<font color="info">成功</font>',
+    "",
+    "所有执行的接口用例均通过。",
+])
+
+print(json.dumps(
+    {"msgtype": "markdown", "markdown": {"content": content}},
+    ensure_ascii=False,
+))
+PY
+
+curl --fail --silent --show-error \
+  --request POST "$WECOM_WEBHOOK" \
+  --header 'Content-Type: application/json; charset=utf-8' \
+  --data-binary @reports/wecom-success.json
+'''
     }
 }
