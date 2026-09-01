@@ -67,67 +67,188 @@ pipeline {
                 reportDir: 'reports/allure-report', reportFiles: 'index.html', reportName: 'Allure Report'
             ])
         }
+        
         failure {
-            sendWecomAlert()
-        }
-        unstable {
-            sendWecomAlert()
-        }
-    }
-}
-
-def sendWecomAlert(){
-    withCredentials([
-        string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
-    ]) {
-        sh '''
-          python3 - <<'PY' > reports/wecom-failure.json
+            withCredentials([
+                string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
+            ]) {
+                sh '''
+                  python3 - <<'PY' > reports/wecom-failure.json
 import json
 import os
 import textwrap
-import xml.etree.ElementTree as ET
 from pathlib import Path
-
-report_path = Path("reports/junit.xml")
-title = "OpenAPI 自动化测试报告"
+results_dir = Path("reports/allure-results")
 build = f"#{os.getenv('BUILD_NUMBER', 'unknown')}"
-interface = "未从报告中提取到接口"
-error_log = "未找到失败详情"
-
-if report_path.exists():
-    root = ET.parse(report_path).getroot()
-    for case in root.iter("testcase"):
-        failure = case.find("failure") or case.find("error")
-        if failure is None:
-            continue
-        interface = case.get("name", interface)
-        error_log = failure.get("message") or (failure.text or error_log)
-        break
-
-error_log = textwrap.shorten(
-    " ".join(error_log.split()),
-    width=1500,
-    placeholder=" ...（日志已截断）",
-)
-
+title = "OpenAPI 自动化测试报告"
+failures = []
+def read_attachment(source):
+    if not source:
+        return ""
+    path = results_dir / source
+    if not path.exists():
+        return ""
+    return path.read_text(encoding="utf-8", errors="replace").strip()
+for result_path in sorted(results_dir.glob("*-result.json")):
+    try:
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        continue
+    if result.get("status") not in {"failed", "broken"}:
+        continue
+    case_name = result.get("name") or result.get("fullName") or "未命名用例"
+    interface = ""
+    # 优先取 Allure 参数中的完整接口 URL。
+    for parameter in result.get("parameters", []):
+        if parameter.get("name") == "Full interface URL":
+            interface = str(parameter.get("value", "")).strip("'")
+            break
+    error_log = (result.get("statusDetails") or {}).get("message", "")
+    # 再从附件补充接口 URL 和失败原因。
+    for attachment in result.get("attachments", []):
+        attachment_name = attachment.get("name")
+        content = read_attachment(attachment.get("source"))
+        if attachment_name == "Full interface URL" and content:
+            interface = content
+        elif attachment_name == "Failure reason" and content:
+            error_log = content
+    failures.append({
+        "case_name": case_name,
+        "interface": interface or "未从 Allure 报告中提取到接口",
+        "error_log": error_log or "未从 Allure 报告中提取到失败详情",
+    })
+if not failures:
+    failures.append({
+        "case_name": "未找到失败用例",
+        "interface": "未从 Allure 报告中提取到接口",
+        "error_log": "请确认 reports/allure-results 已生成并被保留。",
+    })
+items = []
+for index, item in enumerate(failures[:5], start=1):
+    error_log = textwrap.shorten(
+        " ".join(item["error_log"].split()),
+        width=1200,
+        placeholder=" ...（日志已截断）",
+    )
+    items.append(
+        f"### 失败用例 {index}：{item['case_name']}\\n"
+        f"> 接口：`{item['interface']}`\\n"
+        f"> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
+        f"**错误日志：**\\n```text\\n{error_log}\\n```"
+    )
+remaining = len(failures) - 5
+extra = f"\\n\\n另有 {remaining} 条失败用例未展示。" if remaining > 0 else ""
 content = (
     f"## {title}\\n"
     f"> 构建：{build}\\n"
-    f"> 报告：{title}\\n"
-    f"> 接口：`{interface}`\\n"
-    f"> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
-    f"**错误日志：**\\n```text\\n{error_log}\\n```"
+    f"> 报告：OpenAPI 接口自动化测试\\n"
+    f"> 描述：执行接口自动化回归测试\\n"
+    f"> 结果：<font color=\\"warning\\">失败（共 {len(failures)} 条）</font>\\n\\n"
+    + "\\n\\n".join(items)
+    + extra
 )
-
 print(json.dumps(
     {"msgtype": "markdown", "markdown": {"content": content}},
     ensure_ascii=False,
 ))
 PY
-          curl --fail --silent --show-error \
-            --request POST "$WECOM_WEBHOOK" \
-            --header 'Content-Type: application/json' \
-            --data-binary @reports/wecom-failure.json
-        '''
+                  curl --fail --silent --show-error \
+                    --request POST "$WECOM_WEBHOOK" \
+                    --header 'Content-Type: application/json' \
+                    --data-binary @reports/wecom-failure.json
+                '''
+            }
+        }
+        unstable {
+            withCredentials([
+                string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
+            ]) {
+                sh '''
+                  python3 - <<'PY' > reports/wecom-failure.json
+import json
+import os
+import textwrap
+from pathlib import Path
+results_dir = Path("reports/allure-results")
+build = f"#{os.getenv('BUILD_NUMBER', 'unknown')}"
+title = "OpenAPI 自动化测试报告"
+failures = []
+def read_attachment(source):
+    if not source:
+        return ""
+    path = results_dir / source
+    if not path.exists():
+        return ""
+    return path.read_text(encoding="utf-8", errors="replace").strip()
+for result_path in sorted(results_dir.glob("*-result.json")):
+    try:
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        continue
+    if result.get("status") not in {"failed", "broken"}:
+        continue
+    case_name = result.get("name") or result.get("fullName") or "未命名用例"
+    interface = ""
+    # 优先取 Allure 参数中的完整接口 URL。
+    for parameter in result.get("parameters", []):
+        if parameter.get("name") == "Full interface URL":
+            interface = str(parameter.get("value", "")).strip("'")
+            break
+    error_log = (result.get("statusDetails") or {}).get("message", "")
+    # 再从附件补充接口 URL 和失败原因。
+    for attachment in result.get("attachments", []):
+        attachment_name = attachment.get("name")
+        content = read_attachment(attachment.get("source"))
+        if attachment_name == "Full interface URL" and content:
+            interface = content
+        elif attachment_name == "Failure reason" and content:
+            error_log = content
+    failures.append({
+        "case_name": case_name,
+        "interface": interface or "未从 Allure 报告中提取到接口",
+        "error_log": error_log or "未从 Allure 报告中提取到失败详情",
+    })
+if not failures:
+    failures.append({
+        "case_name": "未找到失败用例",
+        "interface": "未从 Allure 报告中提取到接口",
+        "error_log": "请确认 reports/allure-results 已生成并被保留。",
+    })
+items = []
+for index, item in enumerate(failures[:5], start=1):
+    error_log = textwrap.shorten(
+        " ".join(item["error_log"].split()),
+        width=1200,
+        placeholder=" ...（日志已截断）",
+    )
+    items.append(
+        f"### 失败用例 {index}：{item['case_name']}\\n"
+        f"> 接口：`{item['interface']}`\\n"
+        f"> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
+        f"**错误日志：**\\n```text\\n{error_log}\\n```"
+    )
+remaining = len(failures) - 5
+extra = f"\\n\\n另有 {remaining} 条失败用例未展示。" if remaining > 0 else ""
+content = (
+    f"## {title}\\n"
+    f"> 构建：{build}\\n"
+    f"> 报告：OpenAPI 接口自动化测试\\n"
+    f"> 描述：执行接口自动化回归测试\\n"
+    f"> 结果：<font color=\\"warning\\">失败（共 {len(failures)} 条）</font>\\n\\n"
+    + "\\n\\n".join(items)
+    + extra
+)
+print(json.dumps(
+    {"msgtype": "markdown", "markdown": {"content": content}},
+    ensure_ascii=False,
+))
+PY
+                  curl --fail --silent --show-error \
+                    --request POST "$WECOM_WEBHOOK" \
+                    --header 'Content-Type: application/json' \
+                    --data-binary @reports/wecom-failure.json
+                '''
+            }
+        }
     }
 }
