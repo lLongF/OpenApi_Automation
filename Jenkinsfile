@@ -67,21 +67,35 @@ pipeline {
                 reportDir: 'reports/allure-report', reportFiles: 'index.html', reportName: 'Allure Report'
             ])
         }
-        
+        // unstable 和 failure 复用同一份企微告警脚本
+        unstable {
+            sendWecomNotice()
+        }
         failure {
-            withCredentials([
-                string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
-            ]) {
-                sh '''
-                  python3 - <<'PY' > reports/wecom-failure.json
+            sendWecomNotice()
+        }
+    }
+}
+
+/**
+ * 抽成共享函数：企微机器人告警
+ */
+def sendWecomNotice() {
+    withCredentials([
+        string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
+    ]) {
+        sh '''
+python3 - <<'PY' > reports/wecom-failure.json
 import json
 import os
 import textwrap
 from pathlib import Path
+
 results_dir = Path("reports/allure-results")
 build = f"#{os.getenv('BUILD_NUMBER', 'unknown')}"
 title = "OpenAPI 自动化测试报告"
 failures = []
+
 def read_attachment(source):
     if not source:
         return ""
@@ -89,6 +103,7 @@ def read_attachment(source):
     if not path.exists():
         return ""
     return path.read_text(encoding="utf-8", errors="replace").strip()
+
 for result_path in sorted(results_dir.glob("*-result.json")):
     try:
         result = json.loads(result_path.read_text(encoding="utf-8"))
@@ -117,12 +132,14 @@ for result_path in sorted(results_dir.glob("*-result.json")):
         "interface": interface or "未从 Allure 报告中提取到接口",
         "error_log": error_log or "未从 Allure 报告中提取到失败详情",
     })
+
 if not failures:
     failures.append({
         "case_name": "未找到失败用例",
         "interface": "未从 Allure 报告中提取到接口",
         "error_log": "请确认 reports/allure-results 已生成并被保留。",
     })
+
 items = []
 for index, item in enumerate(failures[:5], start=1):
     error_log = textwrap.shorten(
@@ -134,10 +151,12 @@ for index, item in enumerate(failures[:5], start=1):
         f"### 失败用例 {index}：{item['case_name']}\\n"
         f"> 接口：`{item['interface']}`\\n"
         f"> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
-        f"**接口响应信息：**\n```text\n{response_info}\n```"
+        f"**接口响应信息：**\n```text\n{error_log}\n```"
     )
+
 remaining = len(failures) - 5
 extra = f"\\n\\n另有 {remaining} 条失败用例未展示。" if remaining > 0 else ""
+
 content = (
     f"## {title}\\n"
     f"> 构建：{build}\\n"
@@ -147,26 +166,17 @@ content = (
     + "\\n\\n".join(items)
     + extra
 )
+
 print(json.dumps(
     {"msgtype": "markdown", "markdown": {"content": content}},
     ensure_ascii=False,
 ))
 PY
-                  curl --fail --silent --show-error \
-                    --request POST "$WECOM_WEBHOOK" \
-                    --header 'Content-Type: application/json' \
-                    --data-binary @reports/wecom-failure.json
-                '''
-            }
-        }
-        unstable {
-            withCredentials([
-                string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
-            ]) {
-                sh '''
-                  python3 - <<'PY' > reports/wecom-failure.json
-                '''
-            }
-        }
+
+curl --fail --silent --show-error \
+    --request POST "$WECOM_WEBHOOK" \
+    --header 'Content-Type: application/json' \
+    --data-binary @reports/wecom-failure.json
+'''
     }
 }
