@@ -84,7 +84,6 @@ def sendWecomNotify() {
     ]) {
         sh '''
 python3 - <<'PY' > reports/wecom-failure.json
-        '''
 import json
 import os
 import textwrap
@@ -200,4 +199,3 @@ curl --fail --silent --show-error \
         '''
     }
 }
-'''
