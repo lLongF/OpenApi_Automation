@@ -173,7 +173,7 @@ content = newline.join([
     "> 构建：#{}".format(build),
     "> 报告：OpenAPI 接口自动化测试",
     "> 描述：执行接口自动化回归测试",
-    '> 结果:<font color="warning">失败（共 {} 条）</font>'.format(len(failures)),
+    '> 结果: <font color="warning">失败（共 {} 条）</font>'.format(len(failures)),
 ]) + newline + newline + (newline + newline).join(items) + extra
 
 output = json.dumps(
