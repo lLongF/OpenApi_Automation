@@ -84,6 +84,7 @@ def sendWecomNotify() {
     ]) {
         sh '''
 python3 - <<'PY' > reports/wecom-failure.json
+        '''
 import json
 import os
 import textwrap
@@ -158,7 +159,7 @@ for index, item in enumerate(failures[:5], start=1):
     items.append(newline.join([
         "### 失败用例 {}：{}".format(index, item["case_name"]),
         "> 接口：`{}`".format(item["interface"]),
-        "> 结果：<font color=\"warning\">失败</font>",
+        '> 结果：<font color="warning">失败</font>',
         "",
         "**接口响应信息：**",
         "```text",
@@ -183,7 +184,7 @@ content = newline.join([
     "> 构建：#{}".format(build),
     "> 报告：OpenAPI 接口自动化测试",
     "> 描述：执行接口自动化回归测试",
-    "> 结果：<font color=\"warning\">失败（共 {} 条）</font>".format(len(failures)),
+    '> 结果:<font color="warning">失败（共 {} 条）</font>'.format(len(failures)),
 ]) + newline + newline + (newline + newline).join(items) + extra
 
 output = json.dumps(
@@ -199,3 +200,4 @@ curl --fail --silent --show-error \
         '''
     }
 }
+'''
