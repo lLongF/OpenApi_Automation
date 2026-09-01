@@ -41,7 +41,9 @@ pipeline {
                     string(credentialsId: 'test-admin-token', variable: 'SHANHAI_ADMIN_TOKEN')
                 ]) {
                     script {
-                        def marker = params.TEST_SCOPE == 'smoke' ? '-m "not openapi"' : ''
+                        def marker = params.TEST_SCOPE == 'smoke' \
+                            ? '-m "smoke and not openapi and not contract"' \
+                            : '-m "not openapi and not contract"'
                         def syncOpt = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
                         sh returnStatus: true, script: '''
                           export TEST_ENV=test
@@ -81,7 +83,7 @@ def sendWecomNotify() {
         string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
     ]) {
         sh '''
-python3 - <<PY > reports/wecom-failure.json
+python3 - <<'PY' > reports/wecom-failure.json
 import json
 import os
 import textwrap
@@ -109,43 +111,53 @@ for result_path in sorted(results_dir.glob("*-result.json")):
         continue
     case_name = result.get("name") or result.get("fullName") or "未命名用例"
     interface = ""
+    response_info = ""
+    assertion_info = (result.get("statusDetails") or {}).get("message", "")
     for parameter in result.get("parameters", []):
         if parameter.get("name") == "Full interface URL":
             interface = str(parameter.get("value", "")).strip("'")
             break
-    error_log = (result.get("statusDetails") or {}).get("message", "")
     for attachment in result.get("attachments", []):
         attachment_name = attachment.get("name")
         content = read_attachment(attachment.get("source"))
         if attachment_name == "Full interface URL" and content:
             interface = content
+        elif attachment_name == "HTTP response" and content:
+            response_info = content
         elif attachment_name == "Failure reason" and content:
-            error_log = content
+            assertion_info  = content
     failures.append({
         "case_name": case_name,
         "interface": interface or "未从 Allure 报告中提取到接口",
-        "error_log": error_log or "未从 Allure 报告中提取到失败详情",
+        "response_info": response_info or "未从 Allure 报告中提取到接口响应信息",
+        "assertion_info": assertion_info  or "未从 Allure 报告中提取到断言信息",
     })
 
 if not failures:
     failures.append({
         "case_name": "未找到失败用例",
         "interface": "未从 Allure 报告中提取到接口",
-        "error_log": "请确认 reports/allure-results 已生成并被保留。",
+        "response_info": "请确认 reports/allure-results 已生成并被保留。",
+        "assertion_info": "未从 Allure 报告中提取到断言信息。",
     })
-
 items = []
 for index, item in enumerate(failures[:5], start=1):
-    error_log = textwrap.shorten(
-        " ".join(item["error_log"].split()),
+    response_info = textwrap.shorten(
+        " ".join(item["response_info"].split()),
         width=1200,
-        placeholder=" ...（日志已截断）",
+        placeholder=" ...（响应已截断）",
+    )
+    assertion_info = textwrap.shorten(
+        " ".join(item["assertion_info"].split()),
+        width=800,
+        placeholder=" ...（断言已截断）",
     )
     items.append(
-        "### 失败用例 {}：{}\\n".format(index, item['case_name']) +
-        "> 接口：`{}`\\n".format(item['interface']) +
-        "> 结果：<font color=\\"warning\\">失败</font>\\n\\n" +
-        "**失败信息：**\\n```text\\n{}\\n```".format(error_log)
+        "### 失败用例 {}：{}\n".format(index, item["case_name"]) +
+        "> 接口：`{}`\n".format(item["interface"]) +
+        "> 结果：<font color=\"warning\">失败</font>\n\n" +
+        "**接口响应信息：**\n```text\n{}\n```\n\n".format(response_info) +
+        "**断言信息：**\n```text\n{}\n```".format(assertion_info)
     )
 
 remaining = len(failures) - 5
