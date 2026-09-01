@@ -48,7 +48,7 @@ pipeline {
                         sh returnStatus: true, script: '''
                           export TEST_ENV=test
                           mkdir -p reports
-                          .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
+                          .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --no-allure-report --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
                         '''
                         sh "${env.ALLURE_BIN} generate reports/allure-results -o reports/allure-report --clean"
                     }
@@ -140,6 +140,8 @@ if not failures:
         "response_info": "请确认 reports/allure-results 已生成并被保留。",
         "assertion_info": "未从 Allure 报告中提取到断言信息。",
     })
+newline = chr(10)
+
 items = []
 for index, item in enumerate(failures[:5], start=1):
     response_info = textwrap.shorten(
@@ -152,26 +154,37 @@ for index, item in enumerate(failures[:5], start=1):
         width=800,
         placeholder=" ...（断言已截断）",
     )
-    items.append(
-        "### 失败用例 {}：{}\n".format(index, item["case_name"]) +
-        "> 接口：`{}`\n".format(item["interface"]) +
-        "> 结果：<font color=\"warning\">失败</font>\n\n" +
-        "**接口响应信息：**\n```text\n{}\n```\n\n".format(response_info) +
-        "**断言信息：**\n```text\n{}\n```".format(assertion_info)
-    )
+
+    items.append(newline.join([
+        "### 失败用例 {}：{}".format(index, item["case_name"]),
+        "> 接口：`{}`".format(item["interface"]),
+        "> 结果：<font color=\"warning\">失败</font>",
+        "",
+        "**接口响应信息：**",
+        "```text",
+        response_info,
+        "```",
+        "",
+        "**断言信息：**",
+        "```text",
+        assertion_info,
+        "```",
+    ]))
 
 remaining = len(failures) - 5
-extra = "\\n\\n另有 {} 条失败用例未展示。".format(remaining) if remaining > 0 else ""
-
-content = (
-    "## {}\\n".format(title) +
-    "> 构建：#{}\\n".format(build) +
-    "> 报告：OpenAPI 接口自动化测试\\n" +
-    "> 描述：执行接口自动化回归测试\\n" +
-    "> 结果：<font color=\\"warning\\">失败（共 {} 条）</font>\\n\\n".format(len(failures)) +
-    "\\n\\n".join(items) +
-    extra
+extra = (
+    newline + newline + "另有 {} 条失败用例未展示。".format(remaining)
+    if remaining > 0
+    else ""
 )
+
+content = newline.join([
+    "## {}".format(title),
+    "> 构建：#{}".format(build),
+    "> 报告：OpenAPI 接口自动化测试",
+    "> 描述：执行接口自动化回归测试",
+    "> 结果：<font color=\"warning\">失败（共 {} 条）</font>".format(len(failures)),
+]) + newline + newline + (newline + newline).join(items) + extra
 
 output = json.dumps(
     {"msgtype": "markdown", "markdown": {"content": content}},
