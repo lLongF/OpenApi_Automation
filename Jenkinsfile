@@ -86,6 +86,7 @@ def sendWecomNotify() {
         string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
     ]) {
         sh '''
+mkdir -p reports
 python3 - <<'PY' > reports/wecom-failure.json
 import json
 import os
@@ -203,7 +204,7 @@ import os
 title = "OpenAPI 自动化测试报告"
 build = os.getenv("BUILD_NUMBER", "unknown")
 
-content = "\\n".join([
+content = "\n".join([
     "## {}".format(title),
     "> 构建：#{}".format(build),
     "> 报告：OpenAPI 接口自动化测试",
