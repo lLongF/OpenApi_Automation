@@ -203,8 +203,9 @@ import os
 
 title = "OpenAPI 自动化测试报告"
 build = os.getenv("BUILD_NUMBER", "unknown")
+newline = chr(10)
 
-content = "\n".join([
+content = newline.join([
     "## {}".format(title),
     "> 构建：#{}".format(build),
     "> 报告：OpenAPI 接口自动化测试",
