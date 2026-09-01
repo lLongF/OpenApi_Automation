@@ -1,8 +1,11 @@
 pipeline {
     agent any
-    options { timestamps() }
+    options {
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
     parameters {
-        choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'], description: '测试范围')
+        choice(name: 'TEST_SCOPE', choices: ['smoke', 'all'], description: '测试范围：smoke冒烟 / all全量')
         booleanParam(name: 'SYNC_OPENAPI', defaultValue: false, description: '是否同步openapi用例')
     }
     stages {
@@ -30,24 +33,29 @@ pipeline {
                 '''
             }
         }
-        stage('执行冒烟测试') {
+        stage('执行Pytest测试') {
             steps {
-                script {
-                    def allureHome = tool('allure')
-                    env.ALLURE_BIN = "${allureHome}/bin/allure"
-                }
                 withCredentials([
                     string(credentialsId: 'test-user-id', variable: 'SHANHAI_USER_ID'),
                     string(credentialsId: 'test-admin-token', variable: 'SHANHAI_ADMIN_TOKEN')
                 ]) {
                     script {
-                        def marker = '-m "not openapi"'
-                        def syncOpt = params.SYNC_OPENAPI ? '' : '--no-openapi-case-sync'
-                        sh returnStatus: true, script: '''
+                        // 根据参数选择marker
+                        String marker
+                        if(params.TEST_SCOPE == 'smoke'){
+                            marker = '-m "smoke and not openapi"'
+                        }else{
+                            marker = '-m "not openapi"'
+                        }
+                        String syncOpt = params.SYNC_OPENAPI ? '--openapi-case-sync' : '--no-openapi-case-sync'
+
+                        sh '''mkdir -p reports'''
+                        int pytestRet = sh returnStatus: true, script: """
                           export TEST_ENV=test
-                          mkdir -p reports
-                          .venv/bin/python -m pytest tests --live --env test '''+marker+''' '''+syncOpt+''' --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
-                        '''
+                          .venv/bin/python -m pytest tests --live --env test ${marker} ${syncOpt} \
+                          --clean-alluredir --alluredir=reports/allure-results --junitxml=reports/junit.xml
+                        """
+                        echo "pytest执行返回码: ${pytestRet}"
                         sh "${env.ALLURE_BIN} generate reports/allure-results -o reports/allure-report --clean"
                     }
                 }
@@ -58,14 +66,20 @@ pipeline {
         always {
             junit allowEmptyResults: true, testResults: 'reports/junit.xml'
             archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
-            publishHTML(target: [
-                allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
-                reportDir: 'reports', reportFiles: 'report.html', reportName: 'Pytest HTML Report'
-            ])
-            publishHTML(target: [
-                allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
-                reportDir: 'reports/allure-report', reportFiles: 'index.html', reportName: 'Allure Report'
-            ])
+            script {
+                if(fileExists('reports')){
+                    publishHTML(target: [
+                        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
+                        reportDir: 'reports', reportFiles: 'report.html', reportName: 'Pytest HTML Report'
+                    ])
+                }
+                if(fileExists('reports/allure-report')){
+                    publishHTML(target: [
+                        allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
+                        reportDir: 'reports/allure-report', reportFiles: 'index.html', reportName: 'Allure Report'
+                    ])
+                }
+            }
         }
         unstable {
             sendWecomNotice()
@@ -81,6 +95,7 @@ def sendWecomNotice() {
         string(credentialsId: 'wecom-webhook', variable: 'WECOM_WEBHOOK')
     ]) {
         sh '''
+mkdir -p reports
 python3 - <<'PY' > reports/wecom-failure.json
 import json
 import os
@@ -88,7 +103,8 @@ import textwrap
 from pathlib import Path
 
 results_dir = Path("reports/allure-results")
-build = "#" + os.getenv("BUILD_NUMBER", "unknown")
+build_number = os.getenv("BUILD_NUMBER", "unknown")
+build_url = os.getenv("BUILD_URL", "")
 title = "OpenAPI 自动化测试报告"
 failures = []
 
@@ -141,9 +157,10 @@ for index, item in enumerate(failures[:5], start=1):
         width=1200,
         placeholder=" ...（响应已截断）",
     )
+    response_info = error_log
     part1 = "### 失败用例 " + str(index) + "：" + item['case_name'] + "\\n"
     part2 = "> 接口：`" + item['interface'] + "`\\n"
-    part3 = "> 结果：<font color=\\"warning\\">失败</font>\\n\\n"
+    part3 = "> 结果：<font color=\"warning\">失败</font>\\n\\n"
     part4 = "**接口响应信息：**\\n```text\\n" + response_info + "\\n```"
     items.append(part1 + part2 + part3 + part4)
 
@@ -153,10 +170,11 @@ if remaining > 0:
     extra = "\\n\\n另有 " + str(remaining) + " 条失败用例未展示。"
 
 content = "## " + title + "\\n"
-content += "> 构建：" + build + "\\n"
+content += "> 构建：#" + build_number + "\\n"
+content += "> 构建地址：[" + build_url + "](" + build_url + ")\\n"
 content += "> 报告：OpenAPI 接口自动化测试\\n"
 content += "> 描述：执行接口自动化回归测试\\n"
-content += "> 结果：<font color=\\"warning\\">失败（共 " + str(len(failures)) + " 条）</font>\\n\\n"
+content += "> 结果：<font color=\"warning\">失败（共 " + str(len(failures)) + " 条）</font>\\n\\n"
 content += "\\n\\n".join(items)
 content += extra
 
