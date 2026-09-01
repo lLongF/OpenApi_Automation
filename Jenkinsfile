@@ -95,7 +95,7 @@ from pathlib import Path
 
 results_dir = Path("reports/allure-results")
 build = os.getenv('BUILD_NUMBER', 'unknown')
-title = "OpenAPI 自动化测试报告"
+title = "OpenAPI 自动化测试报告(测试环境)"
 failures = []
 
 def read_attachment(source):
