@@ -30,6 +30,8 @@ CATEGORY_LABELS = {
     "positive": "正向用例",
     "negative": "反向用例",
     "boundary": "边界用例",
+    "equivalence": "等价类用例",
+    "scenario": "场景法用例",
     "exception": "异常用例",
 }
 
@@ -40,7 +42,7 @@ def case_ids(cases: list[dict[str, Any]]) -> list[str]:
 
 
 def case_params(cases: list[dict[str, Any]]) -> list[Any]:
-    """将测试用例列表转换为 pytest.param 列表，并根据 category 字段附加标记（smoke/negative/boundary）。"""
+    """将测试用例列表转换为 pytest.param 列表，并按用例分类附加 pytest 标记。"""
     return [pytest.param(case, marks=_marks_for_case(case)) for case in cases]
 
 
@@ -95,6 +97,10 @@ def _marks_for_case(case: dict[str, Any]) -> list[Any]:
         marks.append(pytest.mark.exception)
     elif category == "boundary":
         marks.append(pytest.mark.boundary)
+    elif category == "equivalence":
+        marks.append(pytest.mark.equivalence)
+    elif category == "scenario":
+        marks.append(pytest.mark.scenario)
     return marks
 
 

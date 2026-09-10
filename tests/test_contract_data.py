@@ -52,7 +52,7 @@ def test_case_definitions_have_required_metadata(test_data):
     ids = [case["id"] for case in cases]
     assert len(ids) == len(set(ids)), "Case ids must be unique"
     for case in cases:
-        assert case["category"] in {"positive", "negative", "boundary", "exception"}
+        assert case["category"] in {"positive", "negative", "boundary", "equivalence", "scenario", "exception"}
         assert case["title"].strip()
 
 

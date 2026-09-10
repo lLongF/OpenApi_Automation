@@ -1,7 +1,7 @@
 # 接口名称：统一查询任务状态
-# 接口路径：GET /open/tasks/status
+# 接口路径：GET /tasks/status
 # 轮询策略：每 5 秒查询一次，最多 300 秒。
-# task_id 来自对应提交接口；speaker_classify 使用其 request_id。
+# task_id 来自对应提交接口；speaker_classify 使用其 request_id，ASR 使用 /asr/submit 返回的 data.task_id。
 
 tasks_status:
   poll_interval_seconds: 5
@@ -54,6 +54,16 @@ tasks_status:
         http_status: 200
         code: 200
         final_status: "completed"
+    - id: "UTS_SCENE_001"
+      title: "统一查询任务状态-ASR 异步识别完成"
+      category: "scenario"
+      type: "asr"
+      context_key: "asr_task_id"
+      expected:
+        http_status: 200
+        code: 200
+        final_status: "completed"
+        json_path_required: ["data.result.audio_info.duration", "data.result.result.text"]
     - id: "UTS_NEG_001"
       title: "统一查询任务状态-缺少type"
       category: "negative"

@@ -72,8 +72,9 @@ class ShanhaiOpenApiClient:
     def erase_subtitle(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
         return self.http.post("/subtitle-erasures", files=_multipart_files(files), params=data, auth=auth)
 
-    def asr_rest(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
-        return self.http.post("/open/asr", files=_multipart_files(files), params=data, auth=auth)
+    def asr_submit(self, *, files: dict | None = None, data: dict | None = None, auth: str = "default"):
+        """Submit an asynchronous ASR task as multipart/form-data."""
+        return self.http.post("/asr/submit", files=_multipart_files(files, data), auth=auth)
 
     def speaker_classify_submit(self, *, files: dict | None = None, auth: str = "default"):
         return self.http.post("/speaker-diarizations", files=_multipart_files(files), auth=auth)

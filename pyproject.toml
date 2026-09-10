@@ -22,6 +22,8 @@ markers = [
     "smoke: core positive-path checks",
     "negative: error, auth, and invalid parameter checks",
     "boundary: boundary value checks",
+    "equivalence: equivalence-partition test cases",
+    "scenario: scenario-based test cases",
     "exception: exceptional and invalid-input checks",
     "openapi: OpenAPI/Swagger/Apifox contract synchronization checks",
 ]

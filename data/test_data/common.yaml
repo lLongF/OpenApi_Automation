@@ -5,9 +5,11 @@
 # - task_id: 字幕翻译、视频合成、音频分离等任务类接口的任务 ID
 # - project_id: 字幕擦除提交接口返回的项目 ID
 # - request_id: 音色设计、说话人分类等接口返回的请求 ID
+# - asr_audio_url: ASR 接口音频 URL 用例统一使用的可访问音频地址
 
 common:
   speaker_id: "replace-with-valid-speaker-id"
   task_id: "replace-with-valid-task-id"
   project_id: "replace-with-valid-project-id"
   request_id: "replace-with-valid-request-id"
+  asr_audio_url: "https://dev-1321001571.tos-cn-guangzhou.volces.com/middlestage/digitalVoice/clone/25f6796c-a623-4968-9741-203e1079e725/ref_audio.wav"
