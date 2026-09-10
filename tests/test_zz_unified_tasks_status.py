@@ -19,10 +19,10 @@ def pytest_generate_tests(metafunc):
 
 @pytest.mark.live
 def test_unified_task_status(api_client, common, test_data, task_status_case, runtime_context):
-    """[Live 测试] GET /open/tasks/status，按 type 与 task_id 查询异步任务。"""
+    """[Live 测试] GET /tasks/status，按 type 与 task_id 查询异步任务。"""
     case = rendered(task_status_case, common)
     params = dict(case.get("params") or {})
-    if case.get("category") == "positive":
+    if case.get("category") in {"positive", "scenario"}:
         params = {"type": case["type"], "task_id": _task_id(case, runtime_context, api_client, test_data)}
         response = _poll_until_final(api_client, params, test_data["tasks_status"])
         payload = assert_case(response, case)
@@ -66,6 +66,10 @@ def _submit_task_for_unified_status(task_type, api_client, test_data) -> str:
         from .test_speaker_classify import _submit_speaker_classify_and_get_request_id
 
         return _submit_speaker_classify_and_get_request_id(api_client, test_data)
+    if task_type == "asr":
+        from .test_asr import submit_asr_and_get_task_id
+
+        return submit_asr_and_get_task_id(api_client, test_data)
     if task_type == "subtitle_erase":
         from openapi_automation.clients.openapi_client import build_files
         from openapi_automation.core.assertions import response_json

@@ -20,15 +20,15 @@ from openapi_automation.contract.normalizer import normalize_openapi
 def test_openapi_normalizer_extracts_operations():
     """[单元测试-契约] 验证 OpenAPI 规范化工具能正确从文档中提取接口元数据（operation_id / request_body_required / response_codes）。
 
-    被验证接口：POST /open/asr（ASR REST 语音识别）
+    被验证接口：POST /asr/submit（ASR 异步语音识别）
     """
     document = {
         "openapi": "3.0.3",
         "paths": {
-            "/open/asr": {
+            "/asr/submit": {
                 "post": {
-                    "operationId": "asrRest",
-                    "summary": "ASR REST",
+                    "operationId": "asrSubmit",
+                    "summary": "ASR 异步提交",
                     "tags": ["ASR"],
                     "parameters": [{"name": "traceId", "in": "header", "required": False, "schema": {"type": "string"}}],
                     "requestBody": {"required": True},
@@ -39,8 +39,8 @@ def test_openapi_normalizer_extracts_operations():
     }
 
     snapshot = normalize_openapi(document)
-    operation = snapshot["POST /open/asr"]
-    assert operation["operation_id"] == "asrRest"
+    operation = snapshot["POST /asr/submit"]
+    assert operation["operation_id"] == "asrSubmit"
     assert operation["request_body_required"] is True
     assert operation["response_codes"] == ["200", "400"]
 

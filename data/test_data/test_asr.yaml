@@ -1,99 +1,278 @@
-# 接口名称： 语音识别接口
-# 提交接口：POST /open/asr
-# 接口 ID：ASR REST
-# 请求方式：提交接口使用 multipart/form-data
-# 限制说明：
-# - 音频时长 10s-60min
-# - 音频文件大小 <= 100MB
-# - 音频格式支持 mp3、wav、m4a
-# 数据说明：
-# - rest_cases 维护 ASR 语音识别 REST 提交用例
+# 接口名称：ASR HTTP 异步识别
+# 提交接口：POST /asr/submit
+# 请求方式：multipart/form-data；不能提交 JSON Body。
+# 必填规则：audio（File）与 audio_url（String）必须且只能提供一个。
+# audio 上传限制：时长不超过 60 分钟，文件大小不超过 100MB。
+# 正常 audio_url 用例统一使用 common.asr_audio_url（ref_audio.wav）。
+# rate、bits、channel 边界用例以测试代码生成的 RAW PCM 数据上传，避免为固定 WAV URL 传入 RAW 专属字段。
+
 asr:
-  limit:
-    input: "audio"
-    duration: "10s-60min"
-    max_size: "100MB"
-    formats: ["mp3", "wav", "m4a"]
-  rest_cases:
-    # --- 字段说明 ---
-    # file_key: 上传文件引用key / form: 表单字段
-    # ---
+  submit_cases:
+    # --- 正向流程：两种二选一音频来源均可创建任务 ---
     - id: "ASR_POS_001"
-      title: "语音识别-上传合法音频"
+      title: "语音识别-使用音频 URL 提交任务"
       category: "positive"
-      file_key: "valid_audio"
       form:
-        language: "zh"
+        audio_url: "{{asr_audio_url}}"
       expected:
         http_status: 200
         code: 200
-        json_path_required: ["data.text"]
-    - id: "ASR_BOUNDARY_001"
-      title: "语音识别-上传50MB音频"
-      category: "boundary"
-      file_key: "valid_speaker_5min_50mb"
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_POS_002"
+      title: "语音识别-上传本地 WAV 文件提交任务"
+      category: "positive"
+      files:
+        audio: "valid_audio"
       form:
-        language: "zh"
+        language: "中文"
+        hotwords: "专有名词,产品名"
       expected:
         http_status: 200
         code: 200
-        json_path_required: ["data.text"]
-    - id: "ASR_BOUNDARY_002"
-      title: "语音识别-上传12分钟音频"
-      category: "boundary"
-      file_key: "oversize_speaker_12min"
-      form:
-        language: "zh"
-      expected:
-        http_status: 200
-        code: 200
-        json_path_required: ["data.text"]
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+
+    # --- 反向流程：必填二选一与字段格式校验 ---
     - id: "ASR_NEG_001"
-      title: "语音识别-缺失音频文件"
+      title: "语音识别-未传 audio 与 audio_url"
       category: "negative"
       form:
         language: "zh"
       expected:
-        http_status_any: [400, 422, 500]
-        code: 1002
-        message_contains_any: ["file", "文件", "参数"]
+        http_status: 400
+        code: 1001
+        message_contains_any: ["audio_url", "audio", "必须且只能提供一个"]
     - id: "ASR_NEG_002"
-      title: "语音识别-音频格式错误"
+      title: "语音识别-同时传 audio 与 audio_url"
       category: "negative"
-      file_key: "invalid_audio"
+      files:
+        audio: "valid_audio"
       form:
-        language: "zh"
+        audio_url: "{{asr_audio_url}}"
       expected:
-        http_status_any: [200, 400, 415, 422, 500]
-        code: 1003
-        message_contains_any: ["mp3", "wav", "m4a", "格式", "音频"]
+        http_status: 400
+        code: 1001
+        message_contains_any: ["audio_url", "audio", "必须且只能提供一个"]
     - id: "ASR_NEG_003"
-      title: "语音识别-音频格式错误"
+      title: "语音识别-audio_url 不是 HTTP 或 HTTPS"
       category: "negative"
-      file_key: "empty_audio"
       form:
-        language: "zh"
+        audio_url: "ftp://example.com/audio.wav"
       expected:
-        http_status_any: [ 200, 400, 415, 422, 500 ]
-        code: 1003
-        message_contains_any: [ "文件不能为空", "文件", "为空" ]
+        http_status: 400
+        code: 1001
+        message_contains_any: ["audio_url", "HTTP", "HTTPS", "URL"]
     - id: "ASR_NEG_004"
-      title: "语音识别-上传超过60分钟音频"
+      title: "语音识别-上传不支持的文件扩展名"
       category: "negative"
-      file_key: "valid_audio_65min"
-      form:
-        language: "zh"
+      files:
+        audio: "invalid_audio"
       expected:
-        http_status_any: [ 200, 400, 415, 422, 500 ]
-        code: 1003
-        message_contains_any: [ "音频时长不能超过60分钟", "文件", "60分钟" ]
+        http_status: 400
+        code: 1001
+        message_contains_any: ["audio", "格式", "wav", "mp3", "音频"]
     - id: "ASR_NEG_005"
-      title: "语音识别-上传超过100MB音频"
+      title: "语音识别-传入不支持的 language"
       category: "negative"
-      file_key: "valid_audio_205MB"
+      files:
+        audio: "valid_audio"
+      form:
+        language: "fr"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["language", "中文", "英文", "日文", "粤语"]
+    - id: "ASR_NEG_006"
+      title: "语音识别-hotwords 使用中文逗号"
+      category: "negative"
+      files:
+        audio: "valid_audio"
+      form:
+        hotwords: "专有名词，产品名"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["hotwords", "英文逗号", "分隔" ,"词条仅支持中英文、数字、空格、点、下划线和连字符，且不能为空"]
+    - id: "ASR_NEG_007"
+      title: "语音识别-hotwords 包含空词条"
+      category: "negative"
+      files:
+        audio: "valid_audio"
+      form:
+        hotwords: "专有名词,,产品名"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["hotwords", "空词条", "分隔"]
+
+    # --- 边界值：可选字段为空/最小有效热词项 ---
+    - id: "ASR_BOUNDARY_001"
+      title: "语音识别-language 为空时使用默认中文"
+      category: "boundary"
+      files:
+        audio: "valid_audio"
+      form:
+        language: ""
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_BOUNDARY_002"
+      title: "语音识别-hotwords 单个词条"
+      category: "boundary"
+      files:
+        audio: "valid_audio"
+      form:
+        hotwords: "OpenAI"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_BOUNDARY_003"
+      title: "语音识别-RAW PCM rate 最小值 8000"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 8000
+        bits: 16
+        channel: 1
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_BOUNDARY_004"
+      title: "语音识别-RAW PCM rate 最大值 192000"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 192000
+        bits: 16
+        channel: 2
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_BOUNDARY_005"
+      title: "语音识别-RAW PCM rate 小于最小值 7999"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 7999
+        bits: 16
+        channel: 1
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["rate", "8000", "192000"]
+    - id: "ASR_BOUNDARY_006"
+      title: "语音识别-RAW PCM rate 大于最大值 192001"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 192001
+        bits: 16
+        channel: 1
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["rate", "8000", "192000"]
+    - id: "ASR_BOUNDARY_007"
+      title: "语音识别-RAW PCM bits 非法值 8"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 16000
+        bits: 8
+        channel: 1
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["bits", "16"]
+    - id: "ASR_BOUNDARY_008"
+      title: "语音识别-RAW PCM channel 小于最小值 0"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 16000
+        bits: 16
+        channel: 0
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["channel", "1", "2"]
+    - id: "ASR_BOUNDARY_009"
+      title: "语音识别-RAW PCM channel 大于最大值 3"
+      category: "boundary"
+      raw_pcm: true
+      form:
+        rate: 16000
+        bits: 16
+        channel: 3
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["channel", "1", "2"]
+    - id: "ASR_BOUNDARY_010"
+      title: "语音识别-上传 5 分钟且小于 100MB 的 WAV 文件"
+      category: "boundary"
+      files:
+        audio: "valid_speaker_5min_50mb"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_BOUNDARY_011"
+      title: "语音识别-上传超过 60 分钟的音频文件"
+      category: "boundary"
+      files:
+        audio: "valid_audio_65min"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["音频时长", "60分钟", "60 分钟", "时长", "超过"]
+    - id: "ASR_BOUNDARY_012"
+      title: "语音识别-上传超过 100MB 的音频文件"
+      category: "boundary"
+      files:
+        audio: "valid_audio_205MB"
+      expected:
+        http_status: 400
+        code: 1001
+        message_contains_any: ["文件大小", "100MB", "100 MB", "大小", "超过"]
+
+    # --- 等价类：合法语言代码/名称与合法英文逗号热词 ---
+    - id: "ASR_EQ_001"
+      title: "语音识别-语言代码 zh 与英文逗号热词"
+      category: "equivalence"
+      files:
+        audio: "valid_audio"
       form:
         language: "zh"
+        hotwords: "OpenAI,Codex"
       expected:
-        http_status_any: [ 200, 400, 415, 422, 500 ]
-        code: 1003
-        message_contains_any: [ "文件大小不能超过100MB", "100MB", "文件" ]
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+    - id: "ASR_EQ_002"
+      title: "语音识别-合法语言名称英文"
+      category: "equivalence"
+      files:
+        audio: "valid_audio"
+      form:
+        language: "英文"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
+
+    # --- 场景法：异步任务提交，后续由 tasks/status(type=asr) 轮询至完成 ---
+    - id: "ASR_SCENE_001"
+      title: "语音识别-固定 URL 提交后查询异步结果"
+      category: "scenario"
+      form:
+        audio_url: "{{asr_audio_url}}"
+        language: "zh"
+        hotwords: "OpenAI,Codex"
+      expected:
+        http_status: 200
+        code: 200
+        json_path_required: ["data.task_id", "data.status_code", "data.message", "data.logid"]
