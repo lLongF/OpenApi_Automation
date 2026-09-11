@@ -18,11 +18,6 @@ subtitle_erase:
       title: "字幕擦除-上传合法MP4视频"
       category: "positive"
       file_key: "valid_video"
-      form:
-        name: "api-auto-erase"
-        language_code: "zh"
-        subtitle_mode: 0
-        do_not_encrypt_link: "true"
       expected:
         http_status: 200
         code: 200
@@ -30,8 +25,6 @@ subtitle_erase:
     - id: "SE_NEG_001"
       title: "字幕擦除-缺失视频文件"
       category: "negative"
-      form:
-        language_code: "zh"
       expected:
         http_status_any: [200, 400, 415, 422, 500]
         code: 1002
@@ -40,8 +33,6 @@ subtitle_erase:
       title: "字幕擦除-视频格式不是MP4或MOV"
       category: "negative"
       file_key: "invalid_video"
-      form:
-        language_code: "zh"
       expected:
         http_status_any: [200, 400, 415, 422, 500]
         code: 1003
@@ -50,8 +41,6 @@ subtitle_erase:
       title: "字幕擦除-视频文件为空"
       category: "negative"
       file_key: "empty_audio"
-      form:
-        body: '{"carry_back":"voice-clone-missing-file"}'
       expected:
         http_status_any: [ 200, 400, 415, 422, 500 ]
         code: 1003
